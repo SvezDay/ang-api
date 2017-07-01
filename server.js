@@ -1,42 +1,39 @@
-// Refs: github/sgmeyer/auth0-node-jwks-rs256
-
+/* Refs:
+------------------------------------------------- Authentication & authorization
+https://scotch.io/tutorials/authenticate-a-node-js-api-with-json-web-tokens
+https://github.com/auth0/node-jsonwebtoken
+https://www.youtube.com/watch?v=fDHihQ5hB5I
+------------------------------------------------- Apoc
+https://www.npmjs.com/package/apoc
+*/
 let express = require('express');
 let bodyParser = require('body-parser');
 
-// let jwtCheck = require('./middleware/JwtCheck').jwtCheck;
-let jwksrsa = require('jwks-rsa');
-let jwtAuthz = require('express-jwt-authz');
-let jwt = require('express-jwt');
 let cors = require('cors');
+let morgan = require('morgan');
 
 let app = express();
 let port = process.env.PORT || 3200;
+process.env.NEO4J_PROTOCOL="http";
+// process.env.NEO4J_HOST=192+"."+168+"."+.0+"."+5
+// process.env.NEO4J_HOST=127+"."+0+"."+.0+"."+1
+process.env.NEO4J_HOST="127.0.0.1";
+process.env.NEO4J_PORT=7474;
+process.env.NEO4J_USERNAME="neo4j";
+process.env.NEO4J_PASSWORD="futur$";
 
-// let api = require('./api');
-// let scopeCheck = require('./middleware/scopeCheck');
+
 let appRoutes = require('./api/appRoutes');
-let AUTH_CONFIG = require('./api/config/auth');
+let tokenRoutes = require('./api/tokenRoutes');
+const freeRoutes = require('./tokenFreeRoutes');
 
-// let jwtCheck = jwt({
-//     secret: jwks.expressJwtSecret({
-//         cache: true,
-//         rateLimit: true,
-//         jwksRequestsPerMinute: 5,
-//         jwksUri: "https://svezday.eu.auth0.com/.well-known/jwks.json"
-//     }),
-//     audience: 'https://ang-rest-graph-server.herokuapp.com',
-//     issuer: "https://svezday.eu.auth0.com/",
-//     algorithms: ['RS256']
-// });
-
-
-// app.use(jwtCheck);
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('dev'));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use((req, res, next)=>{
    // res.header("Access-Control-Allow-Origin", "http://localhost:4200");
-   res.header("Access-Control-Allow-Origin", "https://ang-rest-graph-web.herokuapp.com", "http://localhost:4200");
+   res.header("Access-Control-Allow-Origin", "https://ang-app.herokuapp.com", "http://localhost:4200");
    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Auth-Token");
    next();
@@ -50,52 +47,18 @@ app.use(function (err, req, res, next) {
 });
 
 // Add cors protection
+app.use(cors());
 
 // Add the bodyParser limits
 
 // Add the error module
 
 // Add the scope checking
-// app.use('/api', jwtCheck, scopeCheck, api());
 
-app.use(cors());
+app.use('/api', tokenRoutes, appRoutes());
 
-// let authCheck = jwt({
-//    secret: new Buffer(AUTH_CONFIG.secret, 'base64'),
-//    audience: AUTH_CONFIG.clientID
-// });
-
-// let authCheck = jwt({
-//    secret: AUTH_CONFIG.secret,
-//    audience: AUTH_CONFIG.clientID
-// });
-// app.use('/api', authCheck, appRoutes());
-// app.get('/api/course_list', authCheck, (req, res)=>{
-//    res.status(200).json({data:[{name: "maths"}]});
-// });
-
-const checkJwt = jwt({
-   aud: 'http://localhost:3200/',
-   secret: jwksrsa.expressJwtSecret({
-     cache: true,
-     rateLimit: true,
-     jwksRequestsPerMinute: 5,
-     jwksUri: "https://svezday.eu.auth0.com/.well-known/jwks.json"
-   }),
-   issuer: "https://svezday.eu.auth0.com/",
-   algorithms: ['RS256']
-});
-
-// const checkScopes = jwtAuthz(['read:course']);
-
-// app.get('/api/course_list', checkJwt, (req, res)=>{
-//    res.status(200).json({data: [{name: 'maths'}]});
-// });
-
-app.use('/api', checkJwt, appRoutes());
-
+app.post('/authenticate', freeRoutes.authenticate)
+app.post('/register', freeRoutes.register)
 
 app.listen(port);
-
-
-console.log('todo list RESTful API server started on: localhost:' + port);
+console.log('API server started on: localhost:' + port);

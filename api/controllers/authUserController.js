@@ -56,11 +56,11 @@ passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, next) {
 // };
 
 exports.login = function(req, res){
-   if (!req.body.username || !req.body.password){
-      let name = req.body.name;
+   if (!req.body.email || !req.body.password){
+      let email = req.body.email;
       let password = req.body.password;
 
-      var user = users[_.findIndex(users, {name: name})];
+      var user = users[_.findIndex(users, {email})];
       if( ! user ){
          res.status(401).json({message:"no such user found"});
       }

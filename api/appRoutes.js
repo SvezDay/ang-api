@@ -1,9 +1,12 @@
 "use-strict";
 let express = require('express');
+let apoc = require('apoc');
 
 let version = require('../package.json').version;
 
+let auth = require('./controllers/authCtrl.js');
 let person = require('./controllers/personCtrl.js');
+let user = require('./controllers/userCtrl.js');
 let node = require('./controllers/nodeCtrl.js');
 let relationship = require('./controllers/relationshipCtrl.js');
 let container = require('./controllers/containerCtrl.js');
@@ -14,6 +17,28 @@ let course = require('./controllers/learnings/coursesCtrl.js');
 module.exports = ()=>{
    let routes = express.Router();
    routes
+   .post('/test', (req, res)=>{
+      // res.send('path');
+      apoc
+      .query('MATCH (a:Account) RETURN properties(a)')
+      .exec()
+      .then(
+         (response)=>{
+            res.status(200).json({result: response[0].data});
+         },
+         (fail)=>{
+            res.status(200).json({error: fail});
+
+         }
+      )
+   })
+// Authentication
+   .post('/authenticate', auth.login)
+   .get('/users', user.getAll)
+   .get('/users/:id', user.getOne)
+   .post('/users', user.create)
+   .put('/users', user.update)
+   .delete('/users/:id', user.delete)
 // test
    .get('/course_list', course.course_list)
    .post('/add_course', course.add_course)
