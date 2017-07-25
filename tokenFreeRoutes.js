@@ -26,15 +26,31 @@ module.exports.authenticate = (req, res, next)=>{
          // +" call apoc.index.nodes('Account', 'email') YIELD node as account return account"
       )
       .then((data)=>{
-         if(data.records[0] && data.records[0]._fields){
-            res.status(200).json(data.records[0]._fields);
+         if(data.records[0] && data.records[0]._fields[0]){
+            let token = jwt.sign({
+               exp: Math.floor(Date.now() / 1000) + (60 * 60) // expiration in 1 hour
+            },secret);
+            let i = data.records[0]._fields[0].id;
+            let p = data.records[0]._fields[0].properties;
+            let re = /(.{1,})@/g;
+            let match = re.exec(p.email)[1];
+            let name =  p.first |
+                        p.fb_username |
+                        p.gapi_username |
+                        p.li_username |
+                        match;
+
+            res.status(200).json({
+               token:token,
+               id: i.low,
+               name: name
+            });
          }else {
             res.status(201).json({message: 'not found'});
          }
       })
       .catch((error)=>{
-         console.log(error);
-         res.status(401).json({error: error});
+         res.status(401).json({error: error, message:'error basic error'});
       });
 
 
@@ -95,20 +111,50 @@ module.exports.authenticate = (req, res, next)=>{
 
 }
 module.exports.register = (req, res, next)=>{
-   // Check if first + last already exists
-   // or email already exists
-   // also create it
+   // Check the data in body
+   if(!req.body.first || !req.body.last || !req.body.email || !req.body.password) {
+      return res.status(401).json({message: "Parameters missing"});
+   }
+   let _ = req.body;
+   // Check if first + last [+ middle] already exists                          todo
 
-   apoc
-   .query('MATCH (a:Account) RETURN properties(a)')
-   .exec()
-   .then(
-      (response)=>{
-         res.status(200).json({result: response[0].data});
-      },
-      (fail)=>{
-         res.status(200).json({error: fail});
-
+   // Check if email already exists
+   // let query = `
+   //    MATCH (a:Account{email:'${_.email}'})
+   //    WITH COUNT(a) as count_a, a
+   //    FOREACH (_ IN CASE count_a WHEN 0 THEN [1] ELSE [] END |
+   //       CREATE(n:Account{email:'${_.email}', first:'${_.first}', last:'${_.last}',
+   //                password:'${_.password}', middle:'${_.middle || null}'})
+   //    )
+   //    WITH a
+   //    MATCH (n:Account{email:'${_.email}'})
+   //    RETURN {id: id(n), properties:properties(n)} as data
+   //    `;
+   let query = `
+      MATCH (a:Account{email:'${_.email}'})
+      CASE COUNT(a)
+         WHEN 0 THEN
+            CREATE(n:Account{
+               email:'${_.email}', first:'${_.first}', last:'${_.last}',
+                  password:'${_.password}', middle:'${_.middle || null}'
+            })
+            RETURN {id: id(n), properties:properties(n)} as data
+         ELSE
+            MATCH (e:Error{name:'email_already_exists'})
+            RETURN {properties:properties(e)} as data
+      END
+      `;
+   driver.session()
+   .run(query)
+   .then((data)=>{
+      if(data.records[0] && data.records[0]._fields[0]){
+         res.status(200).json(data.records[0]._fields[0]);
+      }else {
+         res.status(401).json({message: 'not found'});
       }
-   )
+   })
+   .catch((error)=>{
+      console.log(error);
+      res.status(400).json({error: error});
+   });
 }

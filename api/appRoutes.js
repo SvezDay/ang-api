@@ -1,6 +1,7 @@
 "use-strict";
 let express = require('express');
 let apoc = require('apoc');
+const neo4j = require('neo4j-driver').v1;
 
 let version = require('../package.json').version;
 
@@ -14,23 +15,28 @@ let learningSchema = require('./controllers/learningSchemaCtrl.js');
 //test
 let course = require('./controllers/learnings/coursesCtrl.js');
 
+const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
+const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
+const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
+
+const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, graphenedbPass));
+
 module.exports = ()=>{
    let routes = express.Router();
    routes
    .post('/test', (req, res)=>{
-      // res.send('path');
-      apoc
-      .query('MATCH (a:Account) RETURN properties(a)')
-      .exec()
-      .then(
-         (response)=>{
-            res.status(200).json({result: response[0].data});
-         },
-         (fail)=>{
-            res.status(200).json({error: fail});
-
-         }
+      let session = driver.session();
+      session.run(
+            "MATCH (a:Account) return a"
       )
+      .then((data)=>{
+         console.log(data.records[0]._fields);
+         res.status(200).json(data.records[0]._fields);
+      })
+      .catch((error)=>{
+         console.log(error);
+         res.status(401).json({error: error, message:'error basic error'});
+      });
    })
 // Authentication
    .post('/authenticate', auth.login)

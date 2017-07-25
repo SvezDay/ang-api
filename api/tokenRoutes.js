@@ -8,8 +8,9 @@ const algo = require('../config/tokenSecret').algo;
 module.exports = apiRoutes.use((req, res, next)=>{
 
    // Check headers or url parameters or post parameters for token
-   const token = req.headers['x-access-token'] | req.query.token | req.body.token;
-
+   const token = req.headers['x-access-token'] || req.query.token || req.body.token;
+   console.log("req.headers: ", req.headers);
+   console.log('token: ', token);
    // Decode token
    if(token){
       let cb = (err, decoded)=>{
@@ -19,7 +20,7 @@ module.exports = apiRoutes.use((req, res, next)=>{
          req.decoded = decoded;
          next();
       };
-      jwt.verify(token, secret, { algorithms: algo }, cb);
+      jwt.verify(token, secret, cb);
 
 
    }
