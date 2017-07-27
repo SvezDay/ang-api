@@ -5,7 +5,6 @@ const neo4j = require('neo4j-driver').v1;
 
 let version = require('../package.json').version;
 
-let auth = require('./controllers/authCtrl.js');
 let person = require('./controllers/personCtrl.js');
 let user = require('./controllers/userCtrl.js');
 let node = require('./controllers/nodeCtrl.js');
@@ -24,25 +23,9 @@ const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, grap
 module.exports = ()=>{
    let routes = express.Router();
    routes
-   .post('/test', (req, res)=>{
-      let session = driver.session();
-      session.run(
-            "MATCH (a:Account) return a"
-      )
-      .then((data)=>{
-         console.log(data.records[0]._fields);
-         res.status(200).json(data.records[0]._fields);
-      })
-      .catch((error)=>{
-         console.log(error);
-         res.status(401).json({error: error, message:'error basic error'});
-      });
-   })
-// Authentication
-   .post('/authenticate', auth.login)
    .get('/users', user.getAll)
    .get('/users/:id', user.getOne)
-   .post('/users', user.create)
+   // .post('/users', user.create)
    .put('/users', user.update)
    .delete('/users/:id', user.delete)
 // test

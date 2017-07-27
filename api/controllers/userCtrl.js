@@ -29,32 +29,32 @@ exports.update = (req, res, next)=>{ // accountId, content{title}
 exports.delete = (req, res, next)=>{ // accountId, content{title}
    res.status(200);
 }
-exports.create = (req, res, next)=>{ // accountId, content{title}
-   // Check the data in body
-   if(req.body.first && req.body.last && req.body.email && req.body.password) {
-      return res.status(401).json({message: "Parameters missing"});
-   }
-   var session = driver.session();
-   // Check if first + last [+ middle] already exists
-
-   // Check if email already exists
-   session.run(
-         "MATCH (a:Account{email:$email})"
-      +  " CALL apoc.do.when("
-      +    " COUNT(a)=1,"
-      +    " 'MATCH (e:Error) WHERE id(e)=170 RETURN e.name as data',"
-      +    " 'CREATE (n:Account"
-      +       " {email:$email, first:$first, last:$last, password:$password}) "
-      +    " RETURN {id:id(n), properties:properties(n)} as data'"
-      +  " )"
-      +  " RETURN data"
-      ,{first: req.body.first, last: req.body.last, email:req.body.email, password:req.body.password}
-   )
-   .then((data)=>{
-      res.status(200).json(data.records[0]._fields[0].properties);
-   })
-   .catch((error)=>{
-      console.log(error);
-      res.status(400).json({error: error});
-   });
-}
+// exports.create = (req, res, next)=>{ // accountId, content{title}
+//    // Check the data in body
+//    if(req.body.first && req.body.last && req.body.email && req.body.password) {
+//       return res.status(401).json({message: "Parameters missing"});
+//    }
+//    var session = driver.session();
+//    // Check if first + last [+ middle] already exists
+//
+//    // Check if email already exists
+//    session.run(
+//          "MATCH (a:Account{email:$email})"
+//       +  " CALL apoc.do.when("
+//       +    " COUNT(a)=1,"
+//       +    " 'MATCH (e:Error) WHERE id(e)=170 RETURN e.name as data',"
+//       +    " 'CREATE (n:Account"
+//       +       " {email:$email, first:$first, last:$last, password:$password}) "
+//       +    " RETURN {id:id(n), properties:properties(n)} as data'"
+//       +  " )"
+//       +  " RETURN data"
+//       ,{first: req.body.first, last: req.body.last, email:req.body.email, password:req.body.password}
+//    )
+//    .then((data)=>{
+//       res.status(200).json(data.records[0]._fields[0].properties);
+//    })
+//    .catch((error)=>{
+//       console.log(error);
+//       res.status(400).json({error: error});
+//    });
+// }

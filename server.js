@@ -22,10 +22,9 @@ process.env.NEO4J_PORT=7474;
 process.env.NEO4J_USERNAME="neo4j";
 process.env.NEO4J_PASSWORD="futur$";
 
-
 let appRoutes = require('./api/appRoutes');
 let tokenRoutes = require('./api/tokenRoutes');
-const freeRoutes = require('./tokenFreeRoutes');
+let freeRoutes = require('./tokenFreeRoutes');
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -57,8 +56,53 @@ app.use(cors());
 
 app.use('/api', tokenRoutes, appRoutes());
 
-app.post('/authenticate', freeRoutes.authenticate)
-app.post('/register', freeRoutes.register)
+app.post('/authenticate', freeRoutes.authenticate);
+app.post('/register', freeRoutes.register);
+
+// const apoc = require('apoc');
+// var neo4j = require('neo4j-driver').v1;
+// const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
+// const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
+// const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
+// const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, graphenedbPass));
+//
+// app.post('/test', function(req, res){
+//    let _ = req.body;
+// //    "MATCH (a:Account{email:$email})"
+// // +  " CALL apoc.do.when("
+// // +    " COUNT(a)=1,"
+// // +    " 'MATCH (e:Error) WHERE id(e)=170 RETURN e.name as data',"
+// // +    " 'CREATE (n:Account"
+// // +       " {email:$email, first:$first, last:$last, password:$password}) "
+// // +    " RETURN {id:id(n), properties:properties(n)} as data'"
+// // +  " )"
+// // +  " RETURN data"
+//    let query = `
+//       MATCH (a:Account{email:'${_.email}'})
+//       WITH COUNT(a) as numb
+//       CALL apoc.do.when(
+//          numb=1,
+//          "MATCH (e:Error) WHERE id(e)=170 RETURN e.name as data",
+//          "CREATE (n:Account{email:'${_.email}'}) RETURN {properties:properties(n)} as data"
+//       ) YIELD value
+//       RETURN value
+//
+//       `;
+//    driver.session()
+//    .run(query)
+//    .then((data)=>{
+//       console.log(data);
+//       if(data.records[0]){
+//          res.status(200).json(data.records[0]._fields[0]);
+//       }else {
+//          res.status(401).json({message: 'not found'});
+//       }
+//    })
+//    .catch((error)=>{
+//       console.log(error);
+//       res.status(400).json({error: error});
+//    });
+// });
 
 app.listen(port);
 console.log('API server started on: localhost:' + port);
