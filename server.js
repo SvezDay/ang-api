@@ -59,50 +59,45 @@ app.use('/api', tokenRoutes, appRoutes());
 app.post('/authenticate', freeRoutes.authenticate);
 app.post('/register', freeRoutes.register);
 
-// const apoc = require('apoc');
-// var neo4j = require('neo4j-driver').v1;
-// const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
-// const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
-// const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
-// const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, graphenedbPass));
-//
-// app.post('/test', function(req, res){
-//    let _ = req.body;
-// //    "MATCH (a:Account{email:$email})"
-// // +  " CALL apoc.do.when("
-// // +    " COUNT(a)=1,"
-// // +    " 'MATCH (e:Error) WHERE id(e)=170 RETURN e.name as data',"
-// // +    " 'CREATE (n:Account"
-// // +       " {email:$email, first:$first, last:$last, password:$password}) "
-// // +    " RETURN {id:id(n), properties:properties(n)} as data'"
-// // +  " )"
-// // +  " RETURN data"
-//    let query = `
-//       MATCH (a:Account{email:'${_.email}'})
-//       WITH COUNT(a) as numb
-//       CALL apoc.do.when(
-//          numb=1,
-//          "MATCH (e:Error) WHERE id(e)=170 RETURN e.name as data",
-//          "CREATE (n:Account{email:'${_.email}'}) RETURN {properties:properties(n)} as data"
-//       ) YIELD value
-//       RETURN value
-//
-//       `;
-//    driver.session()
-//    .run(query)
-//    .then((data)=>{
-//       console.log(data);
-//       if(data.records[0]){
-//          res.status(200).json(data.records[0]._fields[0]);
-//       }else {
-//          res.status(401).json({message: 'not found'});
-//       }
-//    })
-//    .catch((error)=>{
-//       console.log(error);
-//       res.status(400).json({error: error});
-//    });
-// });
+const jwt = require('jsonwebtoken');
+const apoc = require('apoc');
+var neo4j = require('neo4j-driver').v1;
+const secret = require('./config/tokenSecret').secret;
+const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
+const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
+const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
+const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, graphenedbPass));
+
+app.post('/test', function(req, res){
+   let _ = req.body;
+   let query = `
+      match (a:Account)-[:Linked]->(n:Note:Container)
+      where id(a)= 183
+      with collect(n) as list
+      return list
+   `;
+   driver.session()
+   .run(query)
+   .then((data)=>{
+      if(data.records[0] && data.records[0]._fields[0]){
+         let f = data.records[0]._fields[0];
+         let token = jwt.sign({
+            exp: Math.floor(Date.now() / 1000) + (60 * 60) // expiration in 1 hour
+         },secret);
+
+         res.status(200).json({
+            token:token,
+            list: f
+         });
+      }else {
+         res.status(201).json({message: 'Creation failed'});
+      }
+   })
+   .catch((error)=>{
+      res.status(401).json({error: error, message:'error basic error'});
+   });
+
+});
 
 app.listen(port);
 console.log('API server started on: localhost:' + port);

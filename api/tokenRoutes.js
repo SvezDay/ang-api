@@ -9,14 +9,20 @@ module.exports = apiRoutes.use((req, res, next)=>{
 
    // Check headers or url parameters or post parameters for token
    const token = req.headers['x-access-token'] || req.query.token || req.body.token;
-   console.log("req.headers: ", req.headers);
-   console.log('token: ', token);
+   // console.log("req.headers: ", req.headers);
+   // console.log('token: ', token);
    // Decode token
    if(token){
       let cb = (err, decoded)=>{
-         if(err) return res.json({
-            success: 'false', message: 'Fail to authenticate token !'
-         });
+
+         if(err) {
+            console.log('token ERROR 1');
+            console.log(err);
+            return res.json({
+               success: 'false', message: 'Fail to authenticate token !'
+            });
+         }
+         console.log('token GOOD');
          req.decoded = decoded;
          next();
       };
@@ -26,6 +32,7 @@ module.exports = apiRoutes.use((req, res, next)=>{
    }
    // Trow error
    else {
+      console.log('token ERROR 2');
       return res.status(403).json({
          success: false,
          message: 'No token provided.'
