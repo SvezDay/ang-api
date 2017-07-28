@@ -26,6 +26,8 @@ module.exports = ()=>{
    // NOTES
       .post('/create_note', note.create_note)
       .get('/get_all_note', note.get_all_note)
+      .get('/get_note_detail/:id', note.get_note_detail)
+
 //    .get('/users', user.getAll)
 //    .get('/users/:id', user.getOne)
 //    // .post('/users', user.create)

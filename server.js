@@ -71,23 +71,30 @@ const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, grap
 app.post('/test', function(req, res){
    let _ = req.body;
    let query = `
-      match (a:Account)-[:Linked]->(n:Note:Container)
+      match (a:Account)-[:Linked]->(n:Note:Container)-[:Linked]->(x)
       where id(a)= 183
-      with collect(n) as list
-      return list
+      return {note_id: id(n), content:x.value} as list
    `;
    driver.session()
    .run(query)
    .then((data)=>{
-      if(data.records[0] && data.records[0]._fields[0]){
-         let f = data.records[0]._fields[0];
+      if(data.records[0]){
+         let f = data.records;
+         let list = [];
+         for (var i = 0; i < f.length; i++) {
+            list.push({
+               note_id:f[i]._fields[0].note_id.low,
+               content:f[i]._fields[0].content
+            });
+         }
+
          let token = jwt.sign({
             exp: Math.floor(Date.now() / 1000) + (60 * 60) // expiration in 1 hour
          },secret);
 
          res.status(200).json({
             token:token,
-            list: f
+            list: list
          });
       }else {
          res.status(201).json({message: 'Creation failed'});

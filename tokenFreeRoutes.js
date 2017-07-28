@@ -35,7 +35,8 @@ module.exports.authenticate = (req, res, next)=>{
                         f.properties.gapi_username ||
                         f.properties.li_username;
             let token = jwt.sign({
-               exp: Math.floor(Date.now() / 1000) + (60 * 60) // expiration in 1 hour
+               exp: Math.floor(Date.now() / 1000) + (60 * 60), // expiration in 1 hour
+               user_id:f.id.low
             },secret);
 
             res.status(200).json({

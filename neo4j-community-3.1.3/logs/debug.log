@@ -11369,3 +11369,6 @@ Storage files: (filename : modification date - size)
 2017-07-28 07:01:03.005+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 4828ms.
 2017-07-28 10:46:39.210+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 4832ms.
 2017-07-28 12:36:50.012+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 4759ms.
+2017-07-28 14:04:02.038+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 4787ms.
+2017-07-28 14:04:43.026+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 5154ms.
+2017-07-28 14:05:23.039+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 4852ms.
