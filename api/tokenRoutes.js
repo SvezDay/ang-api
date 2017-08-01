@@ -18,7 +18,7 @@ module.exports = apiRoutes.use((req, res, next)=>{
          if(err) {
             console.log('token ERROR 1');
             console.log(err);
-            return res.json({
+            return res.status(401).json({
                success: 'false', message: 'Fail to authenticate token !'
             });
          }
@@ -32,7 +32,7 @@ module.exports = apiRoutes.use((req, res, next)=>{
    // Trow error
    else {
       console.log('token ERROR 2');
-      return res.status(403).json({
+      return res.status(401).json({
          success: false,
          message: 'No token provided.'
       })

@@ -71,20 +71,37 @@ const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, grap
 app.post('/test', function(req, res){
    let _ = req.body;
    let query = `
-      match (a:Account)-[:Linked]->(n:Note:Container)-[:Linked]->(x)
-      where id(a)= 183
-      return {note_id: id(n), content:x.value} as list
+   match (a:Account)-[l1:Linked]->(n:Note:Container)-[:Linked*]->(x)
+   where id(a)= 183 and id(n) = 186
+   with collect(x) as xs, a, l1, n, x
+   return
+   case
+      when count(l1)=1 then xs
+      else {data:{message: 'No access user'}}
+      end
    `;
+      //se call apoc.path.spanningTree(n, 'Linked>') yield path
    driver.session()
    .run(query)
    .then((data)=>{
       if(data.records[0]){
-         let f = data.records;
-         let list = [];
-         for (var i = 0; i < f.length; i++) {
-            list.push({
-               note_id:f[i]._fields[0].note_id.low,
-               content:f[i]._fields[0].content
+         let d = data.records;
+         let detail = [];
+         for (var i = 0; i < d.length; i++) {
+            let check = true;
+            let j = 0;
+            while (check) {
+               if(d[i]._fields[0][0].labels[j] != 'Property'){
+                  d[i]._fields[0][0].labels = d[i]._fields[0][0].labels[j];
+                  check = false;
+               }else {
+                  j++;
+               }
+            }
+            detail.push({
+               node_id:d[i]._fields[0][0].identity.low,
+               content:d[i]._fields[0][0].properties.value,
+               labels:d[i]._fields[0][0].labels
             });
          }
 
@@ -94,13 +111,14 @@ app.post('/test', function(req, res){
 
          res.status(200).json({
             token:token,
-            list: list
+            detail: detail
          });
       }else {
-         res.status(201).json({message: 'Creation failed'});
+         res.status(201).json({message: 'No access user'});
       }
    })
    .catch((error)=>{
+      console.log(error);
       res.status(401).json({error: error, message:'error basic error'});
    });
 
