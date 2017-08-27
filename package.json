@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "jasmine-node spec"
+    "test": "jasmine-node spec/"
   },
   "author": "",
   "license": "ISC",

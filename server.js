@@ -40,9 +40,9 @@ app.use((req, res, next)=>{
 
 // return error message for unauthorized requests
 app.use(function (err, req, res, next) {
-  if (err.name === 'UnauthorizedError') {
-    res.status(401).json({message:'Missing or invalid token'});
-  }
+   if (err.name === 'UnauthorizedError') {
+      res.status(401).json({message:'Missing or invalid token'});
+   }
 });
 
 // Add cors protection
@@ -61,66 +61,189 @@ app.post('/register', freeRoutes.register);
 
 const jwt = require('jsonwebtoken');
 const apoc = require('apoc');
-var neo4j = require('neo4j-driver').v1;
+const neo4j = require('neo4j-driver').v1;
 const secret = require('./config/tokenSecret').secret;
 const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
 const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
 const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
 const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, graphenedbPass));
 
+// function writeTx(session, query, params){
+//    return new Promise((resolve, reject)=>{
+//       session
+//       .writeTransaction(tx => {
+//          tx.run(query, params)
+//       })
+//       .then(() => {
+//          console.log('CHECK resolve writeTx');
+//          resolve('done');
+//       })
+//       .catch(function (error) {
+//          console.log('CHECK reject writeTx');
+//          reject(error);
+//       });
+//    })
+// }
+//
+// function readTx(session, query, params){
+//    return new Promise((resolve, reject)=>{
+//       session
+//       .readTransaction(tx => {
+//          tx.run(query, params)
+//       })
+//       .then((result) => {
+//          console.log('CHECK resolve readTx');
+//          console.log('result of the readTx function');
+//          console.log(result);
+//          resolve(result);
+//       })
+//       .catch((error) =>{
+//          console.log('CHECK reject readTx');
+//          reject(error);
+//       });
+//    })
+// }
+
 app.post('/test', function(req, res){
    let _ = req.body;
-   let query = `
-   match (a:Account)-[l1:Linked]->(n:Note:Container)-[:Linked*]->(x)
-   where id(a)= 183 and id(n) = 186
-   with collect(x) as xs, a, l1, n, x
-   return
-   case
-      when count(l1)=1 then xs
-      else {data:{message: 'No access user'}}
+   let date = new Date().getTime();
+   const session = driver.session();
+   const readA = `
+   match (a:Account)-[l1:Linked]->(n:Note:Container)-[l:Linked*{commitNbr:last(n.commitList)}]->(x:Property)
+      where id(a)= 181 and id(n) = 227
+      with l1, x
+      return
+      case
+         when count(l1)>=1 then collect(x)
+         else {data:{message: 'No access user'}}
       end
    `;
-      //se call apoc.path.spanningTree(n, 'Linked>') yield path
-   driver.session()
-   .run(query)
-   .then((data)=>{
-      if(data.records[0]){
-         let d = data.records;
+
+
+
+   session
+   .readTransaction(tx => tx.run(readA, {}))
+   .then(data => {
+
+      if(data.records && data.records[0]){
+         let d = data.records[0]._fields[0];
+         console.log(d[0][0]);
          let detail = [];
-         for (var i = 0; i < d.length; i++) {
-            let check = true;
-            let j = 0;
-            while (check) {
-               if(d[i]._fields[0][0].labels[j] != 'Property'){
-                  d[i]._fields[0][0].labels = d[i]._fields[0][0].labels[j];
-                  check = false;
-               }else {
-                  j++;
-               }
-            }
-            detail.push({
-               node_id:d[i]._fields[0][0].identity.low,
-               content:d[i]._fields[0][0].properties.value,
-               labels:d[i]._fields[0][0].labels
-            });
-         }
-
-         let token = jwt.sign({
-            exp: Math.floor(Date.now() / 1000) + (60 * 60) // expiration in 1 hour
-         },secret);
-
-         res.status(200).json({
-            token:token,
-            detail: detail
+         let it = 0;
+         let mapped = d.map(x=>{
+            it++;
+            return {
+               node_id: x.identity.low,
+               value:x.properties.value,
+               labels:x.labels,
+               order:it
+            };
          });
+         // for (var i = 0; i < d.length; i++) {
+         //    let check = true;
+         //    let j = 0;
+         //    while (check) {
+         //       if(d[0][i].labels[j] != 'Property'){
+         //          d[0][i].labels = d[0][i].labels[j];
+         //          check = false;
+         //       }else {
+         //          j++;
+         //       }
+         //    }
+         //    detail.push({
+         //       node_id:d[0][i].identity.low,
+         //       value:d[0][i].properties.value,
+         //       labels:d[0][i].labels
+         //    });
+         // };
+
+   res.json({data:mapped})
       }else {
-         res.status(201).json({message: 'No access user'});
+         res.status(403).json({message: 'No access user'});
       }
+
    })
-   .catch((error)=>{
-      console.log(error);
-      res.status(401).json({error: error, message:'error basic error'});
+   .catch(function (error) {
+      console.log("========================== CHECK 1 ERROR ==============");
+     console.log(error);
+     res.status(200).json({error:error});
    });
+
+
+
+
+
+
+
+   // const query1 = `
+   // create (n:Container:Note)
+   // create (p:Property:Undefined{value:'This is a test for transactions'})
+   // create (u:Property:Undefined{value:'5'})
+   // create (n)-[l1:Linked]->(p)-[l2:Linked]->(u)
+   // `;
+   // const params1 = {};
+   // const query2 = `
+   // match (n:Note)-[:Linked]->(p:Property)-[:Linked]->(u:Property{value:'4'})
+   // return n, p, u
+   // `;
+   // const params2 = {};
+   //
+   //
+   // session.writeTransaction(tx => {
+   //    tx.run(query1, params1)
+   // })
+   // .then(() => {
+   //    const readTxPromise = session.readTransaction(tx => tx.run(query2, params2));
+   //    readTxPromise.then(result => {
+   //       session.close();
+   //       console.log(result);
+   //       const singleRecord = result.records[0];
+   //       const createdNodeId = singleRecord.get(0);
+   //       res.status(200).json({data:[singleRecord, createdNodeId]});
+   //    })
+   //    .catch(function (error) {
+   //       console.log("========================== CHECK 2 ERROR ==============");
+   //      console.log(error);
+   //      res.status(200).json({error:error});
+   //    });
+   // })
+   // .catch(function (error) {
+   //    console.log("========================== CHECK 1 ERROR ==============");
+   //   console.log(error);
+   //   res.status(200).json({error:error});
+   // });
+
+
+
+
+// Chaining of transactions
+// writeTx(session, query1, params1).then((result1)=>{
+//    console.log('result1', result1);
+//    readTx(session, query2, params2).then((result2)=>{
+//       if(!result2){
+//          session.close();
+//          return res.status(200).json({error: 'Result is Undefined !'});
+//       }
+//       session.close();
+//       console.log('result2');
+//       console.log(result2);
+//       const singleRecord = result2.records[0];
+//       const createdNodeId = singleRecord.get(0);
+//       res.status(200).json({data:result2});
+//    },(error)=>{
+//       console.log("========================== CHECK 2 ERROR ==============");
+//       console.log(error);
+//       session.close();
+//       res.status(200).json({error:error});
+//    });
+// },(error)=>{
+//    console.log("========================== CHECK 1 ERROR ==============");
+//    console.log(error);
+//    session.close();
+//    res.status(200).json({error:error});
+// });
+
+
 
 });
 

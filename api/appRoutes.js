@@ -27,6 +27,10 @@ module.exports = ()=>{
       .post('/create_note', note.create_note)
       .get('/get_all_note', note.get_all_note)
       .get('/get_note_detail/:id', note.get_note_detail)
+      .post('/update_property', note.update_property)
+      .post('/add_property', note.add_property)
+      .delete('/delete_property/:note_id/:property_id', note.delete_property)
+      .post('/drop_property', note.drop_property)
 
 //    .get('/users', user.getAll)
 //    .get('/users/:id', user.getOne)
