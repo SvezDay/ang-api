@@ -13,6 +13,7 @@ let version = require('../package.json').version;
 // let learningSchema = require('./controllers/learningSchemaCtrl.js');
 // let course = require('./controllers/learnings/coursesCtrl.js');
 let note = require('./controllers/noteCtrl.js');
+let course = require('./controllers/courseCtrl.js');
 
 const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
 const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
@@ -31,6 +32,10 @@ module.exports = ()=>{
       .post('/add_property', note.add_property)
       .delete('/delete_property/:note_id/:property_id', note.delete_property)
       .post('/drop_property', note.drop_property)
+    // LEARN
+      .post('/create_course', course.create_course)
+      .get('/get_all_course', course.get_all_course)
+      .get('/get_schema_list', course.get_schema_list)
 
 //    .get('/users', user.getAll)
 //    .get('/users/:id', user.getOne)

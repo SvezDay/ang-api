@@ -103,6 +103,36 @@ const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, grap
 //       });
 //    })
 // }
+const schemaObj = require('./api/models/schema').getSchemaObj;
+app.post('/tester', function(req, res){
+  // let user_id = req.decoded.user_id;
+  let user_id = 181; //=============================
+  let session = driver.session();
+  let query = `
+    match (a:Account)-[:Linked]->(c:Container:Course)
+    where id(a) = ${user_id}
+    return
+      case
+        when count(c) >= 1 then {id: id(c), value: c.value}
+        else {}
+      end
+
+  `;
+  session
+  .readTransaction(tx => tx.run(query, {}))
+  .then((data)=>{
+    let result = [];
+    for (let x of data.records) {
+      result.push({id:x._fields[0].id.low, value:x._fields[0].value});
+    }
+    res.json({data:result});
+  })
+  .catch((error)=>{
+    console.log(error);
+    res.json({error:error});
+  });
+
+});
 
 app.post('/test', function(req, res){
    let _ = req.body;
