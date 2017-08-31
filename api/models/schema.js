@@ -45,6 +45,7 @@ module.exports.getSchemaObj = (type)=>{
 
 module.exports.getAll = ()=>{
   return new Promise((resolve, reject)=>{
+    console.log('from the schema.js the getAll function objList: ', objList);
     resolve(objList);
   })
 }

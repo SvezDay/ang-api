@@ -36,6 +36,10 @@ module.exports = ()=>{
       .post('/create_course', course.create_course)
       .get('/get_all_course', course.get_all_course)
       .get('/get_schema_list', course.get_schema_list)
+      .get('/get_course_detail/:id', course.get_course_detail)
+      .post('/update_course', course.update_course)
+      .delete('/delete_course/:id', course.delete_course)
+      .post('/update_course_value', course.update_course_value)
 
 //    .get('/users', user.getAll)
 //    .get('/users/:id', user.getOne)
