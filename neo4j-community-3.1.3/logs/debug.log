@@ -17502,3 +17502,8 @@ Storage files: (filename : modification date - size)
 2017-09-01 12:05:13.236+0000 INFO  [o.n.k.i.DiagnosticsManager] --- STARTED diagnostics for KernelDiagnostics:StoreFiles END ---
 2017-09-01 12:05:15.988+0000 INFO  [o.n.k.i.DiagnosticsManager] --- SERVER STARTED START ---
 2017-09-01 12:05:17.548+0000 INFO  [o.n.k.i.DiagnosticsManager] --- SERVER STARTED END ---
+2017-09-01 14:24:58.997+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 2984ms.
+2017-09-01 14:37:46.028+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 2982ms.
+2017-09-01 18:33:52.941+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 2969ms.
+2017-09-02 07:42:41.953+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 2911ms.
+2017-09-02 13:47:44.002+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 2975ms.

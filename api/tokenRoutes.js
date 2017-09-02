@@ -27,7 +27,6 @@ module.exports = apiRoutes.use((req, res, next)=>{
       };
       jwt.verify(token, secret, cb);
 
-
    }
    // Trow error
    else {

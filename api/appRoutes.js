@@ -14,10 +14,11 @@ let version = require('../package.json').version;
 // let course = require('./controllers/learnings/coursesCtrl.js');
 let note = require('./controllers/noteCtrl.js');
 let course = require('./controllers/courseCtrl.js');
+let game = require('./controllers/gameCtrl.js');
 
 const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
 const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
-const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
+const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "utur$";
 
 const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, graphenedbPass));
 
@@ -32,7 +33,7 @@ module.exports = ()=>{
       .post('/add_property', note.add_property)
       .delete('/delete_property/:note_id/:property_id', note.delete_property)
       .post('/drop_property', note.drop_property)
-    // LEARN
+    // COURSE
       .post('/create_course', course.create_course)
       .get('/get_all_course', course.get_all_course)
       .get('/get_schema_list', course.get_schema_list)
@@ -40,6 +41,9 @@ module.exports = ()=>{
       .post('/update_course', course.update_course)
       .delete('/delete_course/:id', course.delete_course)
       .post('/update_course_value', course.update_course_value)
+    // GAME
+      .get('/get_all_corse', game.get_all_course)
+      .post('/new_result', game.new_result)
 
 //    .get('/users', user.getAll)
 //    .get('/users/:id', user.getOne)
