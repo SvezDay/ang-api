@@ -11,7 +11,6 @@ var driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, graphe
 exports.person_check = (req, res, next)=>{ // accountId, content{title}
    var session = driver.session();
    if(!req.body.user_info && !req.body.user_info.auth_type) res.status(401).send('error auth');
-
    session.run(
       // "MATCH (account:Account)"
       // +  " WHERE account[$auth_type] = $auth_user_id"
@@ -25,6 +24,7 @@ exports.person_check = (req, res, next)=>{ // accountId, content{title}
       if(data.records.length == 0){
          console.log('no records');
          console.log(data);
+
          session.run(
             "CREATE (account:Account:PersoAccount{"
             +  " $auth_type: $auth_user_id"

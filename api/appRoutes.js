@@ -42,8 +42,9 @@ module.exports = ()=>{
       .delete('/delete_course/:id', course.delete_course)
       .post('/update_course_value', course.update_course_value)
     // GAME
-      .get('/get_all_corse', game.get_all_course)
       .post('/new_result', game.new_result)
+      .get('/game_timer', game.game_timer)
+      // .post('/game_timer_all_course', game.game_timer_all_course)
 
 //    .get('/users', user.getAll)
 //    .get('/users/:id', user.getOne)

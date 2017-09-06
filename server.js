@@ -63,6 +63,7 @@ const jwt = require('jsonwebtoken');
 const apoc = require('apoc');
 const neo4j = require('neo4j-driver').v1;
 const secret = require('./config/tokenSecret').secret;
+let parser = require('./api/services/parser');
 const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
 const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
 const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
@@ -104,24 +105,35 @@ const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, grap
 //    })
 // }
 const schemaObj = require('./api/models/schema').getSchemaObj;
+
 app.post('/tester', function(req, res){
   // let user_id = req.decoded.user_id;
   let user_id = 181; //=============================
-  let _ = {course_id: 265, value: 'hello'};
   let session = driver.session();
   let query = `
-  match (a:Account)-[l:Linked*]->(c:Property)
-  where id(a) = ${user_id} and id(c) = ${_.course_id}
-  set c.value = '${_.value}'
+    match (c:Course)
+    return c
+  `;
+  let query2 = `
+    match (a:Account)
+    return a
   `;
   session
-  .readTransaction(tx => tx.run(query, {}))
-  .then(()=>{
-    res.status(200).json({message: 'done'});
+  .readTransaction( tx => tx.run(query, {}))
+  .then( data => { return parser.dataMapper(data); })
+  .then( data => {
+    // res.status(200).json({data: data.records[0]._fields[0]});
+    // res.status(200).json({data: data});
+    return session.readTransaction( tx => tx.run(query2, {}));
   })
-  .catch(error => {
-    res.status(400).json({error: error, message: 'Error update course'});
+  .then( data => { return parser.dataMapper(data); })
+  .then( data => {
+    res.status(200).json({data: data});
   })
+  .catch( error => {
+    console.log(error);
+    res.status(400).json({error: error, message: 'Error on /tester'});
+  });
 
 });
 

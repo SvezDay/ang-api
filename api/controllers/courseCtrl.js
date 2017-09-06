@@ -7,6 +7,7 @@ const neo4j = require('neo4j-driver').v1;
 const secret = require('../../config/tokenSecret').secret;
 const schemaQuery = require('../models/schema').getSchemaQuery;
 const schemaObj = require('../models/schema');
+let parser = require('../services/parser');
 
 const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
 const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
@@ -17,14 +18,17 @@ const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, grap
 module.exports.create_course = (req, res, next)=>{
   let user_id = req.decoded.user_id;
   let _ = req.body;
-  let date = new Date().getTime();
+  let today = new Date().getTime();
   let session = driver.session();
-  let query = query1 = query2 = '';
+  let query = query1 = query2 = query3'';
+  let courseRecorded;
   schemaObj.getSchemaObj(_.schema)
   .then((schema)=>{
     console.log('check schema: ', schema);
-    query1 = `match (a:Account) where id(a) = ${user_id}
-    create (n:Container:Course{value:'${_.value}', schema:'${_.schema}'})`;
+    query1 = `
+      match (a:Account) where id(a) = ${user_id}
+      create (n:Container:Course{value:'${_.value}', schema:'${_.schema}'})
+    `;
 
     query2 = `create (a)-[:Linked]->(n)`;
     for (let x of schema) {
@@ -32,19 +36,31 @@ module.exports.create_course = (req, res, next)=>{
       query2 += `-[:Linked]->(p${x})`
     }
     query = `${query1} ${query2} return {id:id(n), value:n.value}`;
+    query3 = `
+      match (a:Account)
+      where id(a) = ${user_id}
+      create (r:RecallMemory:r${course.id.low}{startNode: , endNode: ,level:1, nextDate:${today}}
+      create (a)-[:Linked]->(r)
+    `;
 
-    session
-    .readTransaction(tx => tx.run(query, {}))
-    .then((data)=>{
-      console.log(data.records[0]._fields[0]);
+    session.readTransaction(tx => tx.run(query, {}))
+    .then( data => {
+      // return parser.dataMapper(data);
+      courseRecorded = parser.dataMapper(data);;
+      return courseRecorded;
+    })
+    .then( data => {
+      return session.readTransaction( tx => tx.run(query3, {}));
+    })
+    .then( data => {
       let token = jwt.sign({
          exp: Math.floor(Date.now() / 1000) + (60 * 60), // expiration in 1 hour
          user_id:user_id
       },secret);
       res.status(200).json({
         token:token,
-        id:data.records[0]._fields[0].id.low,
-        value:data.records[0]._fields[0].value
+        id: courseRecorded.id.low,
+        value: courseRecorded.value
       });
     })
     .catch((error)=>{

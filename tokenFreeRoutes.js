@@ -75,7 +75,8 @@ module.exports.register = (req, res, next)=>{
             first:'${_.first}',
             last:'${_.last}',
             middle:'${_.middle}'
-         }) RETURN {properties:properties(n)} as data"
+         })
+         RETURN {properties:properties(n)} as data"
       ) YIELD value
       RETURN value
       `;
