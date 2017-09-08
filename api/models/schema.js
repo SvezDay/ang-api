@@ -1,27 +1,19 @@
 'use-strict';
+/*   from x to y    or    (x) -> (y)
 
-const queryList = {
-  PriMeFoExRe:`
-  -[:Linked]->(p:Property:Principe{value:''})
-    -[:Linked]->(m:Property:Mecanisme{value:''})
-    -[:Linked]->(m:Property:Fonction{value:''})
-    -[:Linked]->(m:Property:Example{value:''})
-    -[:Linked]->(m:Property:Solution{value:''})
-    `,
-  EnFr:''
-};
+          \ to      |course          |Definition      |Property_Theorem   |Method           |Example          |Solution         |
+____from__\_________|________________|________________|___________________|_________________|_________________|_________________|
+course              |0               |1               |1                  |1                |0                |0                |
+Definition          |1               |0               |1                  |1                |0                |0                |
+Property_Theorem    |1               |1               |0                  |1                |0                |0                |
+Method              |1               |1               |1                  |0                |0                |0                |
+Example             |0               |0               |0                  |0                |0                |0                |
+Solution            |0               |0               |0                  |0                |1                |0                |
 
-module.exports.getSchemaQuery = (type)=>{
-  return new Promise((resolve, reject)=>{
-    for (let key of Object.keys(queryList)) {
-      if(key == type){
-        resolve(list[key]);
-      };
-    };
-    reject();
-  });
-
-};
+*/
+const label = [
+  {course: []}
+];
 
 const objList = {
   DefProExpMeExSo:['Definition', 'Property_Theorem', 'Property_Theoem_Explanation', 'Method', 'Example', 'Solution'],

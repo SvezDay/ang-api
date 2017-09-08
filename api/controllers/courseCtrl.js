@@ -20,37 +20,40 @@ module.exports.create_course = (req, res, next)=>{
   let _ = req.body;
   let today = new Date().getTime();
   let session = driver.session();
-  let query = query1 = query2 = query3'';
+  let query1 = queryFirstPart = querySecondPart = query2 = '';
   let courseRecorded;
+
   schemaObj.getSchemaObj(_.schema)
   .then((schema)=>{
     console.log('check schema: ', schema);
-    query1 = `
+    //First part create the node
+    queryFirstPart = `
       match (a:Account) where id(a) = ${user_id}
       create (n:Container:Course{value:'${_.value}', schema:'${_.schema}'})
     `;
-
-    query2 = `create (a)-[:Linked]->(n)`;
+    //Second part create the relationships
+    querySecondPart = `create (a)-[:Linked]->(n)`;
     for (let x of schema) {
       query1 += ` create (p${x}:Property:${x}{value:''})`;
       query2 += `-[:Linked]->(p${x})`
     }
-    query = `${query1} ${query2} return {id:id(n), value:n.value}`;
-    query3 = `
+    query1 = `${queryFirstPart} ${querySecondPart} return {id:id(n), value:n.value}`;
+    // The second query create the RecallMemory node with the id of the nodes's course
+    query2 = `
       match (a:Account)
       where id(a) = ${user_id}
       create (r:RecallMemory:r${course.id.low}{startNode: , endNode: ,level:1, nextDate:${today}}
       create (a)-[:Linked]->(r)
     `;
 
-    session.readTransaction(tx => tx.run(query, {}))
+    session.readTransaction(tx => tx.run(query1, {}))
     .then( data => {
       // return parser.dataMapper(data);
       courseRecorded = parser.dataMapper(data);;
       return courseRecorded;
     })
     .then( data => {
-      return session.readTransaction( tx => tx.run(query3, {}));
+      return session.readTransaction( tx => tx.run(query2, {}));
     })
     .then( data => {
       let token = jwt.sign({
