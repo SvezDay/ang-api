@@ -26,7 +26,7 @@ module.exports.getSchemaObj = (type)=>{
   return new Promise((resolve, reject)=>{
     for (let key of Object.keys(objList)) {
       if(key == type){
-        console.log('key ', objList[key]);
+        // console.log('key ', objList[key]);
         resolve(objList[key]);
       };
     };

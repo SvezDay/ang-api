@@ -59,6 +59,10 @@ app.use('/api', tokenRoutes, appRoutes());
 app.post('/authenticate', freeRoutes.authenticate);
 app.post('/register', freeRoutes.register);
 
+app.listen(port);
+console.log('API server started on: localhost:' + port);
+
+
 const jwt = require('jsonwebtoken');
 const apoc = require('apoc');
 const neo4j = require('neo4j-driver').v1;
@@ -69,216 +73,52 @@ const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
 const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
 const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, graphenedbPass));
 
-// function writeTx(session, query, params){
-//    return new Promise((resolve, reject)=>{
-//       session
-//       .writeTransaction(tx => {
-//          tx.run(query, params)
-//       })
-//       .then(() => {
-//          console.log('CHECK resolve writeTx');
-//          resolve('done');
-//       })
-//       .catch(function (error) {
-//          console.log('CHECK reject writeTx');
-//          reject(error);
-//       });
-//    })
-// }
-//
-// function readTx(session, query, params){
-//    return new Promise((resolve, reject)=>{
-//       session
-//       .readTransaction(tx => {
-//          tx.run(query, params)
-//       })
-//       .then((result) => {
-//          console.log('CHECK resolve readTx');
-//          console.log('result of the readTx function');
-//          console.log(result);
-//          resolve(result);
-//       })
-//       .catch((error) =>{
-//          console.log('CHECK reject readTx');
-//          reject(error);
-//       });
-//    })
-// }
-const schemaObj = require('./api/models/schema').getSchemaObj;
+const schemaObj = require('./api/models/schema');
 
-app.post('/tester', function(req, res){
-  // let user_id = req.decoded.user_id;
-  let user_id = 181; //=============================
+
+app.post('/test', function(req, res){
+  let user_id = 181;
+  let _ = {
+    value: 'Test of course creation',
+    schema: 'DefProExpMeExSo'
+  };
+  let today = new Date().getTime();
   let session = driver.session();
-  let query = `
-    match (c:Course)
-    return c
-  `;
-  let query2 = `
-    match (a:Account)
-    return a
-  `;
-  session
-  .readTransaction( tx => tx.run(query, {}))
-  .then( data => { return parser.dataMapper(data); })
-  .then( data => {
-    // res.status(200).json({data: data.records[0]._fields[0]});
-    // res.status(200).json({data: data});
-    return session.readTransaction( tx => tx.run(query2, {}));
-  })
-  .then( data => { return parser.dataMapper(data); })
-  .then( data => {
-    res.status(200).json({data: data});
-  })
-  .catch( error => {
-    console.log(error);
-    res.status(400).json({error: error, message: 'Error on /tester'});
+  let q_1 = q1_1 = q1_2 = q_2 = '';
+
+
+  schemaObj.getSchemaObj(_.schema)
+  .then( schema =>{
+//First part create the node
+    q_1_1 = `
+      match (a:Account) where id(a) = ${user_id}
+      create (n:Container:Course{value:'${_.value}', schema:'${_.schema}'})
+    `;
+//Second part create the relationships
+    q_1_2 = `create (a)-[:Linked]->(n)`;
+    for (let x of schema) {
+      q_1_1 += ` create (p${x}:Property:${x}{value:''})`;
+      q_1_2 += `-[:Linked]->(p${x})`
+    };
+    q_1 = `${q_1_1} ${q_1_2} return {id:id(n), value:n.value}`;
+    return;
+  }).then(()=>{
+    return session.readTransaction(tx => tx.run(q_1, {}))
+  }).then( data => {
+// return parser.dataMapper(data);
+    return parser.dataMapper(data);;
+  }).then( data => {
+    let token = jwt.sign({
+       exp: Math.floor(Date.now() / 1000) + (60 * 60), // expiration in 1 hour
+       user_id:user_id
+    },secret);
+    res.status(200).json({
+      token:token,
+      id: data.id.low,
+      value: data.value
+    });
+  }).catch(()=>{
+    res.status(404).json({message:"ERROR on /api/create_course"});
   });
 
 });
-
-app.post('/test', function(req, res){
-   let _ = req.body;
-   let date = new Date().getTime();
-   const session = driver.session();
-   const readA = `
-   match (a:Account)-[l1:Linked]->(n:Note:Container)-[l:Linked*{commitNbr:last(n.commitList)}]->(x:Property)
-      where id(a)= 181 and id(n) = 227
-      with l1, x
-      return
-      case
-         when count(l1)>=1 then collect(x)
-         else {data:{message: 'No access user'}}
-      end
-   `;
-
-
-
-   session
-   .readTransaction(tx => tx.run(readA, {}))
-   .then(data => {
-
-      if(data.records && data.records[0]){
-         let d = data.records[0]._fields[0];
-         console.log(d[0][0]);
-         let detail = [];
-         let it = 0;
-         let mapped = d.map(x=>{
-            it++;
-            return {
-               node_id: x.identity.low,
-               value:x.properties.value,
-               labels:x.labels,
-               order:it
-            };
-         });
-         // for (var i = 0; i < d.length; i++) {
-         //    let check = true;
-         //    let j = 0;
-         //    while (check) {
-         //       if(d[0][i].labels[j] != 'Property'){
-         //          d[0][i].labels = d[0][i].labels[j];
-         //          check = false;
-         //       }else {
-         //          j++;
-         //       }
-         //    }
-         //    detail.push({
-         //       node_id:d[0][i].identity.low,
-         //       value:d[0][i].properties.value,
-         //       labels:d[0][i].labels
-         //    });
-         // };
-
-   res.json({data:mapped})
-      }else {
-         res.status(403).json({message: 'No access user'});
-      }
-
-   })
-   .catch(function (error) {
-      console.log("========================== CHECK 1 ERROR ==============");
-     console.log(error);
-     res.status(200).json({error:error});
-   });
-
-
-
-
-
-
-
-   // const query1 = `
-   // create (n:Container:Note)
-   // create (p:Property:Undefined{value:'This is a test for transactions'})
-   // create (u:Property:Undefined{value:'5'})
-   // create (n)-[l1:Linked]->(p)-[l2:Linked]->(u)
-   // `;
-   // const params1 = {};
-   // const query2 = `
-   // match (n:Note)-[:Linked]->(p:Property)-[:Linked]->(u:Property{value:'4'})
-   // return n, p, u
-   // `;
-   // const params2 = {};
-   //
-   //
-   // session.writeTransaction(tx => {
-   //    tx.run(query1, params1)
-   // })
-   // .then(() => {
-   //    const readTxPromise = session.readTransaction(tx => tx.run(query2, params2));
-   //    readTxPromise.then(result => {
-   //       session.close();
-   //       console.log(result);
-   //       const singleRecord = result.records[0];
-   //       const createdNodeId = singleRecord.get(0);
-   //       res.status(200).json({data:[singleRecord, createdNodeId]});
-   //    })
-   //    .catch(function (error) {
-   //       console.log("========================== CHECK 2 ERROR ==============");
-   //      console.log(error);
-   //      res.status(200).json({error:error});
-   //    });
-   // })
-   // .catch(function (error) {
-   //    console.log("========================== CHECK 1 ERROR ==============");
-   //   console.log(error);
-   //   res.status(200).json({error:error});
-   // });
-
-
-
-
-// Chaining of transactions
-// writeTx(session, query1, params1).then((result1)=>{
-//    console.log('result1', result1);
-//    readTx(session, query2, params2).then((result2)=>{
-//       if(!result2){
-//          session.close();
-//          return res.status(200).json({error: 'Result is Undefined !'});
-//       }
-//       session.close();
-//       console.log('result2');
-//       console.log(result2);
-//       const singleRecord = result2.records[0];
-//       const createdNodeId = singleRecord.get(0);
-//       res.status(200).json({data:result2});
-//    },(error)=>{
-//       console.log("========================== CHECK 2 ERROR ==============");
-//       console.log(error);
-//       session.close();
-//       res.status(200).json({error:error});
-//    });
-// },(error)=>{
-//    console.log("========================== CHECK 1 ERROR ==============");
-//    console.log(error);
-//    session.close();
-//    res.status(200).json({error:error});
-// });
-
-
-
-});
-
-app.listen(port);
-console.log('API server started on: localhost:' + port);

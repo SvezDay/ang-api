@@ -15,66 +15,110 @@ const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
 
 const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, graphenedbPass));
 
+// module.exports.create_course = (req, res, next)=>{
+//   let user_id = req.decoded.user_id;
+//   let _ = req.body;
+//   let today = new Date().getTime();
+//   let session = driver.session();
+//   let query1 = queryFirstPart = querySecondPart = query2 = '';
+//   let courseRecorded;
+//
+//   schemaObj.getSchemaObj(_.schema)
+//   .then((schema)=>{
+//     console.log('check schema: ', schema);
+//     //First part create the node
+//     queryFirstPart = `
+//       match (a:Account) where id(a) = ${user_id}
+//       create (n:Container:Course{value:'${_.value}', schema:'${_.schema}'})
+//     `;
+//     //Second part create the relationships
+//     querySecondPart = `create (a)-[:Linked]->(n)`;
+//     for (let x of schema) {
+//       query1 += ` create (p${x}:Property:${x}{value:''})`;
+//       query2 += `-[:Linked]->(p${x})`
+//     }
+//     query1 = `${queryFirstPart} ${querySecondPart} return {id:id(n), value:n.value}`;
+//     // The second query create the RecallMemory node with the id of the nodes's course
+//     query2 = `
+//       match (a:Account)
+//       where id(a) = ${user_id}
+//       create (r:RecallMemory:r${course.id.low}{startNode: , endNode: ,level:1, nextDate:${today}}
+//       create (a)-[:Linked]->(r)
+//     `;
+//
+//     session.readTransaction(tx => tx.run(query1, {}))
+//     .then( data => {
+//       // return parser.dataMapper(data);
+//       courseRecorded = parser.dataMapper(data);;
+//       return courseRecorded;
+//     })
+//     .then( data => {
+//       return session.readTransaction( tx => tx.run(query2, {}));
+//     })
+//     .then( data => {
+//       let token = jwt.sign({
+//          exp: Math.floor(Date.now() / 1000) + (60 * 60), // expiration in 1 hour
+//          user_id:user_id
+//       },secret);
+//       res.status(200).json({
+//         token:token,
+//         id: courseRecorded.id.low,
+//         value: courseRecorded.value
+//       });
+//     })
+//     .catch((error)=>{
+//       res.status(404).json({error: error, message:'error basic error'});
+//     });
+//   })
+//   .catch(()=>{
+//     res.status(404).json({message:"No schema found"});
+//   })
+//
+// }
 module.exports.create_course = (req, res, next)=>{
   let user_id = req.decoded.user_id;
   let _ = req.body;
   let today = new Date().getTime();
   let session = driver.session();
-  let query1 = queryFirstPart = querySecondPart = query2 = '';
-  let courseRecorded;
+  let q_1 = q1_1 = q1_2 = q_2 = '';
+
 
   schemaObj.getSchemaObj(_.schema)
-  .then((schema)=>{
-    console.log('check schema: ', schema);
-    //First part create the node
-    queryFirstPart = `
+  .then( schema =>{
+//First part create the node
+    q_1_1 = `
       match (a:Account) where id(a) = ${user_id}
       create (n:Container:Course{value:'${_.value}', schema:'${_.schema}'})
     `;
-    //Second part create the relationships
-    querySecondPart = `create (a)-[:Linked]->(n)`;
+//Second part create the relationships
+    q_1_2 = `create (a)-[:Linked]->(n)`;
     for (let x of schema) {
-      query1 += ` create (p${x}:Property:${x}{value:''})`;
-      query2 += `-[:Linked]->(p${x})`
-    }
-    query1 = `${queryFirstPart} ${querySecondPart} return {id:id(n), value:n.value}`;
-    // The second query create the RecallMemory node with the id of the nodes's course
-    query2 = `
-      match (a:Account)
-      where id(a) = ${user_id}
-      create (r:RecallMemory:r${course.id.low}{startNode: , endNode: ,level:1, nextDate:${today}}
-      create (a)-[:Linked]->(r)
-    `;
-
-    session.readTransaction(tx => tx.run(query1, {}))
-    .then( data => {
-      // return parser.dataMapper(data);
-      courseRecorded = parser.dataMapper(data);;
-      return courseRecorded;
-    })
-    .then( data => {
-      return session.readTransaction( tx => tx.run(query2, {}));
-    })
-    .then( data => {
-      let token = jwt.sign({
-         exp: Math.floor(Date.now() / 1000) + (60 * 60), // expiration in 1 hour
-         user_id:user_id
-      },secret);
-      res.status(200).json({
-        token:token,
-        id: courseRecorded.id.low,
-        value: courseRecorded.value
-      });
-    })
-    .catch((error)=>{
-      res.status(404).json({error: error, message:'error basic error'});
+      q_1_1 += ` create (p${x}:Property:${x}{value:''})`;
+      q_1_2 += `-[:Linked]->(p${x})`
+    };
+    q_1 = `${q_1_1} ${q_1_2} return {id:id(n), value:n.value}`;
+    return;
+  }).then(()=>{
+    return session.readTransaction(tx => tx.run(q_1, {}))
+  }).then( data => {
+// return parser.dataMapper(data);
+    return parser.dataMapper(data);;
+  }).then( data => {
+    let token = jwt.sign({
+       exp: Math.floor(Date.now() / 1000) + (60 * 60), // expiration in 1 hour
+       user_id:user_id
+    },secret);
+    res.status(200).json({
+      token:token,
+      id: data.id.low,
+      value: data.value
     });
-  })
-  .catch(()=>{
-    res.status(404).json({message:"No schema found"});
-  })
+  }).catch(()=>{
+    res.status(404).json({message:"ERROR on /api/create_course"});
+  });
+};
 
-}
+
 module.exports.get_all_course = (req, res, next)=>{
   let user_id = req.decoded.user_id;
   let session = driver.session();
@@ -109,8 +153,8 @@ module.exports.get_schema_list = (req, res, next)=>{
   let user_id = req.decoded.user_id;
   schemaObj.getAll()
   .then(list => {
-    console.log('===================================================');
-    console.log(list);
+console.log('===================================================');
+console.log(list);
     let token = jwt.sign({
        exp: Math.floor(Date.now() / 1000) + (60 * 60), // expiration in 1 hour
        user_id:user_id

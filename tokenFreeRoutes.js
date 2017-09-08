@@ -63,6 +63,7 @@ module.exports.register = (req, res, next)=>{
       return res.status(401).json({message: "Parameters missing"});
    }
    let _ = req.body;
+   let session = driver.session();
    let query = `
       MATCH (a:Account{email:'${_.email}'})
       WITH COUNT(a) as numb
@@ -76,19 +77,20 @@ module.exports.register = (req, res, next)=>{
             last:'${_.last}',
             middle:'${_.middle}'
          })
+         CREATE (b:Board_Activity{course_wait_recall:[]})
+         CREATE (n)-[:Linked]->(b)
          RETURN {properties:properties(n)} as data"
       ) YIELD value
       RETURN value
       `;
-   driver.session()
-   .run(query)
-   .then((data)=>{
-      console.log(data);
+   session
+   .readTransaction( tx => tx.run(query, {}))
+   .then( data => {
       if(data.records[0] && data.records[0]._fields[0]){
          res.status(200).json(data.records[0]._fields[0]);
       }else {
          res.status(401).json({message: 'not found'});
-      }
+      };
    })
    .catch((error)=>{
       console.log(error);
