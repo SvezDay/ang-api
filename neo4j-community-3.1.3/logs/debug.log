@@ -19456,3 +19456,1174 @@ Storage files: (filename : modification date - size)
     forEach(l in ll | delete l, p)
     delete relation, c
   
+2017-09-08 15:33:39.853+0000 INFO  [o.n.k.i.f.GraphDatabaseFacadeFactory] Shutdown started
+2017-09-08 15:33:39.854+0000 INFO  [o.n.k.i.f.GraphDatabaseFacadeFactory] Database is now unavailable
+2017-09-08 15:33:39.858+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by database shutdown [717]:  Starting check pointing...
+2017-09-08 15:33:39.858+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by database shutdown [717]:  Starting store flush...
+2017-09-08 15:33:39.869+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 717 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-08 15:33:39.870+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 717 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-08 15:33:39.878+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by database shutdown [717]:  Store flush completed
+2017-09-08 15:33:39.878+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by database shutdown [717]:  Starting appending check point entry into the tx log...
+2017-09-08 15:33:39.880+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by database shutdown [717]:  Appending check point entry into the tx log completed
+2017-09-08 15:33:39.880+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by database shutdown [717]:  Check pointing completed
+2017-09-08 15:33:39.880+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-08 15:33:39.880+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-08 15:33:39.911+0000 INFO  [o.n.k.i.DiagnosticsManager] --- STOPPING diagnostics START ---
+2017-09-08 15:33:39.911+0000 INFO  [o.n.k.i.DiagnosticsManager] --- STOPPING diagnostics END ---
+2017-09-09 13:20:04.283+0000 WARN  [o.n.i.p.PageCache] The dbms.memory.pagecache.size setting has not been configured. It is recommended that this setting is always explicitly configured, to ensure the system has a balanced configuration. Until then, a computed heuristic value of 3088402432 bytes will be used instead. 
+2017-09-09 13:20:04.342+0000 INFO  [o.n.k.i.f.CommunityEditionModule] No locking implementation specified, defaulting to 'community'
+2017-09-09 13:20:04.478+0000 INFO  [o.n.k.AvailabilityGuard] Requirement makes database unavailable: Database available
+2017-09-09 13:20:04.497+0000 INFO  [o.n.k.i.DiagnosticsManager] --- INITIALIZED diagnostics START ---
+2017-09-09 13:20:04.497+0000 INFO  [o.n.k.i.DiagnosticsManager] Neo4j Kernel properties:
+2017-09-09 13:20:04.497+0000 INFO  [o.n.k.i.DiagnosticsManager] dbms.connector.http.enabled=true
+2017-09-09 13:20:04.497+0000 INFO  [o.n.k.i.DiagnosticsManager] dbms.security.auth_enabled=true
+2017-09-09 13:20:04.498+0000 INFO  [o.n.k.i.DiagnosticsManager] dbms.windows_service_name=neo4j
+2017-09-09 13:20:04.498+0000 INFO  [o.n.k.i.DiagnosticsManager] unsupported.dbms.directories.neo4j_home=/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3
+2017-09-09 13:20:04.498+0000 INFO  [o.n.k.i.DiagnosticsManager] dbms.directories.import=import
+2017-09-09 13:20:04.498+0000 INFO  [o.n.k.i.DiagnosticsManager] unsupported.dbms.edition=community
+2017-09-09 13:20:04.498+0000 INFO  [o.n.k.i.DiagnosticsManager] dbms.connector.bolt.enabled=true
+2017-09-09 13:20:04.498+0000 INFO  [o.n.k.i.DiagnosticsManager] dbms.connector.https.enabled=true
+2017-09-09 13:20:04.498+0000 INFO  [o.n.k.i.DiagnosticsManager] dbms.jvm.additional=-Dunsupported.dbms.udc.source=tarball
+2017-09-09 13:20:04.498+0000 INFO  [o.n.k.i.DiagnosticsManager] Diagnostics providers:
+2017-09-09 13:20:04.498+0000 INFO  [o.n.k.i.DiagnosticsManager] org.neo4j.kernel.configuration.Config
+2017-09-09 13:20:04.498+0000 INFO  [o.n.k.i.DiagnosticsManager] org.neo4j.kernel.info.DiagnosticsManager
+2017-09-09 13:20:04.499+0000 INFO  [o.n.k.i.DiagnosticsManager] SYSTEM_MEMORY
+2017-09-09 13:20:04.499+0000 INFO  [o.n.k.i.DiagnosticsManager] JAVA_MEMORY
+2017-09-09 13:20:04.499+0000 INFO  [o.n.k.i.DiagnosticsManager] OPERATING_SYSTEM
+2017-09-09 13:20:04.499+0000 INFO  [o.n.k.i.DiagnosticsManager] JAVA_VIRTUAL_MACHINE
+2017-09-09 13:20:04.499+0000 INFO  [o.n.k.i.DiagnosticsManager] CLASSPATH
+2017-09-09 13:20:04.499+0000 INFO  [o.n.k.i.DiagnosticsManager] LIBRARY_PATH
+2017-09-09 13:20:04.499+0000 INFO  [o.n.k.i.DiagnosticsManager] SYSTEM_PROPERTIES
+2017-09-09 13:20:04.499+0000 INFO  [o.n.k.i.DiagnosticsManager] LINUX_SCHEDULERS
+2017-09-09 13:20:04.499+0000 INFO  [o.n.k.i.DiagnosticsManager] NETWORK
+2017-09-09 13:20:04.499+0000 INFO  [o.n.k.i.DiagnosticsManager] System memory information:
+2017-09-09 13:20:04.501+0000 INFO  [o.n.k.i.DiagnosticsManager] Total Physical memory: 7.67 GB
+2017-09-09 13:20:04.501+0000 INFO  [o.n.k.i.DiagnosticsManager] Free Physical memory: 2.78 GB
+2017-09-09 13:20:04.501+0000 INFO  [o.n.k.i.DiagnosticsManager] Committed virtual memory: 4.81 GB
+2017-09-09 13:20:04.501+0000 INFO  [o.n.k.i.DiagnosticsManager] Total swap space: 7.88 GB
+2017-09-09 13:20:04.501+0000 INFO  [o.n.k.i.DiagnosticsManager] Free swap space: 7.88 GB
+2017-09-09 13:20:04.502+0000 INFO  [o.n.k.i.DiagnosticsManager] JVM memory information:
+2017-09-09 13:20:04.502+0000 INFO  [o.n.k.i.DiagnosticsManager] Free  memory: 84.64 MB
+2017-09-09 13:20:04.502+0000 INFO  [o.n.k.i.DiagnosticsManager] Total memory: 124.00 MB
+2017-09-09 13:20:04.502+0000 INFO  [o.n.k.i.DiagnosticsManager] Max   memory: 1.92 GB
+2017-09-09 13:20:04.505+0000 INFO  [o.n.k.i.DiagnosticsManager] Garbage Collector: G1 Young Generation: [G1 Eden Space, G1 Survivor Space]
+2017-09-09 13:20:04.505+0000 INFO  [o.n.k.i.DiagnosticsManager] Garbage Collector: G1 Old Generation: [G1 Eden Space, G1 Survivor Space, G1 Old Gen]
+2017-09-09 13:20:04.506+0000 INFO  [o.n.k.i.DiagnosticsManager] Memory Pool: Code Cache (Non-heap memory): committed=4.25 MB, used=4.20 MB, max=240.00 MB, threshold=0.00 B
+2017-09-09 13:20:04.506+0000 INFO  [o.n.k.i.DiagnosticsManager] Memory Pool: Metaspace (Non-heap memory): committed=12.25 MB, used=11.62 MB, max=-1.00 B, threshold=0.00 B
+2017-09-09 13:20:04.507+0000 INFO  [o.n.k.i.DiagnosticsManager] Memory Pool: Compressed Class Space (Non-heap memory): committed=1.75 MB, used=1.52 MB, max=1.00 GB, threshold=0.00 B
+2017-09-09 13:20:04.507+0000 INFO  [o.n.k.i.DiagnosticsManager] Memory Pool: G1 Eden Space (Heap memory): committed=30.00 MB, used=5.00 MB, max=-1.00 B, threshold=?
+2017-09-09 13:20:04.507+0000 INFO  [o.n.k.i.DiagnosticsManager] Memory Pool: G1 Survivor Space (Heap memory): committed=4.00 MB, used=4.00 MB, max=-1.00 B, threshold=?
+2017-09-09 13:20:04.508+0000 INFO  [o.n.k.i.DiagnosticsManager] Memory Pool: G1 Old Gen (Heap memory): committed=90.00 MB, used=29.36 MB, max=1.92 GB, threshold=0.00 B
+2017-09-09 13:20:04.508+0000 INFO  [o.n.k.i.DiagnosticsManager] Operating system information:
+2017-09-09 13:20:04.508+0000 INFO  [o.n.k.i.DiagnosticsManager] Operating System: Linux; version: 4.10.0-33-generic; arch: amd64; cpus: 4
+2017-09-09 13:20:04.508+0000 INFO  [o.n.k.i.DiagnosticsManager] Max number of file descriptors: 1048576
+2017-09-09 13:20:04.509+0000 INFO  [o.n.k.i.DiagnosticsManager] Number of open file descriptors: 101
+2017-09-09 13:20:04.509+0000 INFO  [o.n.k.i.DiagnosticsManager] Process id: 4084@rudgray-HP-EliteBook-840-G2
+2017-09-09 13:20:04.509+0000 INFO  [o.n.k.i.DiagnosticsManager] Byte order: LITTLE_ENDIAN
+2017-09-09 13:20:04.509+0000 INFO  [o.n.k.i.DiagnosticsManager] Local timezone: Europe/Paris
+2017-09-09 13:20:04.509+0000 INFO  [o.n.k.i.DiagnosticsManager] JVM information:
+2017-09-09 13:20:04.509+0000 INFO  [o.n.k.i.DiagnosticsManager] VM Name: OpenJDK 64-Bit Server VM
+2017-09-09 13:20:04.509+0000 INFO  [o.n.k.i.DiagnosticsManager] VM Vendor: Oracle Corporation
+2017-09-09 13:20:04.510+0000 INFO  [o.n.k.i.DiagnosticsManager] VM Version: 25.131-b11
+2017-09-09 13:20:04.510+0000 INFO  [o.n.k.i.DiagnosticsManager] JIT compiler: HotSpot 64-Bit Tiered Compilers
+2017-09-09 13:20:04.510+0000 INFO  [o.n.k.i.DiagnosticsManager] VM Arguments: [-XX:+UseG1GC, -XX:-OmitStackTraceInFastThrow, -XX:+AlwaysPreTouch, -XX:+UnlockExperimentalVMOptions, -XX:+TrustFinalNonStaticFields, -XX:+DisableExplicitGC, -Djdk.tls.ephemeralDHKeySize=2048, -Dunsupported.dbms.udc.source=tarball, -Dfile.encoding=UTF-8]
+2017-09-09 13:20:04.511+0000 INFO  [o.n.k.i.DiagnosticsManager] Java classpath:
+2017-09-09 13:20:04.512+0000 INFO  [o.n.k.i.DiagnosticsManager]  [bootstrap] /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jce.jar
+2017-09-09 13:20:04.512+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/opencsv-2.3.jar
+2017-09-09 13:20:04.512+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-consistency-check-3.1.3.jar
+2017-09-09 13:20:04.513+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/caffeine-2.3.3.jar
+2017-09-09 13:20:04.513+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/scala-reflect-2.11.8.jar
+2017-09-09 13:20:04.513+0000 INFO  [o.n.k.i.DiagnosticsManager]  [loader.1] file:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/nashorn.jar
+2017-09-09 13:20:04.513+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jetty-servlet-9.2.9.v20150224.jar
+2017-09-09 13:20:04.513+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-cypher-compiler-3.0-3.0.8.jar
+2017-09-09 13:20:04.513+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-graphdb-api-3.1.3.jar
+2017-09-09 13:20:04.513+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-cypher-compiler-3.1-3.1.3.jar
+2017-09-09 13:20:04.513+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-shell-3.1.3.jar
+2017-09-09 13:20:04.513+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-resource-3.1.3.jar
+2017-09-09 13:20:04.513+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/lucene-core-5.5.0.jar
+2017-09-09 13:20:04.513+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jetty-http-9.2.9.v20150224.jar
+2017-09-09 13:20:04.513+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/commons-beanutils-1.8.3.jar
+2017-09-09 13:20:04.513+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/netty-all-4.1.8.Final.jar
+2017-09-09 13:20:04.513+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-logging-3.1.3.jar
+2017-09-09 13:20:04.513+0000 INFO  [o.n.k.i.DiagnosticsManager]  [bootstrap] /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jsse.jar
+2017-09-09 13:20:04.513+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/mimepull-1.9.3.jar
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/lucene-analyzers-common-5.5.0.jar
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [loader.1] file:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/localedata.jar
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jersey-core-1.19.jar
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/asm-5.0.4.jar
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-unsafe-3.1.3.jar
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jackson-core-asl-1.9.13.jar
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [loader.1] file:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/cldrdata.jar
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [bootstrap] /usr/lib/jvm/java-8-openjdk-amd64/jre/classes
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/server-api-3.1.3.jar
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/lucene-codecs-5.5.0.jar
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/conf/
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-collections-3.1.3.jar
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/commons-lang-2.6.jar
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/concurrentlinkedhashmap-lru-1.4.2.jar
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-command-line-3.1.3.jar
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-lucene-upgrade-3.1.3.jar
+2017-09-09 13:20:04.514+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jetty-security-9.2.9.v20150224.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-bolt-3.1.3.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jetty-io-9.2.9.v20150224.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/bcprov-jdk15on-1.53.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-csv-3.1.3.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jersey-servlet-1.19.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/javax.servlet-api-3.1.0.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-udc-3.1.3.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/parboiled-scala_2.11-1.1.7.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-jmx-3.1.3.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-kernel-3.1.3.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jersey-multipart-1.19.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/commons-lang3-3.3.2.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/scala-library-2.11.8.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-import-tool-3.1.3.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-graph-algo-3.1.3.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [loader.1] file:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/icedtea-sound.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/parboiled-core-1.1.7.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-cypher-compiler-2.3-2.3.9.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [loader.1] file:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/sunjce_provider.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-graph-matching-3.1.3.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/commons-io-2.4.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-common-3.1.3.jar
+2017-09-09 13:20:04.515+0000 INFO  [o.n.k.i.DiagnosticsManager]  [bootstrap] /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/sunrsasign.jar
+2017-09-09 13:20:04.516+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jetty-util-9.2.9.v20150224.jar
+2017-09-09 13:20:04.516+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jetty-webapp-9.2.9.v20150224.jar
+2017-09-09 13:20:04.516+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-dbms-3.1.3.jar
+2017-09-09 13:20:04.516+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/rhino-1.7R4.jar
+2017-09-09 13:20:04.516+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jersey-server-1.19.jar
+2017-09-09 13:20:04.516+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-lucene-index-3.1.3.jar
+2017-09-09 13:20:04.516+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-cypher-frontend-2.3-2.3.9.jar
+2017-09-09 13:20:04.516+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/commons-digester-2.1.jar
+2017-09-09 13:20:04.516+0000 INFO  [o.n.k.i.DiagnosticsManager]  [loader.1] file:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/jaccess.jar
+2017-09-09 13:20:04.516+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-primitive-collections-3.1.3.jar
+2017-09-09 13:20:04.516+0000 INFO  [o.n.k.i.DiagnosticsManager]  [loader.1] file:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/sunpkcs11.jar
+2017-09-09 13:20:04.516+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jetty-xml-9.2.9.v20150224.jar
+2017-09-09 13:20:04.516+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/bcpkix-jdk15on-1.53.jar
+2017-09-09 13:20:04.516+0000 INFO  [o.n.k.i.DiagnosticsManager]  [loader.1] file:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/sunec.jar
+2017-09-09 13:20:04.516+0000 INFO  [o.n.k.i.DiagnosticsManager]  [bootstrap] /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jfr.jar
+2017-09-09 13:20:04.517+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jackson-mapper-asl-1.9.13.jar
+2017-09-09 13:20:04.517+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/commons-compress-1.12.jar
+2017-09-09 13:20:04.517+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/plugins/
+2017-09-09 13:20:04.517+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-io-3.1.3.jar
+2017-09-09 13:20:04.517+0000 INFO  [o.n.k.i.DiagnosticsManager]  [loader.1] file:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/zipfs.jar
+2017-09-09 13:20:04.517+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-security-3.1.3.jar
+2017-09-09 13:20:04.517+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jackson-jaxrs-1.9.13.jar
+2017-09-09 13:20:04.517+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-cypher-frontend-3.1-3.1.3.jar
+2017-09-09 13:20:04.517+0000 INFO  [o.n.k.i.DiagnosticsManager]  [bootstrap] /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/resources.jar
+2017-09-09 13:20:04.517+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-cypher-frontend-3.0-3.0.8.jar
+2017-09-09 13:20:04.517+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/lucene-queryparser-5.5.0.jar
+2017-09-09 13:20:04.517+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-cypher-3.1.3.jar
+2017-09-09 13:20:04.517+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jsr311-api-1.1.2.r612.jar
+2017-09-09 13:20:04.518+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-browser-2.0.0-M10.jar
+2017-09-09 13:20:04.518+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-codegen-3.1.3.jar
+2017-09-09 13:20:04.518+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/neo4j-server-3.1.3.jar
+2017-09-09 13:20:04.518+0000 INFO  [o.n.k.i.DiagnosticsManager]  [loader.1] file:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/dnsns.jar
+2017-09-09 13:20:04.518+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jetty-server-9.2.9.v20150224.jar
+2017-09-09 13:20:04.518+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/plugins/apoc-3.1.3.7-all.jar
+2017-09-09 13:20:04.518+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/commons-logging-1.1.1.jar
+2017-09-09 13:20:04.518+0000 INFO  [o.n.k.i.DiagnosticsManager]  [bootstrap] /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/charsets.jar
+2017-09-09 13:20:04.518+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/commons-configuration-1.10.jar
+2017-09-09 13:20:04.518+0000 INFO  [o.n.k.i.DiagnosticsManager]  [bootstrap] /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/rt.jar
+2017-09-09 13:20:04.518+0000 INFO  [o.n.k.i.DiagnosticsManager]  [classpath + loader.0] file:/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/lib/jline-2.12.jar
+2017-09-09 13:20:04.518+0000 INFO  [o.n.k.i.DiagnosticsManager] Library path:
+2017-09-09 13:20:04.518+0000 INFO  [o.n.k.i.DiagnosticsManager] /usr/java/packages/lib/amd64
+2017-09-09 13:20:04.518+0000 INFO  [o.n.k.i.DiagnosticsManager] /usr/lib/x86_64-linux-gnu/jni
+2017-09-09 13:20:04.519+0000 INFO  [o.n.k.i.DiagnosticsManager] /lib/x86_64-linux-gnu
+2017-09-09 13:20:04.519+0000 INFO  [o.n.k.i.DiagnosticsManager] /usr/lib/x86_64-linux-gnu
+2017-09-09 13:20:04.519+0000 INFO  [o.n.k.i.DiagnosticsManager] /usr/lib/jni
+2017-09-09 13:20:04.519+0000 INFO  [o.n.k.i.DiagnosticsManager] /lib
+2017-09-09 13:20:04.519+0000 INFO  [o.n.k.i.DiagnosticsManager] /usr/lib
+2017-09-09 13:20:04.519+0000 INFO  [o.n.k.i.DiagnosticsManager] System.properties:
+2017-09-09 13:20:04.519+0000 INFO  [o.n.k.i.DiagnosticsManager] sun.boot.library.path = /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64
+2017-09-09 13:20:04.519+0000 INFO  [o.n.k.i.DiagnosticsManager] path.separator = :
+2017-09-09 13:20:04.519+0000 INFO  [o.n.k.i.DiagnosticsManager] file.encoding.pkg = sun.io
+2017-09-09 13:20:04.519+0000 INFO  [o.n.k.i.DiagnosticsManager] user.country = US
+2017-09-09 13:20:04.520+0000 INFO  [o.n.k.i.DiagnosticsManager] sun.java.launcher = SUN_STANDARD
+2017-09-09 13:20:04.520+0000 INFO  [o.n.k.i.DiagnosticsManager] sun.os.patch.level = unknown
+2017-09-09 13:20:04.520+0000 INFO  [o.n.k.i.DiagnosticsManager] user.dir = /home/rudgray/Programs/Heroku/ang-api
+2017-09-09 13:20:04.520+0000 INFO  [o.n.k.i.DiagnosticsManager] sun.jnu.encoding = UTF-8
+2017-09-09 13:20:04.520+0000 INFO  [o.n.k.i.DiagnosticsManager] unsupported.dbms.udc.source = tarball
+2017-09-09 13:20:04.520+0000 INFO  [o.n.k.i.DiagnosticsManager] sun.management.compiler = HotSpot 64-Bit Tiered Compilers
+2017-09-09 13:20:04.520+0000 INFO  [o.n.k.i.DiagnosticsManager] user.home = /home/rudgray
+2017-09-09 13:20:04.520+0000 INFO  [o.n.k.i.DiagnosticsManager] user.timezone = Europe/Paris
+2017-09-09 13:20:04.520+0000 INFO  [o.n.k.i.DiagnosticsManager] file.encoding = UTF-8
+2017-09-09 13:20:04.520+0000 INFO  [o.n.k.i.DiagnosticsManager] user.name = rudgray
+2017-09-09 13:20:04.520+0000 INFO  [o.n.k.i.DiagnosticsManager] sun.java.command = org.neo4j.server.CommunityEntryPoint --home-dir=/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3 --config-dir=/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/conf
+2017-09-09 13:20:04.520+0000 INFO  [o.n.k.i.DiagnosticsManager] sun.arch.data.model = 64
+2017-09-09 13:20:04.520+0000 INFO  [o.n.k.i.DiagnosticsManager] user.language = en
+2017-09-09 13:20:04.520+0000 INFO  [o.n.k.i.DiagnosticsManager] awt.toolkit = sun.awt.X11.XToolkit
+2017-09-09 13:20:04.520+0000 INFO  [o.n.k.i.DiagnosticsManager] jdk.tls.ephemeralDHKeySize = 2048
+2017-09-09 13:20:04.520+0000 INFO  [o.n.k.i.DiagnosticsManager] file.separator = /
+2017-09-09 13:20:04.521+0000 INFO  [o.n.k.i.DiagnosticsManager] sun.io.unicode.encoding = UnicodeLittle
+2017-09-09 13:20:04.521+0000 INFO  [o.n.k.i.DiagnosticsManager] sun.cpu.endian = little
+2017-09-09 13:20:04.521+0000 INFO  [o.n.k.i.DiagnosticsManager] sun.desktop = gnome
+2017-09-09 13:20:04.521+0000 INFO  [o.n.k.i.DiagnosticsManager] sun.cpu.isalist = 
+2017-09-09 13:20:04.521+0000 INFO  [o.n.k.i.DiagnosticsManager] Linux scheduler information:
+2017-09-09 13:20:04.537+0000 INFO  [o.n.k.i.DiagnosticsManager] none
+2017-09-09 13:20:04.538+0000 INFO  [o.n.k.i.DiagnosticsManager] none
+2017-09-09 13:20:04.538+0000 INFO  [o.n.k.i.DiagnosticsManager] none
+2017-09-09 13:20:04.538+0000 INFO  [o.n.k.i.DiagnosticsManager] none
+2017-09-09 13:20:04.538+0000 INFO  [o.n.k.i.DiagnosticsManager] none
+2017-09-09 13:20:04.538+0000 INFO  [o.n.k.i.DiagnosticsManager] none
+2017-09-09 13:20:04.539+0000 INFO  [o.n.k.i.DiagnosticsManager] none
+2017-09-09 13:20:04.539+0000 INFO  [o.n.k.i.DiagnosticsManager] none
+2017-09-09 13:20:04.539+0000 INFO  [o.n.k.i.DiagnosticsManager] noop deadline [cfq] 
+2017-09-09 13:20:04.539+0000 INFO  [o.n.k.i.DiagnosticsManager] none
+2017-09-09 13:20:04.539+0000 INFO  [o.n.k.i.DiagnosticsManager] none
+2017-09-09 13:20:04.539+0000 INFO  [o.n.k.i.DiagnosticsManager] none
+2017-09-09 13:20:04.539+0000 INFO  [o.n.k.i.DiagnosticsManager] Network information:
+2017-09-09 13:20:04.540+0000 INFO  [o.n.k.i.DiagnosticsManager] Interface wlo1:
+2017-09-09 13:20:04.540+0000 INFO  [o.n.k.i.DiagnosticsManager]     address: fe80:0:0:0:fc6d:496d:1b3:c438%wlo1
+2017-09-09 13:20:04.541+0000 INFO  [o.n.k.i.DiagnosticsManager]     address: 192.168.1.46
+2017-09-09 13:20:04.541+0000 INFO  [o.n.k.i.DiagnosticsManager] Interface lo:
+2017-09-09 13:20:04.541+0000 INFO  [o.n.k.i.DiagnosticsManager]     address: 0:0:0:0:0:0:0:1%lo
+2017-09-09 13:20:04.541+0000 INFO  [o.n.k.i.DiagnosticsManager]     address: 127.0.0.1
+2017-09-09 13:20:04.541+0000 INFO  [o.n.k.i.DiagnosticsManager] --- INITIALIZED diagnostics END ---
+2017-09-09 13:20:04.821+0000 INFO  [o.n.b.v.r.WorkerFactory] Bolt Server extension loaded.
+2017-09-09 13:20:04.822+0000 INFO  [o.n.b.v.r.WorkerFactory] Bolt enabled on localhost:7687.
+2017-09-09 13:20:04.956+0000 INFO  [o.n.k.i.s.f.RecordFormatSelector] Selected RecordFormat:StandardV3_0[v0.A.7] record format from store /home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db
+2017-09-09 13:20:04.990+0000 INFO  [o.n.k.i.s.f.RecordFormatSelector] Selected RecordFormat:StandardV3_0[v0.A.7] record format from store /home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db
+2017-09-09 13:20:04.990+0000 INFO  [o.n.k.i.s.f.RecordFormatSelector] Format not configured. Selected format from the store: RecordFormat:StandardV3_0[v0.A.7]
+2017-09-09 13:20:05.255+0000 INFO  [o.n.k.i.a.i.IndexingService] IndexingService.init: indexes not specifically mentioned above are POPULATING
+2017-09-09 13:20:05.556+0000 INFO  [o.n.k.NeoStoreDataSource] No commits found after last check point (which is at LogPosition{logVersion=0, byteOffset=779143})
+2017-09-09 13:20:05.568+0000 INFO  [o.n.k.i.a.i.IndexingService] IndexingService.start: indexes not specifically mentioned above are POPULATING
+2017-09-09 13:20:05.573+0000 INFO  [o.n.k.i.DatabaseHealth] Database health set to OK
+2017-09-09 13:20:06.282+0000 WARN  [o.n.k.i.p.Procedures] Failed to load `apoc.couchbase.CouchbaseConnection` from plugin jar `/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/plugins/apoc-3.1.3.7-all.jar`: com/couchbase/client/java/document/Document
+2017-09-09 13:20:06.284+0000 WARN  [o.n.k.i.p.Procedures] Failed to load `apoc.couchbase.CouchbaseManager` from plugin jar `/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/plugins/apoc-3.1.3.7-all.jar`: com/couchbase/client/java/env/CouchbaseEnvironment
+2017-09-09 13:20:06.285+0000 WARN  [o.n.k.i.p.Procedures] Failed to load `apoc.couchbase.document.CouchbaseUtils` from plugin jar `/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/plugins/apoc-3.1.3.7-all.jar`: com/couchbase/client/core/message/kv/MutationToken
+2017-09-09 13:20:06.486+0000 WARN  [o.n.k.i.p.Procedures] Failed to load `apoc.mongodb.MongoDBColl` from plugin jar `/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/plugins/apoc-3.1.3.7-all.jar`: org/bson/conversions/Bson
+2017-09-09 13:20:06.655+0000 WARN  [o.n.k.i.p.Procedures] Failed to load `com.jayway.jsonpath.spi.json.GsonJsonProvider` from plugin jar `/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/plugins/apoc-3.1.3.7-all.jar`: com/google/gson/JsonElement
+2017-09-09 13:20:06.656+0000 WARN  [o.n.k.i.p.Procedures] Failed to load `com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider` from plugin jar `/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/plugins/apoc-3.1.3.7-all.jar`: com/fasterxml/jackson/databind/JsonNode
+2017-09-09 13:20:06.658+0000 WARN  [o.n.k.i.p.Procedures] Failed to load `com.jayway.jsonpath.spi.json.JacksonJsonProvider` from plugin jar `/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/plugins/apoc-3.1.3.7-all.jar`: com/fasterxml/jackson/databind/ObjectMapper
+2017-09-09 13:20:06.659+0000 WARN  [o.n.k.i.p.Procedures] Failed to load `com.jayway.jsonpath.spi.json.JsonOrgJsonProvider` from plugin jar `/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/plugins/apoc-3.1.3.7-all.jar`: org/json/JSONException
+2017-09-09 13:20:06.662+0000 WARN  [o.n.k.i.p.Procedures] Failed to load `com.jayway.jsonpath.spi.mapper.GsonMappingProvider$1` from plugin jar `/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/plugins/apoc-3.1.3.7-all.jar`: com/google/gson/Gson
+2017-09-09 13:20:06.663+0000 WARN  [o.n.k.i.p.Procedures] Failed to load `com.jayway.jsonpath.spi.mapper.GsonMappingProvider$2` from plugin jar `/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/plugins/apoc-3.1.3.7-all.jar`: com/google/gson/Gson
+2017-09-09 13:20:06.828+0000 INFO  [o.n.k.AvailabilityGuard] Fulfilling of requirement makes database available: Database available
+2017-09-09 13:20:06.836+0000 INFO  [o.n.k.i.f.GraphDatabaseFacadeFactory] Database is now ready
+2017-09-09 13:20:06.837+0000 INFO  [o.n.k.i.DiagnosticsManager] --- STARTED diagnostics for KernelDiagnostics:Versions START ---
+2017-09-09 13:20:06.838+0000 INFO  [o.n.k.i.DiagnosticsManager] Graph Database: community single StoreId{creationTime=1492605639784, randomId=4685640279783307379, storeVersion=15531981201765894, upgradeTime=1492605639784, upgradeId=1}
+2017-09-09 13:20:06.838+0000 INFO  [o.n.k.i.DiagnosticsManager] Kernel version: 3.1.3,04f0baa1339a0eab4d2d316b336230cdec036119
+2017-09-09 13:20:06.840+0000 INFO  [o.n.k.i.DiagnosticsManager] --- STARTED diagnostics for KernelDiagnostics:Versions END ---
+2017-09-09 13:20:06.842+0000 INFO  [o.n.k.i.DiagnosticsManager] --- STARTED diagnostics for NEO_STORE_VERSIONS START ---
+2017-09-09 13:20:06.843+0000 INFO  [o.n.k.i.DiagnosticsManager] Store versions:
+2017-09-09 13:20:06.844+0000 INFO  [o.n.k.i.DiagnosticsManager] Store versions:
+2017-09-09 13:20:06.846+0000 INFO  [o.n.k.i.DiagnosticsManager]   ArrayPropertyStore v0.A.7
+2017-09-09 13:20:06.847+0000 INFO  [o.n.k.i.DiagnosticsManager]   NodeStore v0.A.7
+2017-09-09 13:20:06.849+0000 INFO  [o.n.k.i.DiagnosticsManager]   StringPropertyStore v0.A.7
+2017-09-09 13:20:06.850+0000 INFO  [o.n.k.i.DiagnosticsManager]   PropertyIndexStore v0.A.7
+2017-09-09 13:20:06.851+0000 INFO  [o.n.k.i.DiagnosticsManager]   StringPropertyStore v0.A.7
+2017-09-09 13:20:06.852+0000 INFO  [o.n.k.i.DiagnosticsManager]   ArrayPropertyStore v0.A.7
+2017-09-09 13:20:06.853+0000 INFO  [o.n.k.i.DiagnosticsManager]   PropertyStore v0.A.7
+2017-09-09 13:20:06.854+0000 INFO  [o.n.k.i.DiagnosticsManager]   RelationshipStore v0.A.7
+2017-09-09 13:20:06.855+0000 INFO  [o.n.k.i.DiagnosticsManager]   StringPropertyStore v0.A.7
+2017-09-09 13:20:06.855+0000 INFO  [o.n.k.i.DiagnosticsManager]   RelationshipTypeStore v0.A.7
+2017-09-09 13:20:06.856+0000 INFO  [o.n.k.i.DiagnosticsManager]   StringPropertyStore v0.A.7
+2017-09-09 13:20:06.857+0000 INFO  [o.n.k.i.DiagnosticsManager]   LabelTokenStore v0.A.7
+2017-09-09 13:20:06.858+0000 INFO  [o.n.k.i.DiagnosticsManager]   SchemaStore v0.A.7
+2017-09-09 13:20:06.858+0000 INFO  [o.n.k.i.DiagnosticsManager]   RelationshipGroupStore v0.A.7
+2017-09-09 13:20:06.858+0000 INFO  [o.n.k.i.DiagnosticsManager]   NeoStore v0.A.7
+2017-09-09 13:20:06.859+0000 INFO  [o.n.k.i.DiagnosticsManager] --- STARTED diagnostics for NEO_STORE_VERSIONS END ---
+2017-09-09 13:20:06.860+0000 INFO  [o.n.k.i.DiagnosticsManager] --- STARTED diagnostics for NEO_STORE_ID_USAGE START ---
+2017-09-09 13:20:06.861+0000 INFO  [o.n.k.i.DiagnosticsManager] Id usage:
+2017-09-09 13:20:06.862+0000 INFO  [o.n.k.i.DiagnosticsManager] Id usage:
+2017-09-09 13:20:06.863+0000 INFO  [o.n.k.i.DiagnosticsManager]   ArrayPropertyStore: used=1 high=0
+2017-09-09 13:20:06.865+0000 INFO  [o.n.k.i.DiagnosticsManager]   NodeStore: used=282 high=392
+2017-09-09 13:20:06.866+0000 INFO  [o.n.k.i.DiagnosticsManager]   StringPropertyStore: used=36 high=35
+2017-09-09 13:20:06.867+0000 INFO  [o.n.k.i.DiagnosticsManager]   PropertyIndexStore: used=35 high=34
+2017-09-09 13:20:06.868+0000 INFO  [o.n.k.i.DiagnosticsManager]   StringPropertyStore: used=15 high=16
+2017-09-09 13:20:06.868+0000 INFO  [o.n.k.i.DiagnosticsManager]   ArrayPropertyStore: used=6 high=5
+2017-09-09 13:20:06.869+0000 INFO  [o.n.k.i.DiagnosticsManager]   PropertyStore: used=339 high=386
+2017-09-09 13:20:06.870+0000 INFO  [o.n.k.i.DiagnosticsManager]   RelationshipStore: used=198 high=308
+2017-09-09 13:20:06.871+0000 INFO  [o.n.k.i.DiagnosticsManager]   StringPropertyStore: used=20 high=19
+2017-09-09 13:20:06.872+0000 INFO  [o.n.k.i.DiagnosticsManager]   RelationshipTypeStore: used=19 high=18
+2017-09-09 13:20:06.873+0000 INFO  [o.n.k.i.DiagnosticsManager]   StringPropertyStore: used=48 high=47
+2017-09-09 13:20:06.874+0000 INFO  [o.n.k.i.DiagnosticsManager]   LabelTokenStore: used=47 high=46
+2017-09-09 13:20:06.875+0000 INFO  [o.n.k.i.DiagnosticsManager]   SchemaStore: used=1 high=0
+2017-09-09 13:20:06.876+0000 INFO  [o.n.k.i.DiagnosticsManager]   RelationshipGroupStore: used=1 high=0
+2017-09-09 13:20:06.876+0000 INFO  [o.n.k.i.DiagnosticsManager]   NeoStore: used=15 high=14
+2017-09-09 13:20:06.877+0000 INFO  [o.n.k.i.DiagnosticsManager] --- STARTED diagnostics for NEO_STORE_ID_USAGE END ---
+2017-09-09 13:20:06.878+0000 INFO  [o.n.k.i.DiagnosticsManager] --- STARTED diagnostics for NEO_STORE_RECORDS START ---
+2017-09-09 13:20:06.879+0000 INFO  [o.n.k.i.DiagnosticsManager] Neostore records:
+2017-09-09 13:20:06.880+0000 INFO  [o.n.k.i.DiagnosticsManager] TIME (Creation time): 1492605639784
+2017-09-09 13:20:06.881+0000 INFO  [o.n.k.i.DiagnosticsManager] RANDOM_NUMBER (Random number for store id): 4685640279783307379
+2017-09-09 13:20:06.883+0000 INFO  [o.n.k.i.DiagnosticsManager] LOG_VERSION (Current log version): 0
+2017-09-09 13:20:06.884+0000 INFO  [o.n.k.i.DiagnosticsManager] LAST_TRANSACTION_ID (Last committed transaction): 717
+2017-09-09 13:20:06.885+0000 INFO  [o.n.k.i.DiagnosticsManager] STORE_VERSION (Store format version): 15531981201765894
+2017-09-09 13:20:06.885+0000 INFO  [o.n.k.i.DiagnosticsManager] FIRST_GRAPH_PROPERTY (First property record containing graph properties): -1
+2017-09-09 13:20:06.885+0000 INFO  [o.n.k.i.DiagnosticsManager] LAST_CONSTRAINT_TRANSACTION (Last committed transaction containing constraint changes): 0
+2017-09-09 13:20:06.885+0000 INFO  [o.n.k.i.DiagnosticsManager] UPGRADE_TRANSACTION_ID (Transaction id most recent upgrade was performed at): 1
+2017-09-09 13:20:06.885+0000 INFO  [o.n.k.i.DiagnosticsManager] UPGRADE_TIME (Time of last upgrade): 1492605639784
+2017-09-09 13:20:06.885+0000 INFO  [o.n.k.i.DiagnosticsManager] LAST_TRANSACTION_CHECKSUM (Checksum of last committed transaction): -161539503621
+2017-09-09 13:20:06.885+0000 INFO  [o.n.k.i.DiagnosticsManager] UPGRADE_TRANSACTION_CHECKSUM (Checksum of transaction id the most recent upgrade was performed at): 0
+2017-09-09 13:20:06.885+0000 INFO  [o.n.k.i.DiagnosticsManager] LAST_CLOSED_TRANSACTION_LOG_VERSION (Log version where the last transaction commit entry has been written into): 0
+2017-09-09 13:20:06.885+0000 INFO  [o.n.k.i.DiagnosticsManager] LAST_CLOSED_TRANSACTION_LOG_BYTE_OFFSET (Byte offset in the log file where the last transaction commit entry has been written into): 779143
+2017-09-09 13:20:06.885+0000 INFO  [o.n.k.i.DiagnosticsManager] LAST_TRANSACTION_COMMIT_TIMESTAMP (Commit time timestamp for last committed transaction): 1504884739220
+2017-09-09 13:20:06.885+0000 INFO  [o.n.k.i.DiagnosticsManager] UPGRADE_TRANSACTION_COMMIT_TIMESTAMP (Commit timestamp of transaction the most recent upgrade was performed at): 0
+2017-09-09 13:20:06.886+0000 INFO  [o.n.k.i.DiagnosticsManager] --- STARTED diagnostics for NEO_STORE_RECORDS END ---
+2017-09-09 13:20:06.887+0000 INFO  [o.n.k.i.DiagnosticsManager] --- STARTED diagnostics for TRANSACTION_RANGE START ---
+2017-09-09 13:20:06.887+0000 INFO  [o.n.k.i.DiagnosticsManager] Transaction log:
+2017-09-09 13:20:06.888+0000 INFO  [o.n.k.i.DiagnosticsManager] Oldest transaction 2 found in log with version 0
+2017-09-09 13:20:06.888+0000 INFO  [o.n.k.i.DiagnosticsManager] --- STARTED diagnostics for TRANSACTION_RANGE END ---
+2017-09-09 13:20:06.889+0000 INFO  [o.n.k.i.DiagnosticsManager] --- STARTED diagnostics for KernelDiagnostics:StoreFiles START ---
+2017-09-09 13:20:06.889+0000 INFO  [o.n.k.i.DiagnosticsManager] Disk space on partition (Total / Free / Free %): 483285843968 / 435727986688 / 90
+Storage files: (filename : modification date - size)
+2017-09-09 13:20:06.890+0000 INFO  [o.n.k.i.DiagnosticsManager]   index:
+2017-09-09 13:20:06.890+0000 INFO  [o.n.k.i.DiagnosticsManager]   - Total: 2017-06-03T16:43:00+0200 - 0.00 B
+2017-09-09 13:20:06.890+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore: 2017-09-08T17:33:39+0200 - 8.00 kB
+2017-09-09 13:20:06.890+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.counts.db.a: 2017-09-08T17:30:05+0200 - 3.09 kB
+2017-09-09 13:20:06.890+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.counts.db.b: 2017-09-08T17:33:39+0200 - 3.09 kB
+2017-09-09 13:20:06.891+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.id: 2017-09-09T15:20:05+0200 - 9.00 B
+2017-09-09 13:20:06.891+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.labeltokenstore.db: 2017-09-08T16:01:44+0200 - 8.00 kB
+2017-09-09 13:20:06.891+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.labeltokenstore.db.id: 2017-09-09T15:20:05+0200 - 9.00 B
+2017-09-09 13:20:06.891+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.labeltokenstore.db.names: 2017-09-08T16:01:44+0200 - 8.00 kB
+2017-09-09 13:20:06.891+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.labeltokenstore.db.names.id: 2017-09-09T15:20:05+0200 - 9.00 B
+2017-09-09 13:20:06.891+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.nodestore.db: 2017-09-08T17:33:39+0200 - 8.00 kB
+2017-09-09 13:20:06.891+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.nodestore.db.id: 2017-09-09T15:20:05+0200 - 897.00 B
+2017-09-09 13:20:06.891+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.nodestore.db.labels: 2017-06-02T18:35:01+0200 - 8.00 kB
+2017-09-09 13:20:06.892+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.nodestore.db.labels.id: 2017-09-09T15:20:05+0200 - 9.00 B
+2017-09-09 13:20:06.892+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.propertystore.db: 2017-09-08T17:33:39+0200 - 15.94 kB
+2017-09-09 13:20:06.892+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.propertystore.db.arrays: 2017-09-08T16:01:44+0200 - 8.00 kB
+2017-09-09 13:20:06.892+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.propertystore.db.arrays.id: 2017-09-09T15:20:05+0200 - 9.00 B
+2017-09-09 13:20:06.892+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.propertystore.db.id: 2017-09-09T15:20:05+0200 - 393.00 B
+2017-09-09 13:20:06.892+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.propertystore.db.index: 2017-09-08T16:01:44+0200 - 8.00 kB
+2017-09-09 13:20:06.892+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.propertystore.db.index.id: 2017-09-09T15:20:05+0200 - 9.00 B
+2017-09-09 13:20:06.892+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.propertystore.db.index.keys: 2017-09-08T16:01:44+0200 - 8.00 kB
+2017-09-09 13:20:06.892+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.propertystore.db.index.keys.id: 2017-09-09T15:20:05+0200 - 9.00 B
+2017-09-09 13:20:06.893+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.propertystore.db.strings: 2017-09-08T16:08:44+0200 - 8.00 kB
+2017-09-09 13:20:06.893+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.propertystore.db.strings.id: 2017-09-09T15:20:05+0200 - 25.00 B
+2017-09-09 13:20:06.893+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.relationshipgroupstore.db: 2017-06-02T18:35:01+0200 - 8.00 kB
+2017-09-09 13:20:06.893+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.relationshipgroupstore.db.id: 2017-09-09T15:20:05+0200 - 9.00 B
+2017-09-09 13:20:06.893+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.relationshipstore.db: 2017-09-08T17:33:39+0200 - 15.94 kB
+2017-09-09 13:20:06.893+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.relationshipstore.db.id: 2017-09-09T15:20:05+0200 - 897.00 B
+2017-09-09 13:20:06.893+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.relationshiptypestore.db: 2017-09-05T18:25:22+0200 - 8.00 kB
+2017-09-09 13:20:06.893+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.relationshiptypestore.db.id: 2017-09-09T15:20:05+0200 - 9.00 B
+2017-09-09 13:20:06.893+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.relationshiptypestore.db.names: 2017-09-05T18:25:22+0200 - 8.00 kB
+2017-09-09 13:20:06.894+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.relationshiptypestore.db.names.id: 2017-09-09T15:20:05+0200 - 9.00 B
+2017-09-09 13:20:06.894+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.schemastore.db: 2017-06-02T18:35:01+0200 - 8.00 kB
+2017-09-09 13:20:06.894+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.schemastore.db.id: 2017-09-09T15:20:05+0200 - 9.00 B
+2017-09-09 13:20:06.894+0000 INFO  [o.n.k.i.DiagnosticsManager]   neostore.transaction.db.0: 2017-09-08T17:33:39+0200 - 760.90 kB
+2017-09-09 13:20:06.894+0000 INFO  [o.n.k.i.DiagnosticsManager]   schema:
+2017-09-09 13:20:06.894+0000 INFO  [o.n.k.i.DiagnosticsManager]     label:
+2017-09-09 13:20:06.894+0000 INFO  [o.n.k.i.DiagnosticsManager]       lucene:
+2017-09-09 13:20:06.894+0000 INFO  [o.n.k.i.DiagnosticsManager]         labelStore:
+2017-09-09 13:20:06.894+0000 INFO  [o.n.k.i.DiagnosticsManager]           1:
+2017-09-09 13:20:06.895+0000 INFO  [o.n.k.i.DiagnosticsManager]             _j1.cfe: 2017-09-08T17:33:39+0200 - 305.00 B
+2017-09-09 13:20:06.895+0000 INFO  [o.n.k.i.DiagnosticsManager]             _j1.cfs: 2017-09-08T17:33:39+0200 - 8.86 kB
+2017-09-09 13:20:06.897+0000 INFO  [o.n.k.i.DiagnosticsManager]             _j1.si: 2017-09-08T17:33:39+0200 - 437.00 B
+2017-09-09 13:20:06.897+0000 INFO  [o.n.k.i.DiagnosticsManager]             segments_6e: 2017-09-08T17:33:39+0200 - 138.00 B
+2017-09-09 13:20:06.897+0000 INFO  [o.n.k.i.DiagnosticsManager]             write.lock: 2017-06-02T18:35:01+0200 - 0.00 B
+2017-09-09 13:20:06.898+0000 INFO  [o.n.k.i.DiagnosticsManager]           - Total: 2017-09-08T17:33:39+0200 - 9.72 kB
+2017-09-09 13:20:06.898+0000 INFO  [o.n.k.i.DiagnosticsManager]           failure-message: 2017-06-02T18:35:01+0200 - 16.00 kB
+2017-09-09 13:20:06.898+0000 INFO  [o.n.k.i.DiagnosticsManager]         - Total: 2017-06-02T18:35:01+0200 - 25.72 kB
+2017-09-09 13:20:06.898+0000 INFO  [o.n.k.i.DiagnosticsManager]       - Total: 2017-06-02T18:35:01+0200 - 25.72 kB
+2017-09-09 13:20:06.898+0000 INFO  [o.n.k.i.DiagnosticsManager]     - Total: 2017-06-02T18:35:01+0200 - 25.72 kB
+2017-09-09 13:20:06.898+0000 INFO  [o.n.k.i.DiagnosticsManager]   - Total: 2017-06-02T18:35:01+0200 - 25.72 kB
+2017-09-09 13:20:06.898+0000 INFO  [o.n.k.i.DiagnosticsManager]   store_lock: 2017-06-02T18:35:01+0200 - 0.00 B
+2017-09-09 13:20:06.898+0000 INFO  [o.n.k.i.DiagnosticsManager] --- STARTED diagnostics for KernelDiagnostics:StoreFiles END ---
+2017-09-09 13:20:08.411+0000 INFO  [o.n.k.i.DiagnosticsManager] --- SERVER STARTED START ---
+2017-09-09 13:20:09.364+0000 INFO  [o.n.k.i.DiagnosticsManager] --- SERVER STARTED END ---
+2017-09-09 13:33:05.594+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [718]:  Starting check pointing...
+2017-09-09 13:33:05.594+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [718]:  Starting store flush...
+2017-09-09 13:33:05.621+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 718 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-09 13:33:05.627+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 718 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-09 13:33:05.636+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [718]:  Store flush completed
+2017-09-09 13:33:05.636+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [718]:  Starting appending check point entry into the tx log...
+2017-09-09 13:33:05.638+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [718]:  Appending check point entry into the tx log completed
+2017-09-09 13:33:05.638+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [718]:  Check pointing completed
+2017-09-09 13:33:05.638+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-09 13:33:05.638+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-09 13:38:05.646+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [722]:  Starting check pointing...
+2017-09-09 13:38:05.646+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [722]:  Starting store flush...
+2017-09-09 13:38:05.665+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 722 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-09 13:38:05.668+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 722 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-09 13:38:05.678+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [722]:  Store flush completed
+2017-09-09 13:38:05.678+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [722]:  Starting appending check point entry into the tx log...
+2017-09-09 13:38:05.680+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [722]:  Appending check point entry into the tx log completed
+2017-09-09 13:38:05.680+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [722]:  Check pointing completed
+2017-09-09 13:38:05.680+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-09 13:38:05.680+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-09 13:50:35.491+0000 ERROR [o.n.b.v.r.ErrorReporter] Client triggered an unexpected error [UnknownError]: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation). See debug.log for more details, reference cf709b4a-a1ce-4332-8442-017910dfe2d0.
+2017-09-09 13:50:35.491+0000 ERROR [o.n.b.v.r.ErrorReporter] Client triggered an unexpected error [UnknownError]: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation), reference cf709b4a-a1ce-4332-8442-017910dfe2d0. FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation)
+scala.MatchError: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.org$neo4j$cypher$internal$compiler$v3_1$planner$UpdateGraph$$findVariableInNestedStructure(UpdateGraph.scala:78)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$$anonfun$identifiersToDelete$1.apply(UpdateGraph.scala:74)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$$anonfun$identifiersToDelete$1.apply(UpdateGraph.scala:68)
+	at scala.collection.TraversableLike$$anonfun$flatMap$1.apply(TraversableLike.scala:241)
+	at scala.collection.TraversableLike$$anonfun$flatMap$1.apply(TraversableLike.scala:241)
+	at scala.collection.immutable.List.foreach(List.scala:381)
+	at scala.collection.TraversableLike$class.flatMap(TraversableLike.scala:241)
+	at scala.collection.immutable.List.flatMap(List.scala:344)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.identifiersToDelete(UpdateGraph.scala:68)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.QueryGraph.identifiersToDelete(QueryGraph.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.deleteOverlap(UpdateGraph.scala:288)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.QueryGraph.deleteOverlap(QueryGraph.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.headConflicts(Eagerness.scala:59)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.readWriteConflictInHead(Eagerness.scala:47)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.headReadWriteEagerize(Eagerness.scala:82)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanUpdates$.apply(PlanUpdates.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanUpdates$.apply(PlanUpdates.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanSingleQuery.apply(PlanSingleQuery.scala:41)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanSingleQuery.apply(PlanSingleQuery.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner$$anonfun$2.apply(QueryPlanner.scala:51)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner$$anonfun$2.apply(QueryPlanner.scala:51)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:234)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:234)
+	at scala.collection.immutable.List.foreach(List.scala:381)
+	at scala.collection.TraversableLike$class.map(TraversableLike.scala:234)
+	at scala.collection.immutable.List.map(List.scala:285)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner.planQueries(QueryPlanner.scala:51)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner.plan(QueryPlanner.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder.produceLogicalPlan(CostBasedExecutablePlanBuilder.scala:97)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder$$anonfun$1.apply(CostBasedExecutablePlanBuilder.scala:71)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder$$anonfun$1.apply(CostBasedExecutablePlanBuilder.scala:71)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$$anonfun$closing$1.apply(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$$anonfun$closing$1.apply(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$.using(package.scala:37)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$.closing(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder.producePlan(CostBasedExecutablePlanBuilder.scala:70)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.procs.DelegatingProcedureExecutablePlanBuilder.producePlan(DelegatingProcedureExecutablePlanBuilder.scala:98)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.FallbackBuilder$class.producePlan(SilentFallbackPlanBuilder.scala:37)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.SilentFallbackPlanBuilder.producePlan(SilentFallbackPlanBuilder.scala:56)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.ExecutionPlanBuilder.build(ExecutionPlanBuilder.scala:106)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler$$anonfun$5.apply(CypherCompiler.scala:178)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler$$anonfun$5.apply(CypherCompiler.scala:178)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1$$anonfun$apply$1.apply(CacheAccessor.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor$$anonfun$1.apply(CacheAccessor.scala:57)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache$$anon$1.apply(LFUCache.scala:31)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$16(BoundedLocalCache.java:1973)
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1892)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:1971)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:1954)
+	at com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:113)
+	at com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:54)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.getOrElseUpdate(LFUCache.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.apply(LFUCache.scala:48)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor.getOrElseUpdate(CacheAccessor.scala:55)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1.apply(CacheAccessor.scala:34)
+	at scala.collection.Iterator$$anon$9.next(Iterator.scala:162)
+	at scala.collection.Iterator$$anon$12.nextCur(Iterator.scala:434)
+	at scala.collection.Iterator$$anon$12.hasNext(Iterator.scala:440)
+	at scala.collection.Iterator$$anon$12.next(Iterator.scala:444)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache.getOrElseUpdate(CacheAccessor.scala:46)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler.planPreparedQuery(CypherCompiler.scala:176)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3$$anonfun$plan$1.apply(CompatibilityFor3_1.scala:248)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3$$anonfun$plan$1.apply(CompatibilityFor3_1.scala:245)
+	at org.neo4j.cypher.internal.compatibility.exceptionHandlerFor3_1$runSafely$.apply(CompatibilityFor3_1.scala:192)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3.plan(CompatibilityFor3_1.scala:245)
+	at org.neo4j.cypher.internal.ExecutionEngine.org$neo4j$cypher$internal$ExecutionEngine$$producePlan$1(ExecutionEngine.scala:167)
+	at org.neo4j.cypher.internal.ExecutionEngine$$anonfun$liftedTree1$1$1.apply(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.ExecutionEngine$$anonfun$liftedTree1$1$1.apply(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1$$anonfun$apply$1.apply(CacheAccessor.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor$$anonfun$1.apply(CacheAccessor.scala:57)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache$$anon$1.apply(LFUCache.scala:31)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$16(BoundedLocalCache.java:1973)
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1853)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:1971)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:1954)
+	at com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:113)
+	at com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:54)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.getOrElseUpdate(LFUCache.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.apply(LFUCache.scala:48)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor.getOrElseUpdate(CacheAccessor.scala:55)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1.apply(CacheAccessor.scala:34)
+	at scala.collection.Iterator$$anon$9.next(Iterator.scala:162)
+	at scala.collection.Iterator$$anon$12.nextCur(Iterator.scala:434)
+	at scala.collection.Iterator$$anon$12.hasNext(Iterator.scala:440)
+	at scala.collection.Iterator$$anon$12.next(Iterator.scala:444)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache.getOrElseUpdate(CacheAccessor.scala:46)
+	at org.neo4j.cypher.internal.ExecutionEngine.liftedTree1$1(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.ExecutionEngine.planQuery(ExecutionEngine.scala:156)
+	at org.neo4j.cypher.internal.ExecutionEngine.execute(ExecutionEngine.scala:106)
+	at org.neo4j.cypher.internal.javacompat.ExecutionEngine.executeQuery(ExecutionEngine.java:59)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachineSPI$1.start(TransactionStateMachineSPI.java:135)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachine$State$1.run(TransactionStateMachine.java:187)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachine.run(TransactionStateMachine.java:77)
+	at org.neo4j.bolt.v1.runtime.BoltStateMachine$State$2.run(BoltStateMachine.java:396)
+	at org.neo4j.bolt.v1.runtime.BoltStateMachine.run(BoltStateMachine.java:196)
+	at org.neo4j.bolt.v1.messaging.BoltMessageRouter.lambda$onRun$3(BoltMessageRouter.java:80)
+	at org.neo4j.bolt.v1.runtime.concurrent.RunnableBoltWorker.execute(RunnableBoltWorker.java:135)
+	at org.neo4j.bolt.v1.runtime.concurrent.RunnableBoltWorker.run(RunnableBoltWorker.java:89)
+	at java.lang.Thread.run(Thread.java:748)
+2017-09-09 13:51:13.044+0000 ERROR [o.n.b.v.r.ErrorReporter] Client triggered an unexpected error [UnknownError]: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation). See debug.log for more details, reference 2064b8ef-f792-427f-a2d7-833753e58d26.
+2017-09-09 13:51:13.044+0000 ERROR [o.n.b.v.r.ErrorReporter] Client triggered an unexpected error [UnknownError]: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation), reference 2064b8ef-f792-427f-a2d7-833753e58d26. FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation)
+scala.MatchError: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.org$neo4j$cypher$internal$compiler$v3_1$planner$UpdateGraph$$findVariableInNestedStructure(UpdateGraph.scala:78)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$$anonfun$identifiersToDelete$1.apply(UpdateGraph.scala:74)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$$anonfun$identifiersToDelete$1.apply(UpdateGraph.scala:68)
+	at scala.collection.TraversableLike$$anonfun$flatMap$1.apply(TraversableLike.scala:241)
+	at scala.collection.TraversableLike$$anonfun$flatMap$1.apply(TraversableLike.scala:241)
+	at scala.collection.immutable.List.foreach(List.scala:381)
+	at scala.collection.TraversableLike$class.flatMap(TraversableLike.scala:241)
+	at scala.collection.immutable.List.flatMap(List.scala:344)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.identifiersToDelete(UpdateGraph.scala:68)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.QueryGraph.identifiersToDelete(QueryGraph.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.deleteOverlap(UpdateGraph.scala:288)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.QueryGraph.deleteOverlap(QueryGraph.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.headConflicts(Eagerness.scala:59)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.readWriteConflictInHead(Eagerness.scala:47)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.headReadWriteEagerize(Eagerness.scala:82)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanUpdates$.apply(PlanUpdates.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanUpdates$.apply(PlanUpdates.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanSingleQuery.apply(PlanSingleQuery.scala:41)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanSingleQuery.apply(PlanSingleQuery.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner$$anonfun$2.apply(QueryPlanner.scala:51)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner$$anonfun$2.apply(QueryPlanner.scala:51)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:234)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:234)
+	at scala.collection.immutable.List.foreach(List.scala:381)
+	at scala.collection.TraversableLike$class.map(TraversableLike.scala:234)
+	at scala.collection.immutable.List.map(List.scala:285)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner.planQueries(QueryPlanner.scala:51)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner.plan(QueryPlanner.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder.produceLogicalPlan(CostBasedExecutablePlanBuilder.scala:97)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder$$anonfun$1.apply(CostBasedExecutablePlanBuilder.scala:71)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder$$anonfun$1.apply(CostBasedExecutablePlanBuilder.scala:71)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$$anonfun$closing$1.apply(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$$anonfun$closing$1.apply(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$.using(package.scala:37)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$.closing(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder.producePlan(CostBasedExecutablePlanBuilder.scala:70)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.procs.DelegatingProcedureExecutablePlanBuilder.producePlan(DelegatingProcedureExecutablePlanBuilder.scala:98)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.FallbackBuilder$class.producePlan(SilentFallbackPlanBuilder.scala:37)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.SilentFallbackPlanBuilder.producePlan(SilentFallbackPlanBuilder.scala:56)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.ExecutionPlanBuilder.build(ExecutionPlanBuilder.scala:106)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler$$anonfun$5.apply(CypherCompiler.scala:178)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler$$anonfun$5.apply(CypherCompiler.scala:178)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1$$anonfun$apply$1.apply(CacheAccessor.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor$$anonfun$1.apply(CacheAccessor.scala:57)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache$$anon$1.apply(LFUCache.scala:31)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$16(BoundedLocalCache.java:1973)
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1892)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:1971)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:1954)
+	at com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:113)
+	at com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:54)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.getOrElseUpdate(LFUCache.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.apply(LFUCache.scala:48)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor.getOrElseUpdate(CacheAccessor.scala:55)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1.apply(CacheAccessor.scala:34)
+	at scala.collection.Iterator$$anon$9.next(Iterator.scala:162)
+	at scala.collection.Iterator$$anon$12.nextCur(Iterator.scala:434)
+	at scala.collection.Iterator$$anon$12.hasNext(Iterator.scala:440)
+	at scala.collection.Iterator$$anon$12.next(Iterator.scala:444)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache.getOrElseUpdate(CacheAccessor.scala:46)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler.planPreparedQuery(CypherCompiler.scala:176)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3$$anonfun$plan$1.apply(CompatibilityFor3_1.scala:248)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3$$anonfun$plan$1.apply(CompatibilityFor3_1.scala:245)
+	at org.neo4j.cypher.internal.compatibility.exceptionHandlerFor3_1$runSafely$.apply(CompatibilityFor3_1.scala:192)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3.plan(CompatibilityFor3_1.scala:245)
+	at org.neo4j.cypher.internal.ExecutionEngine.org$neo4j$cypher$internal$ExecutionEngine$$producePlan$1(ExecutionEngine.scala:167)
+	at org.neo4j.cypher.internal.ExecutionEngine$$anonfun$liftedTree1$1$1.apply(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.ExecutionEngine$$anonfun$liftedTree1$1$1.apply(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1$$anonfun$apply$1.apply(CacheAccessor.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor$$anonfun$1.apply(CacheAccessor.scala:57)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache$$anon$1.apply(LFUCache.scala:31)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$16(BoundedLocalCache.java:1973)
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1853)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:1971)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:1954)
+	at com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:113)
+	at com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:54)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.getOrElseUpdate(LFUCache.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.apply(LFUCache.scala:48)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor.getOrElseUpdate(CacheAccessor.scala:55)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1.apply(CacheAccessor.scala:34)
+	at scala.collection.Iterator$$anon$9.next(Iterator.scala:162)
+	at scala.collection.Iterator$$anon$12.nextCur(Iterator.scala:434)
+	at scala.collection.Iterator$$anon$12.hasNext(Iterator.scala:440)
+	at scala.collection.Iterator$$anon$12.next(Iterator.scala:444)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache.getOrElseUpdate(CacheAccessor.scala:46)
+	at org.neo4j.cypher.internal.ExecutionEngine.liftedTree1$1(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.ExecutionEngine.planQuery(ExecutionEngine.scala:156)
+	at org.neo4j.cypher.internal.ExecutionEngine.execute(ExecutionEngine.scala:106)
+	at org.neo4j.cypher.internal.javacompat.ExecutionEngine.executeQuery(ExecutionEngine.java:59)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachineSPI$1.start(TransactionStateMachineSPI.java:135)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachine$State$1.run(TransactionStateMachine.java:187)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachine.run(TransactionStateMachine.java:77)
+	at org.neo4j.bolt.v1.runtime.BoltStateMachine$State$2.run(BoltStateMachine.java:396)
+	at org.neo4j.bolt.v1.runtime.BoltStateMachine.run(BoltStateMachine.java:196)
+	at org.neo4j.bolt.v1.messaging.BoltMessageRouter.lambda$onRun$3(BoltMessageRouter.java:80)
+	at org.neo4j.bolt.v1.runtime.concurrent.RunnableBoltWorker.execute(RunnableBoltWorker.java:135)
+	at org.neo4j.bolt.v1.runtime.concurrent.RunnableBoltWorker.run(RunnableBoltWorker.java:89)
+	at java.lang.Thread.run(Thread.java:748)
+2017-09-09 13:51:14.897+0000 ERROR [o.n.b.v.r.ErrorReporter] Client triggered an unexpected error [UnknownError]: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation). See debug.log for more details, reference 25ad58b5-7da8-4dcb-bb54-053a98563293.
+2017-09-09 13:51:14.897+0000 ERROR [o.n.b.v.r.ErrorReporter] Client triggered an unexpected error [UnknownError]: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation), reference 25ad58b5-7da8-4dcb-bb54-053a98563293. FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation)
+scala.MatchError: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.org$neo4j$cypher$internal$compiler$v3_1$planner$UpdateGraph$$findVariableInNestedStructure(UpdateGraph.scala:78)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$$anonfun$identifiersToDelete$1.apply(UpdateGraph.scala:74)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$$anonfun$identifiersToDelete$1.apply(UpdateGraph.scala:68)
+	at scala.collection.TraversableLike$$anonfun$flatMap$1.apply(TraversableLike.scala:241)
+	at scala.collection.TraversableLike$$anonfun$flatMap$1.apply(TraversableLike.scala:241)
+	at scala.collection.immutable.List.foreach(List.scala:381)
+	at scala.collection.TraversableLike$class.flatMap(TraversableLike.scala:241)
+	at scala.collection.immutable.List.flatMap(List.scala:344)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.identifiersToDelete(UpdateGraph.scala:68)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.QueryGraph.identifiersToDelete(QueryGraph.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.deleteOverlap(UpdateGraph.scala:288)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.QueryGraph.deleteOverlap(QueryGraph.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.headConflicts(Eagerness.scala:59)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.readWriteConflictInHead(Eagerness.scala:47)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.headReadWriteEagerize(Eagerness.scala:82)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanUpdates$.apply(PlanUpdates.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanUpdates$.apply(PlanUpdates.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanSingleQuery.apply(PlanSingleQuery.scala:41)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanSingleQuery.apply(PlanSingleQuery.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner$$anonfun$2.apply(QueryPlanner.scala:51)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner$$anonfun$2.apply(QueryPlanner.scala:51)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:234)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:234)
+	at scala.collection.immutable.List.foreach(List.scala:381)
+	at scala.collection.TraversableLike$class.map(TraversableLike.scala:234)
+	at scala.collection.immutable.List.map(List.scala:285)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner.planQueries(QueryPlanner.scala:51)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner.plan(QueryPlanner.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder.produceLogicalPlan(CostBasedExecutablePlanBuilder.scala:97)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder$$anonfun$1.apply(CostBasedExecutablePlanBuilder.scala:71)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder$$anonfun$1.apply(CostBasedExecutablePlanBuilder.scala:71)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$$anonfun$closing$1.apply(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$$anonfun$closing$1.apply(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$.using(package.scala:37)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$.closing(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder.producePlan(CostBasedExecutablePlanBuilder.scala:70)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.procs.DelegatingProcedureExecutablePlanBuilder.producePlan(DelegatingProcedureExecutablePlanBuilder.scala:98)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.FallbackBuilder$class.producePlan(SilentFallbackPlanBuilder.scala:37)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.SilentFallbackPlanBuilder.producePlan(SilentFallbackPlanBuilder.scala:56)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.ExecutionPlanBuilder.build(ExecutionPlanBuilder.scala:106)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler$$anonfun$5.apply(CypherCompiler.scala:178)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler$$anonfun$5.apply(CypherCompiler.scala:178)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1$$anonfun$apply$1.apply(CacheAccessor.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor$$anonfun$1.apply(CacheAccessor.scala:57)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache$$anon$1.apply(LFUCache.scala:31)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$16(BoundedLocalCache.java:1973)
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1892)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:1971)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:1954)
+	at com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:113)
+	at com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:54)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.getOrElseUpdate(LFUCache.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.apply(LFUCache.scala:48)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor.getOrElseUpdate(CacheAccessor.scala:55)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1.apply(CacheAccessor.scala:34)
+	at scala.collection.Iterator$$anon$9.next(Iterator.scala:162)
+	at scala.collection.Iterator$$anon$12.nextCur(Iterator.scala:434)
+	at scala.collection.Iterator$$anon$12.hasNext(Iterator.scala:440)
+	at scala.collection.Iterator$$anon$12.next(Iterator.scala:444)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache.getOrElseUpdate(CacheAccessor.scala:46)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler.planPreparedQuery(CypherCompiler.scala:176)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3$$anonfun$plan$1.apply(CompatibilityFor3_1.scala:248)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3$$anonfun$plan$1.apply(CompatibilityFor3_1.scala:245)
+	at org.neo4j.cypher.internal.compatibility.exceptionHandlerFor3_1$runSafely$.apply(CompatibilityFor3_1.scala:192)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3.plan(CompatibilityFor3_1.scala:245)
+	at org.neo4j.cypher.internal.ExecutionEngine.org$neo4j$cypher$internal$ExecutionEngine$$producePlan$1(ExecutionEngine.scala:167)
+	at org.neo4j.cypher.internal.ExecutionEngine$$anonfun$liftedTree1$1$1.apply(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.ExecutionEngine$$anonfun$liftedTree1$1$1.apply(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1$$anonfun$apply$1.apply(CacheAccessor.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor$$anonfun$1.apply(CacheAccessor.scala:57)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache$$anon$1.apply(LFUCache.scala:31)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$16(BoundedLocalCache.java:1973)
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1853)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:1971)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:1954)
+	at com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:113)
+	at com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:54)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.getOrElseUpdate(LFUCache.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.apply(LFUCache.scala:48)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor.getOrElseUpdate(CacheAccessor.scala:55)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1.apply(CacheAccessor.scala:34)
+	at scala.collection.Iterator$$anon$9.next(Iterator.scala:162)
+	at scala.collection.Iterator$$anon$12.nextCur(Iterator.scala:434)
+	at scala.collection.Iterator$$anon$12.hasNext(Iterator.scala:440)
+	at scala.collection.Iterator$$anon$12.next(Iterator.scala:444)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache.getOrElseUpdate(CacheAccessor.scala:46)
+	at org.neo4j.cypher.internal.ExecutionEngine.liftedTree1$1(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.ExecutionEngine.planQuery(ExecutionEngine.scala:156)
+	at org.neo4j.cypher.internal.ExecutionEngine.execute(ExecutionEngine.scala:106)
+	at org.neo4j.cypher.internal.javacompat.ExecutionEngine.executeQuery(ExecutionEngine.java:59)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachineSPI$1.start(TransactionStateMachineSPI.java:135)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachine$State$1.run(TransactionStateMachine.java:187)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachine.run(TransactionStateMachine.java:77)
+	at org.neo4j.bolt.v1.runtime.BoltStateMachine$State$2.run(BoltStateMachine.java:396)
+	at org.neo4j.bolt.v1.runtime.BoltStateMachine.run(BoltStateMachine.java:196)
+	at org.neo4j.bolt.v1.messaging.BoltMessageRouter.lambda$onRun$3(BoltMessageRouter.java:80)
+	at org.neo4j.bolt.v1.runtime.concurrent.RunnableBoltWorker.execute(RunnableBoltWorker.java:135)
+	at org.neo4j.bolt.v1.runtime.concurrent.RunnableBoltWorker.run(RunnableBoltWorker.java:89)
+	at java.lang.Thread.run(Thread.java:748)
+2017-09-09 13:51:28.041+0000 ERROR [o.n.b.v.r.ErrorReporter] Client triggered an unexpected error [UnknownError]: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation). See debug.log for more details, reference 31579761-982c-45b1-beb7-5fe6f17b99fa.
+2017-09-09 13:51:28.041+0000 ERROR [o.n.b.v.r.ErrorReporter] Client triggered an unexpected error [UnknownError]: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation), reference 31579761-982c-45b1-beb7-5fe6f17b99fa. FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation)
+scala.MatchError: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.org$neo4j$cypher$internal$compiler$v3_1$planner$UpdateGraph$$findVariableInNestedStructure(UpdateGraph.scala:78)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$$anonfun$identifiersToDelete$1.apply(UpdateGraph.scala:74)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$$anonfun$identifiersToDelete$1.apply(UpdateGraph.scala:68)
+	at scala.collection.TraversableLike$$anonfun$flatMap$1.apply(TraversableLike.scala:241)
+	at scala.collection.TraversableLike$$anonfun$flatMap$1.apply(TraversableLike.scala:241)
+	at scala.collection.immutable.List.foreach(List.scala:381)
+	at scala.collection.TraversableLike$class.flatMap(TraversableLike.scala:241)
+	at scala.collection.immutable.List.flatMap(List.scala:344)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.identifiersToDelete(UpdateGraph.scala:68)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.QueryGraph.identifiersToDelete(QueryGraph.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.deleteOverlap(UpdateGraph.scala:288)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.QueryGraph.deleteOverlap(QueryGraph.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.headConflicts(Eagerness.scala:59)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.readWriteConflictInHead(Eagerness.scala:47)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.headReadWriteEagerize(Eagerness.scala:82)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanUpdates$.apply(PlanUpdates.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanUpdates$.apply(PlanUpdates.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanSingleQuery.apply(PlanSingleQuery.scala:41)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanSingleQuery.apply(PlanSingleQuery.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner$$anonfun$2.apply(QueryPlanner.scala:51)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner$$anonfun$2.apply(QueryPlanner.scala:51)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:234)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:234)
+	at scala.collection.immutable.List.foreach(List.scala:381)
+	at scala.collection.TraversableLike$class.map(TraversableLike.scala:234)
+	at scala.collection.immutable.List.map(List.scala:285)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner.planQueries(QueryPlanner.scala:51)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner.plan(QueryPlanner.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder.produceLogicalPlan(CostBasedExecutablePlanBuilder.scala:97)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder$$anonfun$1.apply(CostBasedExecutablePlanBuilder.scala:71)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder$$anonfun$1.apply(CostBasedExecutablePlanBuilder.scala:71)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$$anonfun$closing$1.apply(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$$anonfun$closing$1.apply(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$.using(package.scala:37)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$.closing(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder.producePlan(CostBasedExecutablePlanBuilder.scala:70)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.procs.DelegatingProcedureExecutablePlanBuilder.producePlan(DelegatingProcedureExecutablePlanBuilder.scala:98)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.FallbackBuilder$class.producePlan(SilentFallbackPlanBuilder.scala:37)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.SilentFallbackPlanBuilder.producePlan(SilentFallbackPlanBuilder.scala:56)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.ExecutionPlanBuilder.build(ExecutionPlanBuilder.scala:106)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler$$anonfun$5.apply(CypherCompiler.scala:178)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler$$anonfun$5.apply(CypherCompiler.scala:178)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1$$anonfun$apply$1.apply(CacheAccessor.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor$$anonfun$1.apply(CacheAccessor.scala:57)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache$$anon$1.apply(LFUCache.scala:31)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$16(BoundedLocalCache.java:1973)
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1892)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:1971)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:1954)
+	at com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:113)
+	at com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:54)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.getOrElseUpdate(LFUCache.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.apply(LFUCache.scala:48)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor.getOrElseUpdate(CacheAccessor.scala:55)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1.apply(CacheAccessor.scala:34)
+	at scala.collection.Iterator$$anon$9.next(Iterator.scala:162)
+	at scala.collection.Iterator$$anon$12.nextCur(Iterator.scala:434)
+	at scala.collection.Iterator$$anon$12.hasNext(Iterator.scala:440)
+	at scala.collection.Iterator$$anon$12.next(Iterator.scala:444)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache.getOrElseUpdate(CacheAccessor.scala:46)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler.planPreparedQuery(CypherCompiler.scala:176)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3$$anonfun$plan$1.apply(CompatibilityFor3_1.scala:248)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3$$anonfun$plan$1.apply(CompatibilityFor3_1.scala:245)
+	at org.neo4j.cypher.internal.compatibility.exceptionHandlerFor3_1$runSafely$.apply(CompatibilityFor3_1.scala:192)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3.plan(CompatibilityFor3_1.scala:245)
+	at org.neo4j.cypher.internal.ExecutionEngine.org$neo4j$cypher$internal$ExecutionEngine$$producePlan$1(ExecutionEngine.scala:167)
+	at org.neo4j.cypher.internal.ExecutionEngine$$anonfun$liftedTree1$1$1.apply(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.ExecutionEngine$$anonfun$liftedTree1$1$1.apply(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1$$anonfun$apply$1.apply(CacheAccessor.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor$$anonfun$1.apply(CacheAccessor.scala:57)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache$$anon$1.apply(LFUCache.scala:31)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$16(BoundedLocalCache.java:1973)
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1853)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:1971)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:1954)
+	at com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:113)
+	at com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:54)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.getOrElseUpdate(LFUCache.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.apply(LFUCache.scala:48)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor.getOrElseUpdate(CacheAccessor.scala:55)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1.apply(CacheAccessor.scala:34)
+	at scala.collection.Iterator$$anon$9.next(Iterator.scala:162)
+	at scala.collection.Iterator$$anon$12.nextCur(Iterator.scala:434)
+	at scala.collection.Iterator$$anon$12.hasNext(Iterator.scala:440)
+	at scala.collection.Iterator$$anon$12.next(Iterator.scala:444)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache.getOrElseUpdate(CacheAccessor.scala:46)
+	at org.neo4j.cypher.internal.ExecutionEngine.liftedTree1$1(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.ExecutionEngine.planQuery(ExecutionEngine.scala:156)
+	at org.neo4j.cypher.internal.ExecutionEngine.execute(ExecutionEngine.scala:106)
+	at org.neo4j.cypher.internal.javacompat.ExecutionEngine.executeQuery(ExecutionEngine.java:59)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachineSPI$1.start(TransactionStateMachineSPI.java:135)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachine$State$1.run(TransactionStateMachine.java:187)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachine.run(TransactionStateMachine.java:77)
+	at org.neo4j.bolt.v1.runtime.BoltStateMachine$State$2.run(BoltStateMachine.java:396)
+	at org.neo4j.bolt.v1.runtime.BoltStateMachine.run(BoltStateMachine.java:196)
+	at org.neo4j.bolt.v1.messaging.BoltMessageRouter.lambda$onRun$3(BoltMessageRouter.java:80)
+	at org.neo4j.bolt.v1.runtime.concurrent.RunnableBoltWorker.execute(RunnableBoltWorker.java:135)
+	at org.neo4j.bolt.v1.runtime.concurrent.RunnableBoltWorker.run(RunnableBoltWorker.java:89)
+	at java.lang.Thread.run(Thread.java:748)
+2017-09-09 13:52:28.430+0000 ERROR [o.n.b.v.r.ErrorReporter] Client triggered an unexpected error [UnknownError]: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation). See debug.log for more details, reference 92806da6-ca14-45f3-9be3-8b8285390ee3.
+2017-09-09 13:52:28.430+0000 ERROR [o.n.b.v.r.ErrorReporter] Client triggered an unexpected error [UnknownError]: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation), reference 92806da6-ca14-45f3-9be3-8b8285390ee3. FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation)
+scala.MatchError: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.org$neo4j$cypher$internal$compiler$v3_1$planner$UpdateGraph$$findVariableInNestedStructure(UpdateGraph.scala:78)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$$anonfun$identifiersToDelete$1.apply(UpdateGraph.scala:74)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$$anonfun$identifiersToDelete$1.apply(UpdateGraph.scala:68)
+	at scala.collection.TraversableLike$$anonfun$flatMap$1.apply(TraversableLike.scala:241)
+	at scala.collection.TraversableLike$$anonfun$flatMap$1.apply(TraversableLike.scala:241)
+	at scala.collection.immutable.List.foreach(List.scala:381)
+	at scala.collection.TraversableLike$class.flatMap(TraversableLike.scala:241)
+	at scala.collection.immutable.List.flatMap(List.scala:344)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.identifiersToDelete(UpdateGraph.scala:68)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.QueryGraph.identifiersToDelete(QueryGraph.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.deleteOverlap(UpdateGraph.scala:288)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.QueryGraph.deleteOverlap(QueryGraph.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.headConflicts(Eagerness.scala:59)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.readWriteConflictInHead(Eagerness.scala:47)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.headReadWriteEagerize(Eagerness.scala:82)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanUpdates$.apply(PlanUpdates.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanUpdates$.apply(PlanUpdates.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanSingleQuery.apply(PlanSingleQuery.scala:41)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanSingleQuery.apply(PlanSingleQuery.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner$$anonfun$2.apply(QueryPlanner.scala:51)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner$$anonfun$2.apply(QueryPlanner.scala:51)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:234)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:234)
+	at scala.collection.immutable.List.foreach(List.scala:381)
+	at scala.collection.TraversableLike$class.map(TraversableLike.scala:234)
+	at scala.collection.immutable.List.map(List.scala:285)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner.planQueries(QueryPlanner.scala:51)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner.plan(QueryPlanner.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder.produceLogicalPlan(CostBasedExecutablePlanBuilder.scala:97)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder$$anonfun$1.apply(CostBasedExecutablePlanBuilder.scala:71)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder$$anonfun$1.apply(CostBasedExecutablePlanBuilder.scala:71)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$$anonfun$closing$1.apply(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$$anonfun$closing$1.apply(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$.using(package.scala:37)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$.closing(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder.producePlan(CostBasedExecutablePlanBuilder.scala:70)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.procs.DelegatingProcedureExecutablePlanBuilder.producePlan(DelegatingProcedureExecutablePlanBuilder.scala:98)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.FallbackBuilder$class.producePlan(SilentFallbackPlanBuilder.scala:37)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.SilentFallbackPlanBuilder.producePlan(SilentFallbackPlanBuilder.scala:56)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.ExecutionPlanBuilder.build(ExecutionPlanBuilder.scala:106)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler$$anonfun$5.apply(CypherCompiler.scala:178)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler$$anonfun$5.apply(CypherCompiler.scala:178)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1$$anonfun$apply$1.apply(CacheAccessor.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor$$anonfun$1.apply(CacheAccessor.scala:57)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache$$anon$1.apply(LFUCache.scala:31)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$16(BoundedLocalCache.java:1973)
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1892)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:1971)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:1954)
+	at com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:113)
+	at com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:54)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.getOrElseUpdate(LFUCache.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.apply(LFUCache.scala:48)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor.getOrElseUpdate(CacheAccessor.scala:55)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1.apply(CacheAccessor.scala:34)
+	at scala.collection.Iterator$$anon$9.next(Iterator.scala:162)
+	at scala.collection.Iterator$$anon$12.nextCur(Iterator.scala:434)
+	at scala.collection.Iterator$$anon$12.hasNext(Iterator.scala:440)
+	at scala.collection.Iterator$$anon$12.next(Iterator.scala:444)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache.getOrElseUpdate(CacheAccessor.scala:46)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler.planPreparedQuery(CypherCompiler.scala:176)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3$$anonfun$plan$1.apply(CompatibilityFor3_1.scala:248)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3$$anonfun$plan$1.apply(CompatibilityFor3_1.scala:245)
+	at org.neo4j.cypher.internal.compatibility.exceptionHandlerFor3_1$runSafely$.apply(CompatibilityFor3_1.scala:192)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3.plan(CompatibilityFor3_1.scala:245)
+	at org.neo4j.cypher.internal.ExecutionEngine.org$neo4j$cypher$internal$ExecutionEngine$$producePlan$1(ExecutionEngine.scala:167)
+	at org.neo4j.cypher.internal.ExecutionEngine$$anonfun$liftedTree1$1$1.apply(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.ExecutionEngine$$anonfun$liftedTree1$1$1.apply(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1$$anonfun$apply$1.apply(CacheAccessor.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor$$anonfun$1.apply(CacheAccessor.scala:57)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache$$anon$1.apply(LFUCache.scala:31)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$16(BoundedLocalCache.java:1973)
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1853)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:1971)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:1954)
+	at com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:113)
+	at com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:54)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.getOrElseUpdate(LFUCache.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.apply(LFUCache.scala:48)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor.getOrElseUpdate(CacheAccessor.scala:55)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1.apply(CacheAccessor.scala:34)
+	at scala.collection.Iterator$$anon$9.next(Iterator.scala:162)
+	at scala.collection.Iterator$$anon$12.nextCur(Iterator.scala:434)
+	at scala.collection.Iterator$$anon$12.hasNext(Iterator.scala:440)
+	at scala.collection.Iterator$$anon$12.next(Iterator.scala:444)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache.getOrElseUpdate(CacheAccessor.scala:46)
+	at org.neo4j.cypher.internal.ExecutionEngine.liftedTree1$1(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.ExecutionEngine.planQuery(ExecutionEngine.scala:156)
+	at org.neo4j.cypher.internal.ExecutionEngine.execute(ExecutionEngine.scala:106)
+	at org.neo4j.cypher.internal.javacompat.ExecutionEngine.executeQuery(ExecutionEngine.java:59)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachineSPI$1.start(TransactionStateMachineSPI.java:135)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachine$State$1.run(TransactionStateMachine.java:187)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachine.run(TransactionStateMachine.java:77)
+	at org.neo4j.bolt.v1.runtime.BoltStateMachine$State$2.run(BoltStateMachine.java:396)
+	at org.neo4j.bolt.v1.runtime.BoltStateMachine.run(BoltStateMachine.java:196)
+	at org.neo4j.bolt.v1.messaging.BoltMessageRouter.lambda$onRun$3(BoltMessageRouter.java:80)
+	at org.neo4j.bolt.v1.runtime.concurrent.RunnableBoltWorker.execute(RunnableBoltWorker.java:135)
+	at org.neo4j.bolt.v1.runtime.concurrent.RunnableBoltWorker.run(RunnableBoltWorker.java:89)
+	at java.lang.Thread.run(Thread.java:748)
+2017-09-09 13:52:34.870+0000 ERROR [o.n.b.v.r.ErrorReporter] Client triggered an unexpected error [UnknownError]: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation). See debug.log for more details, reference 82c72122-8470-4ce4-8ac5-b1a1277fdc71.
+2017-09-09 13:52:34.870+0000 ERROR [o.n.b.v.r.ErrorReporter] Client triggered an unexpected error [UnknownError]: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation), reference 82c72122-8470-4ce4-8ac5-b1a1277fdc71. FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation)
+scala.MatchError: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.org$neo4j$cypher$internal$compiler$v3_1$planner$UpdateGraph$$findVariableInNestedStructure(UpdateGraph.scala:78)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$$anonfun$identifiersToDelete$1.apply(UpdateGraph.scala:74)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$$anonfun$identifiersToDelete$1.apply(UpdateGraph.scala:68)
+	at scala.collection.TraversableLike$$anonfun$flatMap$1.apply(TraversableLike.scala:241)
+	at scala.collection.TraversableLike$$anonfun$flatMap$1.apply(TraversableLike.scala:241)
+	at scala.collection.immutable.List.foreach(List.scala:381)
+	at scala.collection.TraversableLike$class.flatMap(TraversableLike.scala:241)
+	at scala.collection.immutable.List.flatMap(List.scala:344)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.identifiersToDelete(UpdateGraph.scala:68)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.QueryGraph.identifiersToDelete(QueryGraph.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.deleteOverlap(UpdateGraph.scala:288)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.QueryGraph.deleteOverlap(QueryGraph.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.headConflicts(Eagerness.scala:59)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.readWriteConflictInHead(Eagerness.scala:47)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.headReadWriteEagerize(Eagerness.scala:82)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanUpdates$.apply(PlanUpdates.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanUpdates$.apply(PlanUpdates.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanSingleQuery.apply(PlanSingleQuery.scala:41)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanSingleQuery.apply(PlanSingleQuery.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner$$anonfun$2.apply(QueryPlanner.scala:51)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner$$anonfun$2.apply(QueryPlanner.scala:51)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:234)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:234)
+	at scala.collection.immutable.List.foreach(List.scala:381)
+	at scala.collection.TraversableLike$class.map(TraversableLike.scala:234)
+	at scala.collection.immutable.List.map(List.scala:285)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner.planQueries(QueryPlanner.scala:51)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner.plan(QueryPlanner.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder.produceLogicalPlan(CostBasedExecutablePlanBuilder.scala:97)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder$$anonfun$1.apply(CostBasedExecutablePlanBuilder.scala:71)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder$$anonfun$1.apply(CostBasedExecutablePlanBuilder.scala:71)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$$anonfun$closing$1.apply(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$$anonfun$closing$1.apply(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$.using(package.scala:37)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$.closing(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder.producePlan(CostBasedExecutablePlanBuilder.scala:70)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.procs.DelegatingProcedureExecutablePlanBuilder.producePlan(DelegatingProcedureExecutablePlanBuilder.scala:98)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.FallbackBuilder$class.producePlan(SilentFallbackPlanBuilder.scala:37)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.SilentFallbackPlanBuilder.producePlan(SilentFallbackPlanBuilder.scala:56)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.ExecutionPlanBuilder.build(ExecutionPlanBuilder.scala:106)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler$$anonfun$5.apply(CypherCompiler.scala:178)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler$$anonfun$5.apply(CypherCompiler.scala:178)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1$$anonfun$apply$1.apply(CacheAccessor.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor$$anonfun$1.apply(CacheAccessor.scala:57)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache$$anon$1.apply(LFUCache.scala:31)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$16(BoundedLocalCache.java:1973)
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1892)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:1971)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:1954)
+	at com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:113)
+	at com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:54)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.getOrElseUpdate(LFUCache.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.apply(LFUCache.scala:48)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor.getOrElseUpdate(CacheAccessor.scala:55)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1.apply(CacheAccessor.scala:34)
+	at scala.collection.Iterator$$anon$9.next(Iterator.scala:162)
+	at scala.collection.Iterator$$anon$12.nextCur(Iterator.scala:434)
+	at scala.collection.Iterator$$anon$12.hasNext(Iterator.scala:440)
+	at scala.collection.Iterator$$anon$12.next(Iterator.scala:444)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache.getOrElseUpdate(CacheAccessor.scala:46)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler.planPreparedQuery(CypherCompiler.scala:176)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3$$anonfun$plan$1.apply(CompatibilityFor3_1.scala:248)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3$$anonfun$plan$1.apply(CompatibilityFor3_1.scala:245)
+	at org.neo4j.cypher.internal.compatibility.exceptionHandlerFor3_1$runSafely$.apply(CompatibilityFor3_1.scala:192)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3.plan(CompatibilityFor3_1.scala:245)
+	at org.neo4j.cypher.internal.ExecutionEngine.org$neo4j$cypher$internal$ExecutionEngine$$producePlan$1(ExecutionEngine.scala:167)
+	at org.neo4j.cypher.internal.ExecutionEngine$$anonfun$liftedTree1$1$1.apply(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.ExecutionEngine$$anonfun$liftedTree1$1$1.apply(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1$$anonfun$apply$1.apply(CacheAccessor.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor$$anonfun$1.apply(CacheAccessor.scala:57)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache$$anon$1.apply(LFUCache.scala:31)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$16(BoundedLocalCache.java:1973)
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1853)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:1971)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:1954)
+	at com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:113)
+	at com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:54)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.getOrElseUpdate(LFUCache.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.apply(LFUCache.scala:48)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor.getOrElseUpdate(CacheAccessor.scala:55)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1.apply(CacheAccessor.scala:34)
+	at scala.collection.Iterator$$anon$9.next(Iterator.scala:162)
+	at scala.collection.Iterator$$anon$12.nextCur(Iterator.scala:434)
+	at scala.collection.Iterator$$anon$12.hasNext(Iterator.scala:440)
+	at scala.collection.Iterator$$anon$12.next(Iterator.scala:444)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache.getOrElseUpdate(CacheAccessor.scala:46)
+	at org.neo4j.cypher.internal.ExecutionEngine.liftedTree1$1(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.ExecutionEngine.planQuery(ExecutionEngine.scala:156)
+	at org.neo4j.cypher.internal.ExecutionEngine.execute(ExecutionEngine.scala:106)
+	at org.neo4j.cypher.internal.javacompat.ExecutionEngine.executeQuery(ExecutionEngine.java:59)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachineSPI$1.start(TransactionStateMachineSPI.java:135)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachine$State$1.run(TransactionStateMachine.java:187)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachine.run(TransactionStateMachine.java:77)
+	at org.neo4j.bolt.v1.runtime.BoltStateMachine$State$2.run(BoltStateMachine.java:396)
+	at org.neo4j.bolt.v1.runtime.BoltStateMachine.run(BoltStateMachine.java:196)
+	at org.neo4j.bolt.v1.messaging.BoltMessageRouter.lambda$onRun$3(BoltMessageRouter.java:80)
+	at org.neo4j.bolt.v1.runtime.concurrent.RunnableBoltWorker.execute(RunnableBoltWorker.java:135)
+	at org.neo4j.bolt.v1.runtime.concurrent.RunnableBoltWorker.run(RunnableBoltWorker.java:89)
+	at java.lang.Thread.run(Thread.java:748)
+2017-09-09 13:52:40.025+0000 ERROR [o.n.b.v.r.ErrorReporter] Client triggered an unexpected error [UnknownError]: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation). See debug.log for more details, reference 8578e25c-79ac-4b0e-a7a9-67262653f741.
+2017-09-09 13:52:40.025+0000 ERROR [o.n.b.v.r.ErrorReporter] Client triggered an unexpected error [UnknownError]: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation), reference 8578e25c-79ac-4b0e-a7a9-67262653f741. FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation)
+scala.MatchError: FunctionInvocation(Namespace(List()),FunctionName(head),false,Vector(Property(Variable(b),PropertyKeyName(course_wait_recall)))) (of class org.neo4j.cypher.internal.frontend.v3_1.ast.FunctionInvocation)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.org$neo4j$cypher$internal$compiler$v3_1$planner$UpdateGraph$$findVariableInNestedStructure(UpdateGraph.scala:78)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$$anonfun$identifiersToDelete$1.apply(UpdateGraph.scala:74)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$$anonfun$identifiersToDelete$1.apply(UpdateGraph.scala:68)
+	at scala.collection.TraversableLike$$anonfun$flatMap$1.apply(TraversableLike.scala:241)
+	at scala.collection.TraversableLike$$anonfun$flatMap$1.apply(TraversableLike.scala:241)
+	at scala.collection.immutable.List.foreach(List.scala:381)
+	at scala.collection.TraversableLike$class.flatMap(TraversableLike.scala:241)
+	at scala.collection.immutable.List.flatMap(List.scala:344)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.identifiersToDelete(UpdateGraph.scala:68)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.QueryGraph.identifiersToDelete(QueryGraph.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.UpdateGraph$class.deleteOverlap(UpdateGraph.scala:288)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.QueryGraph.deleteOverlap(QueryGraph.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.headConflicts(Eagerness.scala:59)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.readWriteConflictInHead(Eagerness.scala:47)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.Eagerness$.headReadWriteEagerize(Eagerness.scala:82)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanUpdates$.apply(PlanUpdates.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanUpdates$.apply(PlanUpdates.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanSingleQuery.apply(PlanSingleQuery.scala:41)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.PlanSingleQuery.apply(PlanSingleQuery.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner$$anonfun$2.apply(QueryPlanner.scala:51)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner$$anonfun$2.apply(QueryPlanner.scala:51)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:234)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:234)
+	at scala.collection.immutable.List.foreach(List.scala:381)
+	at scala.collection.TraversableLike$class.map(TraversableLike.scala:234)
+	at scala.collection.immutable.List.map(List.scala:285)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner.planQueries(QueryPlanner.scala:51)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.logical.DefaultQueryPlanner.plan(QueryPlanner.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder.produceLogicalPlan(CostBasedExecutablePlanBuilder.scala:97)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder$$anonfun$1.apply(CostBasedExecutablePlanBuilder.scala:71)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder$$anonfun$1.apply(CostBasedExecutablePlanBuilder.scala:71)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$$anonfun$closing$1.apply(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$$anonfun$closing$1.apply(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$.using(package.scala:37)
+	at org.neo4j.cypher.internal.compiler.v3_1.helpers.package$.closing(package.scala:29)
+	at org.neo4j.cypher.internal.compiler.v3_1.planner.CostBasedExecutablePlanBuilder.producePlan(CostBasedExecutablePlanBuilder.scala:70)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.procs.DelegatingProcedureExecutablePlanBuilder.producePlan(DelegatingProcedureExecutablePlanBuilder.scala:98)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.FallbackBuilder$class.producePlan(SilentFallbackPlanBuilder.scala:37)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.SilentFallbackPlanBuilder.producePlan(SilentFallbackPlanBuilder.scala:56)
+	at org.neo4j.cypher.internal.compiler.v3_1.executionplan.ExecutionPlanBuilder.build(ExecutionPlanBuilder.scala:106)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler$$anonfun$5.apply(CypherCompiler.scala:178)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler$$anonfun$5.apply(CypherCompiler.scala:178)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1$$anonfun$apply$1.apply(CacheAccessor.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor$$anonfun$1.apply(CacheAccessor.scala:57)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache$$anon$1.apply(LFUCache.scala:31)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$16(BoundedLocalCache.java:1973)
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1892)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:1971)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:1954)
+	at com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:113)
+	at com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:54)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.getOrElseUpdate(LFUCache.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.apply(LFUCache.scala:48)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor.getOrElseUpdate(CacheAccessor.scala:55)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1.apply(CacheAccessor.scala:34)
+	at scala.collection.Iterator$$anon$9.next(Iterator.scala:162)
+	at scala.collection.Iterator$$anon$12.nextCur(Iterator.scala:434)
+	at scala.collection.Iterator$$anon$12.hasNext(Iterator.scala:440)
+	at scala.collection.Iterator$$anon$12.next(Iterator.scala:444)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache.getOrElseUpdate(CacheAccessor.scala:46)
+	at org.neo4j.cypher.internal.compiler.v3_1.CypherCompiler.planPreparedQuery(CypherCompiler.scala:176)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3$$anonfun$plan$1.apply(CompatibilityFor3_1.scala:248)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3$$anonfun$plan$1.apply(CompatibilityFor3_1.scala:245)
+	at org.neo4j.cypher.internal.compatibility.exceptionHandlerFor3_1$runSafely$.apply(CompatibilityFor3_1.scala:192)
+	at org.neo4j.cypher.internal.compatibility.CompatibilityFor3_1$$anon$3.plan(CompatibilityFor3_1.scala:245)
+	at org.neo4j.cypher.internal.ExecutionEngine.org$neo4j$cypher$internal$ExecutionEngine$$producePlan$1(ExecutionEngine.scala:167)
+	at org.neo4j.cypher.internal.ExecutionEngine$$anonfun$liftedTree1$1$1.apply(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.ExecutionEngine$$anonfun$liftedTree1$1$1.apply(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1$$anonfun$apply$1.apply(CacheAccessor.scala:36)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor$$anonfun$1.apply(CacheAccessor.scala:57)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache$$anon$1.apply(LFUCache.scala:31)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$16(BoundedLocalCache.java:1973)
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1853)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:1971)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:1954)
+	at com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:113)
+	at com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:54)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.getOrElseUpdate(LFUCache.scala:30)
+	at org.neo4j.cypher.internal.compiler.v3_1.LFUCache.apply(LFUCache.scala:48)
+	at org.neo4j.cypher.internal.compiler.v3_1.MonitoringCacheAccessor.getOrElseUpdate(CacheAccessor.scala:55)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache$$anonfun$getOrElseUpdate$1.apply(CacheAccessor.scala:34)
+	at scala.collection.Iterator$$anon$9.next(Iterator.scala:162)
+	at scala.collection.Iterator$$anon$12.nextCur(Iterator.scala:434)
+	at scala.collection.Iterator$$anon$12.hasNext(Iterator.scala:440)
+	at scala.collection.Iterator$$anon$12.next(Iterator.scala:444)
+	at org.neo4j.cypher.internal.compiler.v3_1.QueryCache.getOrElseUpdate(CacheAccessor.scala:46)
+	at org.neo4j.cypher.internal.ExecutionEngine.liftedTree1$1(ExecutionEngine.scala:170)
+	at org.neo4j.cypher.internal.ExecutionEngine.planQuery(ExecutionEngine.scala:156)
+	at org.neo4j.cypher.internal.ExecutionEngine.execute(ExecutionEngine.scala:106)
+	at org.neo4j.cypher.internal.javacompat.ExecutionEngine.executeQuery(ExecutionEngine.java:59)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachineSPI$1.start(TransactionStateMachineSPI.java:135)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachine$State$1.run(TransactionStateMachine.java:187)
+	at org.neo4j.bolt.v1.runtime.TransactionStateMachine.run(TransactionStateMachine.java:77)
+	at org.neo4j.bolt.v1.runtime.BoltStateMachine$State$2.run(BoltStateMachine.java:396)
+	at org.neo4j.bolt.v1.runtime.BoltStateMachine.run(BoltStateMachine.java:196)
+	at org.neo4j.bolt.v1.messaging.BoltMessageRouter.lambda$onRun$3(BoltMessageRouter.java:80)
+	at org.neo4j.bolt.v1.runtime.concurrent.RunnableBoltWorker.execute(RunnableBoltWorker.java:135)
+	at org.neo4j.bolt.v1.runtime.concurrent.RunnableBoltWorker.run(RunnableBoltWorker.java:89)
+	at java.lang.Thread.run(Thread.java:748)
+2017-09-09 14:05:55.718+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [725]:  Starting check pointing...
+2017-09-09 14:05:55.718+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [725]:  Starting store flush...
+2017-09-09 14:05:55.736+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 725 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-09 14:05:55.738+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 725 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-09 14:05:55.746+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [725]:  Store flush completed
+2017-09-09 14:05:55.746+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [725]:  Starting appending check point entry into the tx log...
+2017-09-09 14:05:55.748+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [725]:  Appending check point entry into the tx log completed
+2017-09-09 14:05:55.748+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [725]:  Check pointing completed
+2017-09-09 14:05:55.748+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-09 14:05:55.748+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-09 14:10:55.753+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [729]:  Starting check pointing...
+2017-09-09 14:10:55.754+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [729]:  Starting store flush...
+2017-09-09 14:10:55.767+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 729 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-09 14:10:55.768+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 729 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-09 14:10:55.775+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [729]:  Store flush completed
+2017-09-09 14:10:55.775+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [729]:  Starting appending check point entry into the tx log...
+2017-09-09 14:10:55.777+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [729]:  Appending check point entry into the tx log completed
+2017-09-09 14:10:55.777+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [729]:  Check pointing completed
+2017-09-09 14:10:55.777+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-09 14:10:55.777+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-09 14:37:15.804+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [730]:  Starting check pointing...
+2017-09-09 14:37:15.804+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [730]:  Starting store flush...
+2017-09-09 14:37:15.822+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 730 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-09 14:37:15.823+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 730 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-09 14:37:15.830+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [730]:  Store flush completed
+2017-09-09 14:37:15.830+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [730]:  Starting appending check point entry into the tx log...
+2017-09-09 14:37:15.832+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [730]:  Appending check point entry into the tx log completed
+2017-09-09 14:37:15.832+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [730]:  Check pointing completed
+2017-09-09 14:37:15.832+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-09 14:37:15.832+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-09 14:42:15.837+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [732]:  Starting check pointing...
+2017-09-09 14:42:15.837+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [732]:  Starting store flush...
+2017-09-09 14:42:15.855+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 732 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-09 14:42:15.857+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 732 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-09 14:42:15.864+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [732]:  Store flush completed
+2017-09-09 14:42:15.864+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [732]:  Starting appending check point entry into the tx log...
+2017-09-09 14:42:15.866+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [732]:  Appending check point entry into the tx log completed
+2017-09-09 14:42:15.866+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [732]:  Check pointing completed
+2017-09-09 14:42:15.866+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-09 14:42:15.866+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-09 14:47:15.885+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [738]:  Starting check pointing...
+2017-09-09 14:47:15.885+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [738]:  Starting store flush...
+2017-09-09 14:47:15.901+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 738 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-09 14:47:15.902+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 738 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-09 14:47:15.908+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [738]:  Store flush completed
+2017-09-09 14:47:15.908+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [738]:  Starting appending check point entry into the tx log...
+2017-09-09 14:47:15.910+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [738]:  Appending check point entry into the tx log completed
+2017-09-09 14:47:15.910+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [738]:  Check pointing completed
+2017-09-09 14:47:15.910+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-09 14:47:15.910+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-09 15:07:45.924+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [739]:  Starting check pointing...
+2017-09-09 15:07:45.924+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [739]:  Starting store flush...
+2017-09-09 15:07:45.940+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 739 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-09 15:07:45.942+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 739 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-09 15:07:45.949+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [739]:  Store flush completed
+2017-09-09 15:07:45.949+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [739]:  Starting appending check point entry into the tx log...
+2017-09-09 15:07:45.952+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [739]:  Appending check point entry into the tx log completed
+2017-09-09 15:07:45.952+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [739]:  Check pointing completed
+2017-09-09 15:07:45.952+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-09 15:07:45.952+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-09 15:12:45.957+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [740]:  Starting check pointing...
+2017-09-09 15:12:45.957+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [740]:  Starting store flush...
+2017-09-09 15:12:45.967+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 740 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-09 15:12:45.968+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 740 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-09 15:12:45.976+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [740]:  Store flush completed
+2017-09-09 15:12:45.976+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [740]:  Starting appending check point entry into the tx log...
+2017-09-09 15:12:45.978+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [740]:  Appending check point entry into the tx log completed
+2017-09-09 15:12:45.979+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [740]:  Check pointing completed
+2017-09-09 15:12:45.979+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-09 15:12:45.979+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.

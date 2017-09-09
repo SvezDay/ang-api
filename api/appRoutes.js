@@ -45,6 +45,7 @@ module.exports = ()=>{
       .post('/new_result', game.new_result)
       .get('/game_timer', game.game_timer)
       // .post('/game_timer_all_course', game.game_timer_all_course)
+      .get('/course_wait_recall', game.course_wait_recall)
 
 //    .get('/users', user.getAll)
 //    .get('/users/:id', user.getOne)

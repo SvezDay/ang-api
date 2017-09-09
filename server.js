@@ -66,8 +66,10 @@ console.log('API server started on: localhost:' + port);
 const jwt = require('jsonwebtoken');
 const apoc = require('apoc');
 const neo4j = require('neo4j-driver').v1;
-const secret = require('./config/tokenSecret').secret;
+// const secret = require('./config/tokenSecret').secret;
+
 let parser = require('./api/services/parser');
+let tokenGen = require('./api/services/token').generate;
 const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
 const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
 const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
@@ -78,47 +80,34 @@ const schemaObj = require('./api/models/schema');
 
 app.post('/test', function(req, res){
   let user_id = 181;
-  let _ = {
-    value: 'Test of course creation',
-    schema: 'DefProExpMeExSo'
-  };
-  let today = new Date().getTime();
   let session = driver.session();
-  let q_1 = q1_1 = q1_2 = q_2 = '';
+  let _ = req.body;
+  let today = new Date().getTime();
 
-
-  schemaObj.getSchemaObj(_.schema)
-  .then( schema =>{
-//First part create the node
-    q_1_1 = `
-      match (a:Account) where id(a) = ${user_id}
-      create (n:Container:Course{value:'${_.value}', schema:'${_.schema}'})
-    `;
-//Second part create the relationships
-    q_1_2 = `create (a)-[:Linked]->(n)`;
-    for (let x of schema) {
-      q_1_1 += ` create (p${x}:Property:${x}{value:''})`;
-      q_1_2 += `-[:Linked]->(p${x})`
-    };
-    q_1 = `${q_1_1} ${q_1_2} return {id:id(n), value:n.value}`;
-    return;
-  }).then(()=>{
-    return session.readTransaction(tx => tx.run(q_1, {}))
-  }).then( data => {
-// return parser.dataMapper(data);
-    return parser.dataMapper(data);;
-  }).then( data => {
-    let token = jwt.sign({
-       exp: Math.floor(Date.now() / 1000) + (60 * 60), // expiration in 1 hour
-       user_id:user_id
-    },secret);
+  let query = `
+    match (a:Account)-[]->(b:Board_Activity)
+    where id(a) = ${user_id}
+    with b, b.course_wait_recall as list, count(b.course_wait_recall) as nb
+    call apoc.do.when(
+      nb >= 1,
+      "match (c:Container) where id(c) in list
+       return {id:id(c), value:c.value, schema: c.schema, label:labels(c)}",
+      "return {message: 'No course wait for !'}",
+    {list:list, nb:nb}) yield value
+    return value
+  `;
+  session
+  .readTransaction(tx => tx.run(query, {}))
+  .then( data => { return parser.dataMapper(data); })
+  .then( data => {
     res.status(200).json({
-      token:token,
-      id: data.id.low,
-      value: data.value
+      token: tokenGen(user_id),
+      data: data
     });
-  }).catch(()=>{
-    res.status(404).json({message:"ERROR on /api/create_course"});
+  })
+  .catch( error => {
+    console.log(error);
+    res.status(400).json({message: 'Error on the /api/course_wait_recall'})
   });
 
 });
