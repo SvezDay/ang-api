@@ -11,16 +11,22 @@ Example             |0               |0               |0                  |0    
 Solution            |0               |0               |0                  |0                |1                |0                |
 
 */
-const label = [
-  {course: []}
-];
+const labelRecallableTargetList = {
+  Course: ['Definition', 'Property_Theorem', 'Method'],
+  Definition: ['Course', 'Property_Theorem', 'Method'],
+  Property_Theorem: ['Course', 'Definition', 'Method'],
+  Method: ['Course', 'Definition', 'Property_Theorem'],
+  Example: ['Solution'],
+  Solution: []
+};
 
 const objList = {
-  DefProExpMeExSo:['Definition', 'Property_Theorem', 'Property_Theoem_Explanation', 'Method', 'Example', 'Solution'],
+  DefProExpMeExSo:['Definition', 'Property_Theorem', 'Method', 'Example', 'Solution'],
   MeExSo: ['Method', 'Example', 'Solution'],
   EnFr:['English', 'French'],
   Exp:['Explanation']
 };
+
 
 module.exports.getSchemaObj = (type)=>{
   return new Promise((resolve, reject)=>{
@@ -32,7 +38,6 @@ module.exports.getSchemaObj = (type)=>{
     };
     reject();
   });
-
 };
 
 module.exports.getAll = ()=>{
@@ -41,3 +46,8 @@ module.exports.getAll = ()=>{
     resolve(objList);
   })
 }
+
+
+module.exports.labelRecallableTargetList = ()=>{
+  return labelRecallableTargetList;
+};

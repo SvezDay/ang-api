@@ -7,6 +7,7 @@ const neo4j = require('neo4j-driver').v1;
 const secret = require('../../config/tokenSecret').secret;
 let tokenGen = require('../services/token').generate;
 let parser = require('../services/parser');
+let schema = require('../models/schema');
 
 const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
 const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
@@ -52,7 +53,7 @@ module.exports.game_timer = (req, res, next)=>{
     let queryTwo = '';
 
     queryOne = `
-       match (a:Account)-[:Linked]->(r:RecallMemory)
+       match (a:Account)-[:Linked]->(r:Recall_Memory)
        where id(a) = ${user_id} and r.nextDate <= ${today}
        return
           case
@@ -108,10 +109,39 @@ module.exports.game_timer = (req, res, next)=>{
     });
 
 };
+
+
 module.exports.get_all_course = (req, res, next)=>{
   res.status(200).json({message:"come from server"});
 };
+
+
 module.exports.new_result = (req, res, next)=>{
   // console.log(req)
   res.status(200).json({message:'test of new_result is done', data: req.body});
+};
+
+
+module.exports.toggle_out_from_recallable = (req, res, next)=>{
+  res.json({});
+};
+module.exports.toggle_in_to_recallable = (req, res, next)=>{
+  let user_id = req.decoded.user_id;
+  let session = driver.session();
+  let _ = req.body;
+
+  let query = `
+  match (a)-[:Linked*]->(c:Course)
+  where id(a)=${user_id} and id(c)=${_.id}
+  `;
+
+
+  session.readTransaction(tx=>tx.run(query))
+  .then(()=>{ res.status(200).json({token:tokenGen(user_id), message:'Done !'})})
+  .catch( error => {
+      res.status(403).json({
+        error:error,
+        message: 'ERROR on game toggle_out_from_recallable'
+    });
+  });
 };

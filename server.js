@@ -70,6 +70,7 @@ const neo4j = require('neo4j-driver').v1;
 
 let parser = require('./api/services/parser');
 let tokenGen = require('./api/services/token').generate;
+let schema = require('./api/models/schema');
 const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
 const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
 const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
@@ -83,31 +84,80 @@ app.post('/test', function(req, res){
   let session = driver.session();
   let _ = req.body;
   let today = new Date().getTime();
+  let recallList = [];
+  let recallTarget = schema.labelRecallableTargetList();
 
-  let query = `
-    match (a:Account)-[]->(b:Board_Activity)
-    where id(a) = ${user_id}
-    with b, b.course_wait_recall as list, count(b.course_wait_recall) as nb
-    call apoc.do.when(
-      nb >= 1,
-      "match (c:Container) where id(c) in list
-       return {id:id(c), value:c.value, schema: c.schema, label:labels(c)}",
-      "return {message: 'No course wait for !'}",
-    {list:list, nb:nb}) yield value
-    return value
+  let query1 = `
+  match (a)-[:Linked*]->(c:Course)-[ll:Linked*]->(pp:Property)
+    where id(a)=${user_id} and id(c)=${_.id}
+    with a, c,
+    	extract( p in  collect(pp) |
+      	{label: filter(l in labels(p) where l <> 'Property')[0], id:id(p)}
+      ) as newList
+    return newList
   `;
-  session
-  .readTransaction(tx => tx.run(query, {}))
+  let query2First = `
+  match (a:Account) where id(a)=${user_id}
+  `;
+  let query2Last = ``;
+  // For each property of the schema found, the second iteration allow to
+  // select the property whose match for create the list of the recallable relations
+  let mapper = (nodeList)=>{
+    // console.log('==============================================================')
+    // console.log('==============================================================')
+    console.log('==============================================================')
+    console.log(nodeList)
+    nodeList.map( p => {
+
+      recallTarget[`${p.label}`].map( l => {
+        // console.log('==============================================================')
+        // console.log('l', l);
+        if(nodeList.includes(`${l}`)){
+          // console.log('check')
+          query2One += ` create (r${p.id}${l.id}:Recallable_Memeory:c${_.id}{
+            level:1, nextDate: ${today}, startNode: ${p.id}, endNode: ${l.id}
+          })`;
+          query2last += `create (a)-[:Linked]->(r${p.id}${l.id})`;
+        };
+      });
+    });
+  };
+
+  session.readTransaction(tx=>tx.run(query1))
   .then( data => { return parser.dataMapper(data); })
   .then( data => {
-    res.status(200).json({
-      token: tokenGen(user_id),
-      data: data
-    });
+    recallList = mapper(data);
+    // console.log(recallList);
+    return;
   })
+  .then(()=>{ res.status(200).json({token:tokenGen(user_id), message:'Done !'})})
   .catch( error => {
     console.log(error);
-    res.status(400).json({message: 'Error on the /api/course_wait_recall'})
+      res.status(403).json({
+        error:error,
+        message: 'ERROR on game toggle_out_from_recallable'
+    });
+  });
+
+});
+
+app.post('/me', function(req, res){
+  let user_id = 181;
+  let session = driver.session();
+
+  let query1 = `
+  match (a:Course) return collect(a)
+  `;
+
+  session.readTransaction(tx=>tx.run(query1))
+  // .then( data => { return parser.dataMapper(data); })
+  .then((data)=>{ res.status(200).json({token:tokenGen(user_id), data:data})})
+  .catch( error => {
+    console.log(error);
+      res.status(403).json({
+        error:error,
+        message: 'ERROR on game toggle_out_from_recallable'
+    });
   });
 
 });

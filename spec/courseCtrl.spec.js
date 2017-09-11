@@ -4,7 +4,7 @@ const base_url = 'http://localhost:3200';
 const jwt = require('jsonwebtoken');
 const secret = require('../config/tokenSecret').secret;
 
-describe('File: Course Controller :: ', ()=>{
+xdescribe('File: Course Controller :: ', ()=>{
 
    /*
    Using the following userTest
