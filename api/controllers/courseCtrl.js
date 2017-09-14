@@ -42,23 +42,39 @@ module.exports.create_course = (req, res, next)=>{
     q_2 = `
       match (a:Account)-[]->(b:Board_Activity) where id(a)= $user_id
       set b.course_wait_recall = b.course_wait_recall + $course_id
+      return b
     `;
     return;
-  }).then(()=>{
+  })
+  .then(()=>{
     return session.readTransaction(tx => tx.run(q_1, {}))
-  }).then( data => {
-    return parser.dataMapper(data);
-  }).then( data => {
-    course.id = data.id.low;
-    course.value = data.value
+  })
+  .then( data => {
+    return data.records.map( x => {
+      let f = x._fields[0];
+      if(f.id && f.id.low){
+        f.id = f.id.low;
+      }else if (f.identity) {
+        f.id = f.identity.low;
+        delete f.identity
+      };
+      return f
+    });
+  })
+  .then( data => {
+    course.id = data[0].id;
+    course.value = data[0].value
     return session.readTransaction(tx => tx.run(q_2, {user_id:user_id, course_id:course.id}))
-  }).then( () => {
+  })
+  .then( (data) => {
+    console.log(data)
     res.status(200).json({
       token:tokenGen(user_id),
       id: course.id,
       value: course.value
     });
-  }).catch( error =>{
+  })
+  .catch( error =>{
     console.log(error);
     res.status(404).json({message:"ERROR on /api/create_course"});
   });

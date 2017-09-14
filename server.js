@@ -76,88 +76,186 @@ const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
 const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
 const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, graphenedbPass));
 
-const schemaObj = require('./api/models/schema');
+const schemas = require('./api/models/schema');
 
 
 app.post('/test', function(req, res){
   let user_id = 181;
-  let session = driver.session();
-  let _ = req.body;
+  let _ = {id: 255, schema: 'DefProExpMeExSo', value: 'Test creation from server.js'};
+
   let today = new Date().getTime();
-  let recallList = [];
-  let recallTarget = schema.labelRecallableTargetList();
+  let session = driver.session();
+  let q_1 = q1_1 = q1_2 = q_2 = '';
+  let course = {};
 
-  let query1 = `
-  match (a)-[:Linked*]->(c:Course)-[ll:Linked*]->(pp:Property)
-    where id(a)=${user_id} and id(c)=${_.id}
-    with a, c,
-    	extract( p in  collect(pp) |
-      	{label: filter(l in labels(p) where l <> 'Property')[0], id:id(p)}
-      ) as newList
-    return newList
-  `;
-  let query2First = `
-  match (a:Account) where id(a)=${user_id}
-  `;
-  let query2Last = ``;
-  // For each property of the schema found, the second iteration allow to
-  // select the property whose match for create the list of the recallable relations
-  let mapper = (nodeList)=>{
-    // console.log('==============================================================')
-    // console.log('==============================================================')
-    console.log('==============================================================')
-    console.log(nodeList)
-    nodeList.map( p => {
 
-      recallTarget[`${p.label}`].map( l => {
-        // console.log('==============================================================')
-        // console.log('l', l);
-        if(nodeList.includes(`${l}`)){
-          // console.log('check')
-          query2One += ` create (r${p.id}${l.id}:Recallable_Memeory:c${_.id}{
-            level:1, nextDate: ${today}, startNode: ${p.id}, endNode: ${l.id}
-          })`;
-          query2last += `create (a)-[:Linked]->(r${p.id}${l.id})`;
-        };
-      });
-    });
-  };
-
-  session.readTransaction(tx=>tx.run(query1))
-  .then( data => { return parser.dataMapper(data); })
-  .then( data => {
-    recallList = mapper(data);
-    // console.log(recallList);
+  schemas.getSchemaObj(_.schema)
+  .then( schema =>{
+//First part create the node
+    q_1_1 = `
+      match (a:Account) where id(a) = ${user_id}
+      create (c:Container:Course{value:'${_.value}', schema:'${_.schema}'})
+    `;
+//Second part create the relationships
+    q_1_2 = `create (a)-[:Linked]->(c)`;
+    for (let x of schema) {
+      q_1_1 += ` create (p${x}:Property:${x}{value:''})`;
+      q_1_2 += `-[:Linked]->(p${x})`
+    };
+    q_1 = `${q_1_1} ${q_1_2} return {id:id(c), value:c.value}`;
+    q_2 = `
+      match (a:Account)-[]->(b:Board_Activity) where id(a)= $user_id
+      set b.course_wait_recall = b.course_wait_recall + $course_id
+      return b
+    `;
     return;
   })
-  .then(()=>{ res.status(200).json({token:tokenGen(user_id), message:'Done !'})})
-  .catch( error => {
-    console.log(error);
-      res.status(403).json({
-        error:error,
-        message: 'ERROR on game toggle_out_from_recallable'
+  .then(()=>{
+    return session.readTransaction(tx => tx.run(q_1, {}))
+  })
+  // .then( data => {
+  //   return parser.dataMapper(data);
+  // })
+  .then( data => {
+    return data.records.map( x => {
+      let f = x._fields[0];
+      if(f.id && f.id.low){
+        f.id = f.id.low;
+      }else if (f.identity) {
+        f.id = f.identity.low;
+        delete f.identity
+      };
+      return f
     });
-  });
+  })
+  .then( data => {
+    course.id = data[0].id;
+    course.value = data[0].value
+    return session.readTransaction(tx => tx.run(q_2, {user_id:user_id, course_id:course.id}))
+  })
+  .then( data => {res.json({data: data})})
+  // .then( (data) => {
+  //   console.log(data)
+  //   res.status(200).json({
+  //     token:tokenGen(user_id),
+  //     id: course.id,
+  //     value: course.value
+  //   });
+  // })
+  // .catch( error =>{
+  //   console.log(error);
+  //   res.status(404).json({message:"ERROR on /api/create_course"});
+  // });
 
 });
 
-app.post('/me', function(req, res){
-  let user_id = 181;
-  let session = driver.session();
+let cleanId = (obj)=>{
+    if( obj.identity ){
+      obj.id = obj.identity.low;
+      delete obj.identity;
+    }else if(obj.id && obj.id.low){
+      obj.id = obj.id.low;
+    };
+  return obj;
+};
 
-  let query1 = `
-  match (a:Course) return collect(a)
-  `;
-
-  session.readTransaction(tx=>tx.run(query1))
-  // .then( data => { return parser.dataMapper(data); })
-  .then((data)=>{ res.status(200).json({token:tokenGen(user_id), data:data})})
-  .catch( error => {
-    console.log(error);
-      res.status(403).json({
-        error:error,
-        message: 'ERROR on game toggle_out_from_recallable'
-    });
+let  dataMapper = (data)=>{
+  return new Promise((resolve, reject)=>{
+    if (data.records.length > 1){
+      // resolve(data.records.map(x => {
+      //   // if(x._fields[0].identity){
+      //   //   x._fields[0].id = x._fields[0].identity.low;
+      //   //   delete x._fields[0]['identity']
+      //   // };
+      //   // return x._fields[0];
+      //   return cleanId(x._fields[0]);
+      // }));
+      resolve(data.records.map(x => {
+        console.log('check 1')
+        if(!Array.isArray(x)){   // it's an object with key/value
+          if(x._fields[0].id && x.id._fields[0].low || x._fields[0].identity){
+            x._fields[0] = cleanId(x);
+          }else{
+            console.log('==================')
+            let u = Object.keys(x._fields[0])[0];
+            console.log(u)
+            let t = x._fields[0][u];
+            console.log(t.labels)
+            if(typeof Object.keys(x._fields[0])[0] == 'string'){
+              console.log('check')
+              console.log(Object.keys(x._fields[0])[0])
+              x[Object.keys(x._fields[0])[0]] = cleanId(x._fields[0][Object.keys(x._fields[0])[0]]);
+              delete x._fields[0][u];
+            }
+            console.log(typeof Object.keys(x._fields[0])[0])
+            // x._fields[0][Object.keys(x._fields[0])].map( y => {
+            //   y = cleanId(y);
+            // });
+          };
+        }else{ // it's an array - list
+          x[Object.keys(x)[0]].map( y => {
+            y = cleanId(y);
+          });
+        };
+        return x;
+      }));
+    }else if (data.records[0]._fields[0].length >= 1) {
+      console.log('check 2')
+      resolve(data.records[0]._fields[0].map(x => {
+        return cleanId(x);
+      }));
+    }else if (data.records[0]._fields.length >= 1) {
+        console.log('check 3')
+      resolve(data.records[0]._fields.map(x => {
+        if(!Array.isArray(x)){   // it's an object with key/value
+          if(x.id && x.id.low || x.identity){
+            x = cleanId(x);
+          }else{
+            x[Object.keys(x)[0]].map( y => {
+              y = cleanId(y);
+            });
+          };
+        }else{ // it's an array - list
+          x[Object.keys(x)[0]].map( y => {
+            y = cleanId(y);
+          });
+        };
+        // return x;
+      }));
+    }else {
+      console.log('init check')
+      return "Error";
+      // res.status(400).json({message: 'on the parser service'});
+    };
   });
+};
+// A single obj
+// let query = "match (a:Account) return a limit 1";
 
+// Multiple records with 1 array of 1 object in fields for each
+
+// let query = "match (c:Course) match (d:Definition) return {courseList: c, definition:d}";
+// let query = "match (c:Course) match (d:Definition) return c as courseList";
+// let query = "match (c:Course) match (d:Definition) return c as courseList, d as definition";
+// let query = "match (c:Course) return {courseList: collect(c)}";
+// let query = "match (c:Course) return collect(c)";
+// let query = "match (c:Course) match (d:Definition) return {courseList: collect(c)}, collect(d)";
+// let query = "match (c:Course) match (d:Definition) return {message:'hello'}";
+
+
+app.post('/myTest', (req, res, next)=>{
+  let session = driver.session();
+  session.readTransaction(tx => tx.run(query))
+  .then(data=>{
+    return dataMapper(data);
+  })
+  .then(data =>{
+    let course = {id: 270, label: 'Course'};
+    // data[0].courseList.push(course);
+    res.json({response: data})
+  })
+  .catch(error => {
+    console.log(error)
+    res.json({error:error})
+  });
 });

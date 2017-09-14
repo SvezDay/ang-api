@@ -32,7 +32,19 @@ module.exports.course_wait_recall = (req, res, next)=>{
   `;
   session
   .readTransaction(tx => tx.run(query, {}))
-  .then( data => { return parser.dataMapper(data); })
+  // .then( data => { return parser.dataMapper(data); })
+  .then( data => {
+    return data.records.map(x => {
+      f = x._fields[0][Object.keys(x._fields[0])];
+      if( f.id && f.id.low){
+        f.id = f.id.low;
+      }else if (f.identity) {
+        f.id = f.identity.low;
+        delete f.identity;
+      };
+      return f;
+    });
+  })
   .then( data => {
     res.status(200).json({
       token: tokenGen(user_id),
@@ -44,6 +56,57 @@ module.exports.course_wait_recall = (req, res, next)=>{
     res.status(400).json({message: 'Error on the /api/course_wait_recall'})
   });
 };
+
+
+module.exports.course_recallable = (req, res, next)=>{
+  let user_id = req.decoded.user_id;
+  let session = driver.session();
+  query1 = `
+  match (a:Account)-[l]->(m:Recall_Memory)
+  where id(a)=181
+  with m, extract(x in collect(m) |
+  filter(y in labels(m) where y <> 'Recall_Memory')
+) as pre_list
+  return collect( distinct head(head(pre_list)) )as list
+  `;
+
+  session.readTransaction(tx=>tx.run(query1))
+  .then( data => {
+    let parse = data.records[0]._fields[0];
+    return parse.map( x => {
+      return Number(x.match(/([0-9]{1,})/g)[0]);
+    });
+  })
+  .then( data => {
+    console.log(data);
+    query2 = `
+    match (c:Course) where id(c) in [${data}]
+    return {id: id(c), value: c.value, schema: c.schema, label: labels(c)}
+    `;
+    return session.readTransaction(tx => tx.run(query2));
+  })
+  .then( data => {
+    return data.records.map( x => {
+      let f = x._fields[0];
+      if( f.id && f.id.low){
+        f.id = f.id.low;
+      }else if (f.identity) {
+        f.id = f.identity.low;
+        delete f.identity;
+      }
+      return f;
+    });
+  })
+  .then( data =>{ res.status(200).json({data:data}); })
+  .catch( error => {
+    console.log(error);
+    res.status(400).json({
+      message: 'Error on the /game_course_recallable',
+      error: error
+    });
+  });
+};
+
 
 module.exports.game_timer = (req, res, next)=>{
     let user_id = req.decoded.user_id;
@@ -123,25 +186,97 @@ module.exports.new_result = (req, res, next)=>{
 
 
 module.exports.toggle_out_from_recallable = (req, res, next)=>{
-  res.json({});
+  let user_id = req.decoded.user_id;
+  let _ = req.body[0];
+  let session = driver.session();
+
+  let query = `
+    match(a:Account)-[l]->(m:c${_.id})
+    where id(a) = ${user_id}
+    delete l, m
+  `;
+  let query2 = `
+    match (a:Account)-[]->(b:Board_Activity)
+    where id(a)=${user_id}
+    set b.course_wait_recall = b.course_wait_recall + ${_.id}
+  `;
+
+
+  session.readTransaction(tx => tx.run(query))
+  .then( ()=>{
+    return session.readTransaction(tx=>tx.run(query2));
+  })
+  .then(()=>{ res.status(200).json({message:'Done !'})})
+  .catch( error => {
+    console.log(error);
+    res.status(400).json({
+      message: 'Error on the /game_toggle_out_from_recallable',
+      error:error
+    });
+  });
 };
 module.exports.toggle_in_to_recallable = (req, res, next)=>{
   let user_id = req.decoded.user_id;
   let session = driver.session();
-  let _ = req.body;
+  let _ = req.body[0];
+  let today = new Date().getTime();
+  let recallList = [];
+  let recallTarget = schema.labelRecallableTargetList();
+  let query1 = query2 = query2First = query2Last = query3 = '';
+  // For each property of the schema found, the second iteration allow to
+  // select the property whose match for create the list of the recallable relations
+  let mapper = (nodeList)=>{
+    let endNode;
+    nodeList.map( p => {
+      recallTarget[`${p.label}`].map( l => {
+        if(endNode = parser.includerReturnId(nodeList, 'label', l)){
+          query2First += ` create (r${p.id}${endNode}:Recall_Memory:c${_.id}{
+            level:1, nextDate: ${today}, startNode: ${p.id}, endNode: ${endNode}
+          })`;
+          query2Last += ` create (a)-[:Linked]->(r${p.id}${endNode})`;
+        };
+      });
+    });
+    query2 = query2First + query2Last;
+  };
 
-  let query = `
-  match (a)-[:Linked*]->(c:Course)
-  where id(a)=${user_id} and id(c)=${_.id}
+
+  query1 = `
+  match (a)-[:Linked*]->(c:Course)-[ll:Linked*]->(pp:Property)
+    where id(a)=${user_id} and id(c)=${_.id}
+    with a, c,
+    	extract( p in  collect(pp) |
+      	{label: filter(l in labels(p) where l <> 'Property')[0], id:id(p)}
+      ) as newList
+    return newList
+  `;
+  query2First = `match (a:Account) where id(a)=${user_id}`;
+  query2Last = ``;
+  query3 = `
+  match (a:Account)-[]->(b:Board_Activity)
+  where id(a)=${user_id}
+  set b.course_wait_recall = filter(x in b.course_wait_recall where x <> ${_.id})
   `;
 
 
-  session.readTransaction(tx=>tx.run(query))
+  session.readTransaction(tx=>tx.run(query1))
+  .then( data => { return parser.dataMapper(data); })
+  .then( data => {
+    data.push({"label": "Course", "id": 270});
+    mapper(data);
+    return data;
+  })
+  .then(data => { return session.readTransaction(tx=>tx.run(query2)); })
+  .then( () => {
+    return session.readTransaction(tx=>tx.run(query3));
+  })
   .then(()=>{ res.status(200).json({token:tokenGen(user_id), message:'Done !'})})
   .catch( error => {
+    console.log(error);
       res.status(403).json({
         error:error,
         message: 'ERROR on game toggle_out_from_recallable'
     });
   });
+
 };
