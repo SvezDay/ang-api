@@ -112,62 +112,47 @@ module.exports.game_timer = (req, res, next)=>{
     let user_id = req.decoded.user_id;
     let session = driver.session();
     let today = new Date().getTime();
-    let queryOne = '';
-    let queryTwo = '';
 
-    queryOne = `
+    let queryOne =`
        match (a:Account)-[:Linked]->(r:Recall_Memory)
        where id(a) = ${user_id} and r.nextDate <= ${today}
-       return
-          case
-            when count(r) >= 1
-              then {startNode: r.startNode, endNode: r.endNode, level:r.level}
-            else {message:'No recall available !'}
-          end
+       with count(r)as num
+       call apoc.do.when(
+          num>=1,
+          "match (a:Account)-[:Linked]->(r:Recall_Memory)
+              where id(a) = $user_id and r.nextDate <= $today
+              with head(collect(r)) as re
+              match (x) where id(x)= re.startNode
+              match (y) where id(y)= re.endNode
+              return {startNode: x, endNode:y} ",
+          "return {message: 'No more question'}",
+          {user_id: ${user_id}, today: ${today} }
+       ) yield value
+      return value
     `;
-    queryTwo = `
-      match (start) where id(n) = ${data.startNode}
-      match (end) where id(n) = ${data.endNode}
-      return
-        case
-          when count(start) <> 0 && count(end) <> 0
-            then {
-              start_id: id(start), start_label: labels(start), start_value: start.value,
-              end_id: id(end), end_label: labels(end), end_value: end.value
-            }
-          else
-            {message: "Error for the recall of "+${data.startNode}+" or "+${data.endNode}}
-        end
-    `;
+
     session.readTransaction(tx => tx.run(queryOne, {}))
-    .then( data => { return parser.dataMapper(data); })
     .then( data => {
-      if(data.message){
-        res.status(400).json({message:data.message});
-      }else {
-        return data;
-      };
+      let f = data.records[0]._fields[0];
+      let u = f[Object.keys(f)[0]];
+      u.startNode.id = u.startNode.identity.low;
+      delete u.startNode.identity;
+      u.endNode.id = u.endNode.identity.low;
+      delete u.endNode.identity;
+      return u;
     })
-    .then( data => {
-      return session.readTransaction(tx => tx.run(queryTwo, {}))
-    })
-    .then( data => { return parser.dataMapper(data); })
     .then( data => {
         if (data.message){
           res.status(400).json({message: data.message});
         }else {
-          // let token = jwt.sign({
-          //   exp: Math.floor(Date.now() / 1000) + (60 * 60), // expiration in 1 hour
-          //   user_id:user_id
-          // },secret);
           res.status(200).json({
             token: tokenGen(user_id),
-            start_id: f.start_id, start_label: f.start_label, start_value: f.start_value,
-            end_id: f.end_id, end_label: f.end_label, end_value: f.end_value
+            data:data
           });
         }
     })
     .catch((error)=>{
+      console.log(error)
        res.status(404).json({error: error, message:'error basic error'});
     });
 
@@ -206,7 +191,8 @@ module.exports.toggle_out_from_recallable = (req, res, next)=>{
   .then( ()=>{
     return session.readTransaction(tx=>tx.run(query2));
   })
-  .then(()=>{ res.status(200).json({message:'Done !'})})
+  .then(()=>{
+    res.status(200).json({message:'Done !', token: tokenGen(user_id)})})
   .catch( error => {
     console.log(error);
     res.status(400).json({
@@ -219,6 +205,8 @@ module.exports.toggle_in_to_recallable = (req, res, next)=>{
   let user_id = req.decoded.user_id;
   let session = driver.session();
   let _ = req.body[0];
+  console.log('==============================================================')
+  console.log(_)
   let today = new Date().getTime();
   let recallList = [];
   let recallTarget = schema.labelRecallableTargetList();
@@ -241,11 +229,21 @@ module.exports.toggle_in_to_recallable = (req, res, next)=>{
   };
 
 
+  // query1 = `
+  // match (a)-[:Linked*]->(c:Course)-[ll:Linked*]->(pp:Property)
+  //   where id(a)=${user_id} and id(c)=${_.id}
+  //   with a, c,
+  //   	extract( p in  collect(pp) |
+  //     	{label: filter(l in labels(p) where l <> 'Property')[0], id:id(p)}
+  //     ) as newList
+  //   return newList
+  // `;
   query1 = `
   match (a)-[:Linked*]->(c:Course)-[ll:Linked*]->(pp:Property)
     where id(a)=${user_id} and id(c)=${_.id}
-    with a, c,
-    	extract( p in  collect(pp) |
+    with a, c, collect(pp) as totallist
+      with a, c, totallist, filter( p in totallist where size(p.value)>=1 ) as cleanlist
+    	with a, c, cleanlist, extract( p in  cleanlist |
       	{label: filter(l in labels(p) where l <> 'Property')[0], id:id(p)}
       ) as newList
     return newList
@@ -262,7 +260,10 @@ module.exports.toggle_in_to_recallable = (req, res, next)=>{
   session.readTransaction(tx=>tx.run(query1))
   .then( data => { return parser.dataMapper(data); })
   .then( data => {
-    data.push({"label": "Course", "id": 270});
+    data.push({
+      "label": "Course",
+      "id": _.id
+    });
     mapper(data);
     return data;
   })
