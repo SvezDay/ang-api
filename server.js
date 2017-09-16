@@ -149,53 +149,37 @@ app.post('/testing', (req, res)=>{
 });
 
 app.post('/test', function(req, res){
-  let user_id = 181;
-  let _ = {id: 255, schema: 'DefProExpMeExSo', value: 'Test creation from server.js'};
-
   let session = driver.session();
+  let user_id = 181;
+  let _ = {bool:true, recall_id:290};
   let today = new Date().getTime();
 
+
   let queryOne =`
-     match (a:Account)-[:Linked]->(r:Recall_Memory)
-     where id(a) = ${user_id} and r.nextDate <= ${today}
-     with count(r)as num
-     call apoc.do.when(
-        num>=1,
-        "match (a:Account)-[:Linked]->(r:Recall_Memory)
-            where id(a) = $user_id and r.nextDate <= $today
-            with head(collect(r)) as re
-            match (x) where id(x)= re.startNode
-            match (y) where id(y)= re.endNode
-            return {startNode: x, endNode:y} ",
-        "return {message: 'No more question'}",
-        {user_id: ${user_id}, today: ${today} }
-     ) yield value
-    return value
+    match (r:Recall_Memory) where id(r)= ${_.recall_id}
   `;
+  if(_.bool){
+    queryOne += `
+      set r.level = r.level * 2
+      set r.nextDate = ${today} + (r.level * 1000 * 60 * 60 * 24)
+     `
+  }
 
   session.readTransaction(tx => tx.run(queryOne, {}))
+  // .then( data => {
+  //   let f = data.records[0]._fields[0];
+  //   let u = f[Object.keys(f)[0]];
+  //   u.startNode.id = u.startNode.identity.low;
+  //   delete u.startNode.identity;
+  //   u.endNode.id = u.endNode.identity.low;
+  //   delete u.endNode.identity;
+  //   return u;
+  // })
   .then( data => {
-    let f = data.records[0]._fields[0];
-    let u = f[Object.keys(f)[0]];
-    u.startNode.id = u.startNode.identity.low;
-    delete u.startNode.identity;
-    u.endNode.id = u.endNode.identity.low;
-    delete u.endNode.identity;
-    return u;
-  })
-  .then( data => {
-      if (data.message){
-        res.status(400).json({message: data.message});
-      }else {
-        // let token = jwt.sign({
-        //   exp: Math.floor(Date.now() / 1000) + (60 * 60), // expiration in 1 hour
-        //   user_id:user_id
-        // },secret);
-        res.status(200).json({
-          token: tokenGen(user_id),
-          data:data
-        });
-      }
+    res.status(200).json({
+      token: tokenGen(user_id),
+      data:data
+    });
   })
   .catch((error)=>{
     console.log(error)

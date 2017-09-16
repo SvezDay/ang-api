@@ -131,6 +131,14 @@ module.exports.game_timer = (req, res, next)=>{
       return value
     `;
 
+    let miniMap = (labels)=>{
+      let l = ['Container', 'Property'];
+      labels.map(x => {
+        l.indexOf(x) >= 0 ? labels.splice(labels.indexOf(x), 1) : null
+      });
+      return labels;
+    };
+
     session.readTransaction(tx => tx.run(queryOne, {}))
     .then( data => {
       let f = data.records[0]._fields[0];
@@ -139,6 +147,8 @@ module.exports.game_timer = (req, res, next)=>{
       delete u.startNode.identity;
       u.endNode.id = u.endNode.identity.low;
       delete u.endNode.identity;
+      u.startNode.labels = miniMap(u.startNode.labels);
+      u.endNode.labels = miniMap(u.endNode.labels);
       return u;
     })
     .then( data => {
@@ -280,4 +290,9 @@ module.exports.toggle_in_to_recallable = (req, res, next)=>{
     });
   });
 
+};
+
+
+module.exports.answering = (req, res, next)=>{
+  res.json();
 };

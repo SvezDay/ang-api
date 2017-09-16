@@ -49,6 +49,7 @@ module.exports = ()=>{
       .get('/game_course_recallable', game.course_recallable)
       .post('/game_toggle_out_from_recallable', game.toggle_out_from_recallable)
       .post('/game_toggle_in_to_recallable', game.toggle_in_to_recallable)
+      .post('/game_answering', game.answering)
 
 //    .get('/users', user.getAll)
 //    .get('/users/:id', user.getOne)
