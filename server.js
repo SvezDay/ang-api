@@ -151,34 +151,34 @@ app.post('/testing', (req, res)=>{
 app.post('/test', function(req, res){
   let session = driver.session();
   let user_id = 181;
-  let _ = {bool:true, recall_id:290};
+  let _ = {bool:false, recall_id:290};
   let today = new Date().getTime();
+  let tomorrow = today + 1000 + 60 + 60 + 24;
 
 
-  let queryOne =`
+  let query =`
     match (r:Recall_Memory) where id(r)= ${_.recall_id}
   `;
-  if(_.bool){
-    queryOne += `
-      set r.level = r.level * 2
+  if(_.bool){ // if bool is "TRUE"
+  console.log('check bool is true')
+  console.log(_.bool)
+    query += `
       set r.nextDate = ${today} + (r.level * 1000 * 60 * 60 * 24)
+      set r.level = r.level * 2
      `
+  }else{ // else it's "FALSE"
+  console.log('check bool is false')
+  console.log(_.bool)
+    query += `
+    set r.nextDate = ${tomorrow}
+    set r.level = 1
+    `;
   }
 
-  session.readTransaction(tx => tx.run(queryOne, {}))
-  // .then( data => {
-  //   let f = data.records[0]._fields[0];
-  //   let u = f[Object.keys(f)[0]];
-  //   u.startNode.id = u.startNode.identity.low;
-  //   delete u.startNode.identity;
-  //   u.endNode.id = u.endNode.identity.low;
-  //   delete u.endNode.identity;
-  //   return u;
-  // })
-  .then( data => {
+  session.readTransaction(tx => tx.run(query))
+  .then( () => {
     res.status(200).json({
-      token: tokenGen(user_id),
-      data:data
+      token: tokenGen(user_id)
     });
   })
   .catch((error)=>{
