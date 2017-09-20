@@ -157,7 +157,8 @@ app.post('/test', function(req, res){
 
 
   let query =`
-    match (r:Recall_Memory) where id(r)= ${_.recall_id}
+    match (a:Account)-[:Linked]->(r:Recall_Memory)
+    where id(a)=${user_id} and id(r)= ${_.recall_id}
   `;
   if(_.bool){ // if bool is "TRUE"
   console.log('check bool is true')

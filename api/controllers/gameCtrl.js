@@ -124,8 +124,8 @@ module.exports.game_timer = (req, res, next)=>{
               with head(collect(r)) as re
               match (x) where id(x)= re.startNode
               match (y) where id(y)= re.endNode
-              return {startNode: x, endNode:y} ",
-          "return {message: 'No more question'}",
+              return {startNode: x, endNode:y, recall_id:id(re)} as true ",
+          "return {message: 'No more question'} as false",
           {user_id: ${user_id}, today: ${today} }
        ) yield value
       return value
@@ -141,20 +141,28 @@ module.exports.game_timer = (req, res, next)=>{
 
     session.readTransaction(tx => tx.run(queryOne, {}))
     .then( data => {
-      let f = data.records[0]._fields[0];
-      let u = f[Object.keys(f)[0]];
-      u.startNode.id = u.startNode.identity.low;
-      delete u.startNode.identity;
-      u.endNode.id = u.endNode.identity.low;
-      delete u.endNode.identity;
-      u.startNode.labels = miniMap(u.startNode.labels);
-      u.endNode.labels = miniMap(u.endNode.labels);
-      return u;
+      // let f = data.records[0]._fields[0];
+      let d;
+      if(d = data.records[0]._fields[0].true){
+        d.recall_id = d.recall_id.low;
+        d.startNode.id = d.startNode.identity.low;
+        delete d.startNode.identity;
+        d.endNode.id = d.endNode.identity.low;
+        delete d.endNode.identity;
+        d.startNode.labels = miniMap(d.startNode.labels);
+        d.endNode.labels = miniMap(d.endNode.labels);
+      }else{
+        d = data.records[0]._fields[0].false
+      };
+      return d;
     })
     .then( data => {
+      console.log(data)
         if (data.message){
-          res.status(400).json({message: data.message});
+          console.log('data.message', data.message)
+          res.status(204).json({message: 'No more content'});
         }else {
+          console.log('toto ben')
           res.status(200).json({
             token: tokenGen(user_id),
             data:data
@@ -294,6 +302,42 @@ module.exports.toggle_in_to_recallable = (req, res, next)=>{
 
 
 module.exports.answering = (req, res, next)=>{
-  console.log(req.body)
-  res.json();
+  let user_id = req.decoded.user_id;
+  let session = driver.session();
+  let _ = req.body[0];
+  let today = new Date().getTime();
+  let tomorrow = today + 1000 + 60 + 60 + 24;
+
+  console.log("req.body",_)
+
+  let query =`
+    match (a:Account)-[:Linked]->(r:Recall_Memory)
+    where id(a)=${user_id} and id(r)= ${_.recall_id}
+  `;
+  if(_.bool){ // if bool is "TRUE"
+  console.log('check bool is true')
+  console.log(_.bool)
+    query += `
+      set r.nextDate = ${today} + (r.level * 1000 * 60 * 60 * 24)
+      set r.level = r.level * 2
+     `
+  }else{ // else it's "FALSE"
+  console.log('check bool is false')
+  console.log(_.bool)
+    query += `
+    set r.nextDate = ${tomorrow}
+    set r.level = 1
+    `;
+  };
+
+  session.readTransaction(tx => tx.run(query))
+  .then( () => {
+    res.status(200).json({
+      token: tokenGen(user_id)
+    });
+  })
+  .catch((error)=>{
+    console.log(error)
+     res.status(404).json({error: error, message:'error basic error'});
+  });
 };
