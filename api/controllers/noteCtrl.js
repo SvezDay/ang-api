@@ -5,6 +5,7 @@ const apoc = require('apoc');
 const neo4j = require('neo4j-driver').v1;
 
 const secret = require('../../config/tokenSecret').secret;
+let tokenGen = require('../services/token').generate;
 
 const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
 const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
@@ -13,45 +14,47 @@ const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
 const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, graphenedbPass));
 
 module.exports.create_note = (req, res, next)=>{
-   console.log('the note Ctrl function is called');
-   if(req.body.content && req.body.user_id){
-      let user_id = req.decoded.user_id;
-      let _ = req.body;
-      let date = new Date().getTime();
-      let query = `
-         match (a:Account) where id(a) = ${user_id}
-         create (n:Note:Container{commitList: [${date}] })
-         create (u:Undefined:Property{value:'${_.content}'})
-         create (a)-[:Linked]->(n)-[:Linked{commitNbr:${date}, orderNbr:1}]->(u)
-         return {note_id: id(n), content:u.value}
-      `;
-      driver.session()
-      .run(query)
-      .then((data)=>{
-         if(data.records[0] && data.records[0]._fields[0]){
-            let f = data.records[0]._fields[0];
-            let token = jwt.sign({
-               exp: Math.floor(Date.now() / 1000) + (60 * 60), // expiration in 1 hour
-               user_id:user_id
-            },secret);
-            res.status(200).json({
-               token:token,
-               note_id: f.note_id.low,
-               content: f.content
-            });
-         }else {
-            res.status(403).json({message: 'Creation failed'});
-         }
-      })
-      .catch((error)=>{
-         res.status(404).json({error: error, message:'error basic error'});
-      });
+  let session = driver.session();
+  let today = new Date().getTime();
+  let user_id = 181;
+  let _ = {
+    title_value: "Undefined",
+    content_value:"The logic of ensemblisime is the rule to follow",
+    content_label: "Undefined"
+  };
 
-   }else{
-      res.status(401).json({message: 'Email or Password is missing'});
-   }
 
-}
+  let query = `
+     match (a:Account) where id(a) = ${user_id}
+     create (n:Note:Container{commitList: [${today}] })
+     create (t:Property:Title {value:'${_.title_value}'})
+     create (u:Property:${_.content_label}{value:'${_.content_value}'})
+     create (a)-[:Linked]->(n)-[:Has{commit:${today}}]->(t)-[:Has{commit:${today}}]->(u)
+     return {note_id: id(n), title_id:id(t), first_property_id: id(u)}
+  `;
+
+
+  session.readTransaction(tx => tx.run(query))
+  .then( data => {
+    let f = data.records[0]._fields[0];
+    let l = Object.keys(f);
+    l.map(x => {
+      f[x].low ? f[x] = f[x].low : null
+    });
+    return f;
+  })
+  .then( data =>{
+    res.status(200).json({
+      token: tokenGen(user_id),
+      data: data.records
+    });
+  })
+  .catch( error => {
+    console.log(error);
+     res.status(404).json({error: error, message:'error basic error'});
+  });
+
+};
 
 module.exports.get_all_note = (req, res, next)=>{
    if(req.decoded && req.decoded.user_id){

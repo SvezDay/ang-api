@@ -77,225 +77,47 @@ const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
 const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, graphenedbPass));
 
 const schemas = require('./api/models/schema');
-// import {toNumber} from 'neo4j-driver/src/v1/integer.js'
-// let toNumber = neo4j.integer;
-app.post('/testing', (req, res)=>{
+
+
+app.post('/test', (req, res)=>{
   let session = driver.session();
   let today = new Date().getTime();
   let user_id = 181;
-  let _ = {id: 293};
-  let recallList = [];
-  let recallTarget = schema.labelRecallableTargetList();
-  let query1 = query2 = query2First = query2Last = query3 = '';
-  // For each property of the schema found, the second iteration allow to
-  // select the property whose match for create the list of the recallable relations
-  let mapper = (nodeList)=>{
-    let endNode;
-    nodeList.map( p => {
-      recallTarget[`${p.label}`].map( l => {
-        if(endNode = parser.includerReturnId(nodeList, 'label', l)){
-          query2First += ` create (r${p.id}${endNode}:Recall_Memory:c${_.id}{
-            level:1, nextDate: ${today}, startNode: ${p.id}, endNode: ${endNode}
-          })`;
-          query2Last += ` create (a)-[:Linked]->(r${p.id}${endNode})`;
-        };
-      });
-    });
-    query2 = query2First + query2Last;
+  let _ = {
+    title_value: "Undefined",
+    content_value:"The logic of ensemblisime is the rule to follow",
+    content_label: "Undefined"
   };
 
 
-  query1 = `
-  match (a)-[:Linked*]->(c:Course)-[ll:Linked*]->(pp:Property)
-    where id(a)=${user_id} and id(c)=${_.id}
-    with a, c, collect(pp) as totallist
-      filter( p in totallist where size(p.value)>=1 ) as cleanlist
-    	extract( p in  cleanlist |
-      	{label: filter(l in labels(p) where l <> 'Property')[0], id:id(p)}
-      ) as newList
-    return newList
-  `;
-  query2First = `match (a:Account) where id(a)=${user_id}`;
-  query2Last = ``;
-  query3 = `
-  match (a:Account)-[]->(b:Board_Activity)
-  where id(a)=${user_id}
-  set b.course_wait_recall = filter(x in b.course_wait_recall where x <> ${_.id})
+  let query = `
+     match (a:Account) where id(a) = ${user_id}
+     create (n:Note:Container{commitList: [${today}] })
+     create (t:Property:Title {value:'${_.title_value}'})
+     create (u:Property:${_.content_label}{value:'${_.content_value}'})
+     create (a)-[:Linked]->(n)-[:Has{commit:${today}}]->(t)-[:Has{commit:${today}}]->(u)
+     return {note_id: id(n), title_id:id(t), first_property_id: id(u)}
   `;
 
-
-  session.readTransaction(tx=>tx.run(query1))
-  .then( data => { return parser.dataMapper(data); })
-  .then( data => {
-    data.push({
-      "label": "Course",
-      "id": _.id
-    });
-    mapper(data);
-    return data;
-  })
-  .then(data => { return session.readTransaction(tx=>tx.run(query2)); })
-  .then( () => {
-    return session.readTransaction(tx=>tx.run(query3));
-  })
-  .then(()=>{ res.status(200).json({token:tokenGen(user_id), message:'Done !'})})
-  .catch( error => {
-    console.log(error);
-      res.status(403).json({
-        error:error,
-        message: 'ERROR on game toggle_out_from_recallable'
-    });
-  });
-});
-
-app.post('/test', function(req, res){
-  let session = driver.session();
-  let user_id = 181;
-  let _ = {bool:false, recall_id:290};
-  let today = new Date().getTime();
-  let tomorrow = today + 1000 + 60 + 60 + 24;
-
-
-  let query =`
-    match (a:Account)-[:Linked]->(r:Recall_Memory)
-    where id(a)=${user_id} and id(r)= ${_.recall_id}
-  `;
-  if(_.bool){ // if bool is "TRUE"
-  console.log('check bool is true')
-  console.log(_.bool)
-    query += `
-      set r.nextDate = ${today} + (r.level * 1000 * 60 * 60 * 24)
-      set r.level = r.level * 2
-     `
-  }else{ // else it's "FALSE"
-  console.log('check bool is false')
-  console.log(_.bool)
-    query += `
-    set r.nextDate = ${tomorrow}
-    set r.level = 1
-    `;
-  }
 
   session.readTransaction(tx => tx.run(query))
-  .then( () => {
+  .then( data => {
+    let f = data.records[0]._fields[0];
+    let l = Object.keys(f);
+    l.map(x => {
+      f[x].low ? f[x] = f[x].low : null
+    });
+    return f;
+  })
+  .then( data =>{
     res.status(200).json({
-      token: tokenGen(user_id)
+      token: tokenGen(user_id),
+      data: data.records
     });
   })
-  .catch((error)=>{
-    console.log(error)
+  .catch( error => {
+    console.log(error);
      res.status(404).json({error: error, message:'error basic error'});
   });
 
-});
-
-let cleanId = (obj)=>{
-    if( obj.identity ){
-      obj.id = obj.identity.low;
-      delete obj.identity;
-    }else if(obj.id && obj.id.low){
-      obj.id = obj.id.low;
-    };
-  return obj;
-};
-
-let  dataMapper = (data)=>{
-  return new Promise((resolve, reject)=>{
-    if (data.records.length > 1){
-      // resolve(data.records.map(x => {
-      //   // if(x._fields[0].identity){
-      //   //   x._fields[0].id = x._fields[0].identity.low;
-      //   //   delete x._fields[0]['identity']
-      //   // };
-      //   // return x._fields[0];
-      //   return cleanId(x._fields[0]);
-      // }));
-      resolve(data.records.map(x => {
-        console.log('check 1')
-        if(!Array.isArray(x)){   // it's an object with key/value
-          if(x._fields[0].id && x.id._fields[0].low || x._fields[0].identity){
-            x._fields[0] = cleanId(x);
-          }else{
-            console.log('==================')
-            let u = Object.keys(x._fields[0])[0];
-            console.log(u)
-            let t = x._fields[0][u];
-            console.log(t.labels)
-            if(typeof Object.keys(x._fields[0])[0] == 'string'){
-              console.log('check')
-              console.log(Object.keys(x._fields[0])[0])
-              x[Object.keys(x._fields[0])[0]] = cleanId(x._fields[0][Object.keys(x._fields[0])[0]]);
-              delete x._fields[0][u];
-            }
-            console.log(typeof Object.keys(x._fields[0])[0])
-            // x._fields[0][Object.keys(x._fields[0])].map( y => {
-            //   y = cleanId(y);
-            // });
-          };
-        }else{ // it's an array - list
-          x[Object.keys(x)[0]].map( y => {
-            y = cleanId(y);
-          });
-        };
-        return x;
-      }));
-    }else if (data.records[0]._fields[0].length >= 1) {
-      console.log('check 2')
-      resolve(data.records[0]._fields[0].map(x => {
-        return cleanId(x);
-      }));
-    }else if (data.records[0]._fields.length >= 1) {
-        console.log('check 3')
-      resolve(data.records[0]._fields.map(x => {
-        if(!Array.isArray(x)){   // it's an object with key/value
-          if(x.id && x.id.low || x.identity){
-            x = cleanId(x);
-          }else{
-            x[Object.keys(x)[0]].map( y => {
-              y = cleanId(y);
-            });
-          };
-        }else{ // it's an array - list
-          x[Object.keys(x)[0]].map( y => {
-            y = cleanId(y);
-          });
-        };
-        // return x;
-      }));
-    }else {
-      console.log('init check')
-      return "Error";
-      // res.status(400).json({message: 'on the parser service'});
-    };
-  });
-};
-// A single obj
-// let query = "match (a:Account) return a limit 1";
-
-// Multiple records with 1 array of 1 object in fields for each
-
-// let query = "match (c:Course) match (d:Definition) return {courseList: c, definition:d}";
-// let query = "match (c:Course) match (d:Definition) return c as courseList";
-// let query = "match (c:Course) match (d:Definition) return c as courseList, d as definition";
-// let query = "match (c:Course) return {courseList: collect(c)}";
-// let query = "match (c:Course) return collect(c)";
-// let query = "match (c:Course) match (d:Definition) return {courseList: collect(c)}, collect(d)";
-// let query = "match (c:Course) match (d:Definition) return {message:'hello'}";
-
-
-app.post('/myTest', (req, res, next)=>{
-  let session = driver.session();
-  session.readTransaction(tx => tx.run(query))
-  .then(data=>{
-    return dataMapper(data);
-  })
-  .then(data =>{
-    let course = {id: 270, label: 'Course'};
-    // data[0].courseList.push(course);
-    res.json({response: data})
-  })
-  .catch(error => {
-    console.log(error)
-    res.json({error:error})
-  });
 });
