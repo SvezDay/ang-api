@@ -25464,3 +25464,106 @@ Storage files: (filename : modification date - size)
 2017-09-22 15:41:24.972+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
 2017-09-22 15:41:24.972+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
 2017-09-22 16:34:55.011+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 3003ms.
+2017-09-22 16:37:47.004+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 2989ms.
+2017-09-23 14:21:03.271+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 4209ms.
+2017-09-23 15:00:53.308+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [926]:  Starting check pointing...
+2017-09-23 15:00:53.315+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [926]:  Starting store flush...
+2017-09-23 15:00:53.329+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 926 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-23 15:00:53.331+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 926 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-23 15:00:53.341+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [926]:  Store flush completed
+2017-09-23 15:00:53.341+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [926]:  Starting appending check point entry into the tx log...
+2017-09-23 15:00:53.342+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [926]:  Appending check point entry into the tx log completed
+2017-09-23 15:00:53.342+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [926]:  Check pointing completed
+2017-09-23 15:00:53.342+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-23 15:00:53.342+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-23 15:05:53.347+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [928]:  Starting check pointing...
+2017-09-23 15:05:53.347+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [928]:  Starting store flush...
+2017-09-23 15:05:53.366+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 928 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-23 15:05:53.368+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 928 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-23 15:05:53.376+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [928]:  Store flush completed
+2017-09-23 15:05:53.376+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [928]:  Starting appending check point entry into the tx log...
+2017-09-23 15:05:53.378+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [928]:  Appending check point entry into the tx log completed
+2017-09-23 15:05:53.378+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [928]:  Check pointing completed
+2017-09-23 15:05:53.378+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-23 15:05:53.378+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-23 15:11:33.384+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [929]:  Starting check pointing...
+2017-09-23 15:11:33.384+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [929]:  Starting store flush...
+2017-09-23 15:11:33.404+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 929 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-23 15:11:33.405+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 929 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-23 15:11:33.414+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [929]:  Store flush completed
+2017-09-23 15:11:33.414+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [929]:  Starting appending check point entry into the tx log...
+2017-09-23 15:11:33.415+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [929]:  Appending check point entry into the tx log completed
+2017-09-23 15:11:33.415+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [929]:  Check pointing completed
+2017-09-23 15:11:33.415+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-23 15:11:33.415+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-23 15:16:33.421+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [931]:  Starting check pointing...
+2017-09-23 15:16:33.421+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [931]:  Starting store flush...
+2017-09-23 15:16:33.440+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 931 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-23 15:16:33.441+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 931 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-23 15:16:33.449+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [931]:  Store flush completed
+2017-09-23 15:16:33.449+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [931]:  Starting appending check point entry into the tx log...
+2017-09-23 15:16:33.451+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [931]:  Appending check point entry into the tx log completed
+2017-09-23 15:16:33.451+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [931]:  Check pointing completed
+2017-09-23 15:16:33.451+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-23 15:16:33.451+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-23 15:21:33.456+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [932]:  Starting check pointing...
+2017-09-23 15:21:33.456+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [932]:  Starting store flush...
+2017-09-23 15:21:33.474+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 932 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-23 15:21:33.475+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 932 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-23 15:21:33.483+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [932]:  Store flush completed
+2017-09-23 15:21:33.483+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [932]:  Starting appending check point entry into the tx log...
+2017-09-23 15:21:33.486+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [932]:  Appending check point entry into the tx log completed
+2017-09-23 15:21:33.486+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [932]:  Check pointing completed
+2017-09-23 15:21:33.486+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-23 15:21:33.486+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-23 15:26:33.491+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [937]:  Starting check pointing...
+2017-09-23 15:26:33.491+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [937]:  Starting store flush...
+2017-09-23 15:26:33.504+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 937 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-23 15:26:33.506+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 937 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-23 15:26:33.518+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [937]:  Store flush completed
+2017-09-23 15:26:33.519+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [937]:  Starting appending check point entry into the tx log...
+2017-09-23 15:26:33.520+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [937]:  Appending check point entry into the tx log completed
+2017-09-23 15:26:33.521+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [937]:  Check pointing completed
+2017-09-23 15:26:33.521+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-23 15:26:33.521+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-23 15:26:41.050+0000 INFO  [o.n.c.i.ExecutionEngine] Discarded stale query from the query cache: 
+         match (a:Account)-[:Linked]->(n:Note:Container)-[l:Linked{commitNbr:last(n.commitList)}]->(x)
+         where id(a)= 181
+         return case
+            when count(n) >= 1 then {note_id: id(n), content:x.value}
+            else {}
+         end
+
+      
+2017-09-23 15:26:41.053+0000 INFO  [o.n.c.i.CypherCompiler] Discarded stale query from the query cache: match (a:Account)-[:Linked]->(n:Note:Container)-[l:Linked{commitNbr:last(n.commitList)}]->(x)
+         where id(a)= 181
+         return case
+            when count(n) >= 1 then {note_id: id(n), content:x.value}
+            else {}
+         end
+
+      
+2017-09-23 15:31:33.528+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [938]:  Starting check pointing...
+2017-09-23 15:31:33.528+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [938]:  Starting store flush...
+2017-09-23 15:31:33.547+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 938 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-23 15:31:33.548+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 938 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a].
+2017-09-23 15:31:33.556+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [938]:  Store flush completed
+2017-09-23 15:31:33.556+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [938]:  Starting appending check point entry into the tx log...
+2017-09-23 15:31:33.558+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [938]:  Appending check point entry into the tx log completed
+2017-09-23 15:31:33.558+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [938]:  Check pointing completed
+2017-09-23 15:31:33.558+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-23 15:31:33.558+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-23 15:50:43.580+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [939]:  Starting check pointing...
+2017-09-23 15:50:43.580+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [939]:  Starting store flush...
+2017-09-23 15:50:43.597+0000 INFO  [o.n.k.i.s.c.CountsTracker] About to rotate counts store at transaction 939 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-23 15:50:43.598+0000 INFO  [o.n.k.i.s.c.CountsTracker] Successfully rotated counts store at transaction 939 to [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.a], from [/home/rudgray/Programs/Heroku/ang-api/neo4j-community-3.1.3/data/databases/graph.db/neostore.counts.db.b].
+2017-09-23 15:50:43.605+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [939]:  Store flush completed
+2017-09-23 15:50:43.605+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [939]:  Starting appending check point entry into the tx log...
+2017-09-23 15:50:43.606+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [939]:  Appending check point entry into the tx log completed
+2017-09-23 15:50:43.606+0000 INFO  [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [939]:  Check pointing completed
+2017-09-23 15:50:43.607+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-09-23 15:50:43.607+0000 INFO  [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-09-23 16:36:26.706+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 1468ms.
+2017-09-24 12:27:01.986+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 2908ms.
+2017-09-25 08:36:54.312+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 2876ms.
+2017-09-25 13:36:44.007+0000 WARN  [o.n.k.i.c.MonitorGc] GC Monitor: Application threads blocked for 3027ms.

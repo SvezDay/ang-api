@@ -27,12 +27,13 @@ module.exports = ()=>{
    routes
    // NOTES
       .post('/create_note', note.create_note)
+      .get('/note_get_label', note.get_label)
       .get('/get_all_note', note.get_all_note)
-      .get('/get_note_detail/:id', note.get_note_detail)
-      .post('/update_property', note.update_property)
-      .post('/add_property', note.add_property)
-      .delete('/delete_property/:note_id/:property_id', note.delete_property)
-      .post('/drop_property', note.drop_property)
+      // .get('/get_note_detail/:id', note.get_note_detail)
+      // .post('/update_property', note.update_property)
+      // .post('/add_property', note.add_property)
+      // .delete('/delete_property/:note_id/:property_id', note.delete_property)
+      // .post('/drop_property', note.drop_property)
     // COURSE
       .post('/create_course', course.create_course)
       .get('/get_all_course', course.get_all_course)
@@ -50,6 +51,7 @@ module.exports = ()=>{
       .post('/game_toggle_out_from_recallable', game.toggle_out_from_recallable)
       .post('/game_toggle_in_to_recallable', game.toggle_in_to_recallable)
       .post('/game_answering', game.answering)
+
 
 //    .get('/users', user.getAll)
 //    .get('/users/:id', user.getOne)

@@ -53,8 +53,35 @@ module.exports.create_note = (req, res, next)=>{
     console.log(error);
      res.status(404).json({error: error, message:'error basic error'});
   });
-
 };
+
+
+module.exports.get_label = (req, res, next)=>{
+  let user_id = req.decoded.user_id;
+  let session = driver.session();
+  let query = `
+  
+  `;
+
+
+  session.readTransaction(tx => tx.run(query))
+  .then( data => {
+    return data;
+  })
+  .then( data => {
+    res.status(200).json({
+      token: tokenGen(user_id),
+      data: data
+    });
+  })
+  .catch( error => {
+    res.status(400).json({
+      message: 'Error on note_get_label',
+      error : error
+    });
+  });
+};
+
 
 module.exports.get_all_note = (req, res, next)=>{
    if(req.decoded && req.decoded.user_id){
