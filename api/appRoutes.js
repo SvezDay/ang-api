@@ -29,7 +29,7 @@ module.exports = ()=>{
       .post('/create_note', note.create_note)
       .get('/note_get_label', note.get_label)
       .get('/get_all_note', note.get_all_note)
-      // .get('/get_note_detail/:id', note.get_note_detail)
+      .get('/get_note_detail/:id', note.get_note_detail)
       // .post('/update_property', note.update_property)
       // .post('/add_property', note.add_property)
       // .delete('/delete_property/:note_id/:property_id', note.delete_property)
@@ -37,7 +37,7 @@ module.exports = ()=>{
     // COURSE
       .post('/create_course', course.create_course)
       .get('/get_all_course', course.get_all_course)
-      .get('/get_schema_list', course.get_schema_list)
+      .get('/get_model_list', course.get_model_list)
       .get('/get_course_detail/:id', course.get_course_detail)
       .post('/update_course', course.update_course)
       .delete('/delete_course/:id', course.delete_course)

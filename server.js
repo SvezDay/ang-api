@@ -69,7 +69,7 @@ const neo4j = require('neo4j-driver').v1;
 // const secret = require('./config/tokenSecret').secret;
 
 let parser = require('./api/services/parser');
-let tokenGen = require('./api/services/token').generate;
+let tokenGen = require('./api/services/token.service');
 let schema = require('./api/models/schema');
 const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
 const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
@@ -80,44 +80,40 @@ const schemas = require('./api/models/schema');
 
 
 app.post('/test', (req, res)=>{
-  let session = driver.session();
-  let today = new Date().getTime();
   let user_id = 181;
-  let _ = {
-    title_value: "Undefined",
-    content_value:"The logic of ensemblisime is the rule to follow",
-    content_label: "Undefined"
-  };
-
-
+  let session = driver.session();
   let query = `
-     match (a:Account) where id(a) = ${user_id}
-     create (n:Note:Container{commitList: [${today}] })
-     create (t:Property:Title {value:'${_.title_value}'})
-     create (u:Property:${_.content_label}{value:'${_.content_value}'})
-     create (a)-[:Linked]->(n)-[:Has{commit:${today}}]->(t)-[:Has{commit:${today}}]->(u)
-     return {note_id: id(n), title_id:id(t), first_property_id: id(u)}
+  match (a:Account)-[:Linked]->(n:Container{type:'note'})-[l:Has{commit:last(n.commitList)}]->(x:Property)
+     where id(a)= ${user_id}
+     return case
+        when count(n) >= 1 then {note_id: id(n), title:x.value}
+        else {}
+     end
   `;
-
-
   session.readTransaction(tx => tx.run(query))
+  .then((data)=>{
+     if(data.records[0]){
+        let f = data.records;
+        let list = [];
+        for (var i = 0; i < f.length; i++) {
+           list.push({
+              note_id:f[i]._fields[0].note_id.low,
+              title:f[i]._fields[0].title
+           });
+        };
+        return list;
+     }else {
+        return {};
+     };
+  })
   .then( data => {
-    let f = data.records[0]._fields[0];
-    let l = Object.keys(f);
-    l.map(x => {
-      f[x].low ? f[x] = f[x].low : null
-    });
-    return f;
-  })
-  .then( data =>{
     res.status(200).json({
-      token: tokenGen(user_id),
-      data: data.records
+       token:tokenGen(user_id),
+       list: data
     });
   })
-  .catch( error => {
-    console.log(error);
-     res.status(404).json({error: error, message:'error basic error'});
+  .catch((error)=>{
+     console.log(error);
+     res.status(400).json({error: error, message:'error basic error'});
   });
-
 });

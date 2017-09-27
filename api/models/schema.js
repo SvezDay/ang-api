@@ -29,62 +29,58 @@ const objList = {
 };
 
 
-const label_list = [
-  {"Account": "Personal_account"},
-  {"Account": "Business_account"},
-  {"Container": "Note"},
-  {"Container": "Course"},
-  {"Container": "Project"},
-  {"Property": "Definition"},
-  {"Property": "Property_Theorem"},
-  {"Property": "Method"},
-  {"Property": "Example"},
-  {"Property": "Solution"},
-  {"Property": "Explanation"}
-];
-
-
-const primary_model_list = {
-
-};
-
-
-let get_main_label = ()=>{
-  let brut = [];
-  label_list.map( x => {
-    brut.push(Object.keys(x)[0]);
-  });
-  return Array.from(new Set(brut));
-};
-
-
-let get_all_sub_label = ()=>{
-  let brut = [];
-  label_list.map( x => {
-    brut.push(x[Object.keys(x)[0]]);
-  });
-  return Array.from(new Set(brut));
-};
-
-
-let check_main_label = (label)=>{
-  return get_main_label().includes(label) ? true : false
-};
-
-
-let get_sub_label = (label)=>{
-  if(!check_main_label(label) ){
-    return 'Undefined';
-  }else{
-    let list = [];
-    label_list.map( x => {
-      if(Object.keys(x)[0] == label){
-        list.push(x[Object.keys(x)[0]]);
-      };
-    });
-    return list;
-  };
-};
+// const label_list = [
+//   {"Account": "Personal_account"},
+//   {"Account": "Business_account"},
+//   {"Container": "Note"},
+//   {"Container": "Course"},
+//   {"Container": "Project"},
+//   {"Property": "Definition"},
+//   {"Property": "Property_Theorem"},
+//   {"Property": "Method"},
+//   {"Property": "Example"},
+//   {"Property": "Solution"},
+//   {"Property": "Explanation"}
+// ];
+//
+//
+//
+// let get_main_label = ()=>{
+//   let brut = [];
+//   label_list.map( x => {
+//     brut.push(Object.keys(x)[0]);
+//   });
+//   return Array.from(new Set(brut));
+// };
+//
+//
+// let get_all_sub_label = ()=>{
+//   let brut = [];
+//   label_list.map( x => {
+//     brut.push(x[Object.keys(x)[0]]);
+//   });
+//   return Array.from(new Set(brut));
+// };
+//
+//
+// let check_main_label = (label)=>{
+//   return get_main_label().includes(label) ? true : false
+// };
+//
+//
+// let get_sub_label = (label)=>{
+//   if(!check_main_label(label) ){
+//     return 'Undefined';
+//   }else{
+//     let list = [];
+//     label_list.map( x => {
+//       if(Object.keys(x)[0] == label){
+//         list.push(x[Object.keys(x)[0]]);
+//       };
+//     });
+//     return list;
+//   };
+// };
 
 
 
@@ -103,7 +99,7 @@ module.exports.getSchemaObj = (type)=>{
 
 module.exports.getAll = ()=>{
   return new Promise((resolve, reject)=>{
-    console.log('from the schema.js the getAll function objList: ', objList);
+    // console.log('from the schema.js the getAll function objList: ', objList);
     resolve(objList);
   })
 }

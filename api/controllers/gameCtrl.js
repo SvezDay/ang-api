@@ -5,7 +5,7 @@ const apoc = require('apoc');
 const neo4j = require('neo4j-driver').v1;
 
 const secret = require('../../config/tokenSecret').secret;
-let tokenGen = require('../services/token').generate;
+let tokenGen = require('../services/token.service');
 let parser = require('../services/parser');
 let schema = require('../models/schema');
 

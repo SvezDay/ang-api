@@ -6,8 +6,13 @@ const neo4j = require('neo4j-driver').v1;
 
 const secret = require('../../config/tokenSecret').secret;
 const schemas = require('../models/schema');
+
+const labels_model = require('../models/labels.model');
+const labels_service = require('../services/labels.service');
+const utility = require('../services/utility.service');
+
 let parser = require('../services/parser');
-let tokenGen = require('../services/token').generate;
+let tokenGen = require('../services/token.service');
 
 const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
 const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
@@ -17,38 +22,37 @@ const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, grap
 
 
 module.exports.create_course = (req, res, next)=>{
-  let user_id = req.decoded.user_id;
-  let _ = req.body;
-  let today = new Date().getTime();
   let session = driver.session();
+  let user_id = req.decoded.user_id;
+  let today = new Date().getTime();
+  let _ = req.body;
   let q_1 = q1_1 = q1_2 = q_2 = '';
   let course = {};
 
-
-  schemas.getSchemaObj(_.schema)
-  .then( schema =>{
 //First part create the node
-    q_1_1 = `
-      match (a:Account) where id(a) = ${user_id}
-      create (c:Container:Course{value:'${_.value}', schema:'${_.schema}'})
-    `;
+  q_1_1 = `
+    match (a:Account) where id(a) = ${user_id}
+    create (c:Container:Course{value:'${_.value}', model:'${_.model_title}'})
+  `;
 //Second part create the relationships
-    q_1_2 = `create (a)-[:Linked]->(c)`;
-    for (let x of schema) {
+  q_1_2 = `create (a)-[:Linked]->(c)`;
+
+  if(_.model_title != "Undefined"){
+    let model_list = labels_model.primary_model_list[_.model_title];
+    for (let x of model_list) {
       q_1_1 += ` create (p${x}:Property:${x}{value:''})`;
       q_1_2 += `-[:Linked]->(p${x})`
     };
-    q_1 = `${q_1_1} ${q_1_2} return {id:id(c), value:c.value}`;
-    q_2 = `
-      match (a:Account)-[]->(b:Board_Activity) where id(a)= $user_id
-      set b.course_wait_recall = b.course_wait_recall + $course_id
-      return b
-    `;
-    return;
-  })
-  .then(()=>{
-    return session.readTransaction(tx => tx.run(q_1, {}))
-  })
+  };
+
+  q_1 = `${q_1_1} ${q_1_2} return {id:id(c), value:c.value}`;
+  q_2 = `
+    match (a:Account)-[]->(b:Board_Activity) where id(a)= $user_id
+    set b.course_wait_recall = b.course_wait_recall + $course_id
+    return b
+  `;
+
+  session.readTransaction(tx => tx.run(q_1))
   .then( data => {
     return data.records.map( x => {
       let f = x._fields[0];
@@ -109,15 +113,14 @@ module.exports.get_all_course = (req, res, next)=>{
 };
 
 
-module.exports.get_schema_list = (req, res, next)=>{
+module.exports.get_model_list = (req, res, next)=>{
   let user_id = req.decoded.user_id;
-  schemas.getAll()
-  .then(list => {
-      res.status(200).json({token:tokenGen(user_id), list:list});
-  })
-  .catch(()=>{
-    res.status(400).json({message:'No list found'});
+
+  res.status(200).json({
+    token:tokenGen(user_id),
+    list:labels_model.primary_model_list
   });
+
 };
 
 

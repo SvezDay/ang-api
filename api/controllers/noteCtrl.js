@@ -5,7 +5,9 @@ const apoc = require('apoc');
 const neo4j = require('neo4j-driver').v1;
 
 const secret = require('../../config/tokenSecret').secret;
-let tokenGen = require('../services/token').generate;
+
+let tokenGen = require('../services/token.service');
+let labels_service = require('../services/labels.service');
 
 const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
 const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
@@ -16,17 +18,13 @@ const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, grap
 module.exports.create_note = (req, res, next)=>{
   let session = driver.session();
   let today = new Date().getTime();
-  let user_id = 181;
-  let _ = {
-    title_value: "Undefined",
-    content_value:"The logic of ensemblisime is the rule to follow",
-    content_label: "Undefined"
-  };
+  let user_id = req.decoded.user_id;
+  let _ = req.body;
 
 
   let query = `
      match (a:Account) where id(a) = ${user_id}
-     create (n:Note:Container{commitList: [${today}] })
+     create (n:Container{commitList: [${today}], type: 'note'})
      create (t:Property:Title {value:'${_.title_value}'})
      create (u:Property:${_.content_label}{value:'${_.content_value}'})
      create (a)-[:Linked]->(n)-[:Has{commit:${today}}]->(t)-[:Has{commit:${today}}]->(u)
@@ -46,7 +44,7 @@ module.exports.create_note = (req, res, next)=>{
   .then( data =>{
     res.status(200).json({
       token: tokenGen(user_id),
-      data: data.records
+      data: data
     });
   })
   .catch( error => {
@@ -58,137 +56,129 @@ module.exports.create_note = (req, res, next)=>{
 
 module.exports.get_label = (req, res, next)=>{
   let user_id = req.decoded.user_id;
-  let session = driver.session();
-  let query = `
-  
-  `;
-
-
-  session.readTransaction(tx => tx.run(query))
-  .then( data => {
-    return data;
-  })
-  .then( data => {
-    res.status(200).json({
-      token: tokenGen(user_id),
-      data: data
-    });
-  })
-  .catch( error => {
-    res.status(400).json({
-      message: 'Error on note_get_label',
-      error : error
-    });
+  let u = labels_service.get_sub_label('Property');
+  console.log(u)
+  res.status(200).json({
+    token: tokenGen(user_id),
+    data: u
   });
+  // let session = driver.session();
+  // let query = `
+  //
+  // `;
+  //
+  //
+  // session.readTransaction(tx => tx.run(query))
+  // .then( data => {
+  //   return data;
+  // })
+  // .then( data => {
+  //   res.status(200).json({
+  //     token: tokenGen(user_id),
+  //     data: data
+  //   });
+  // })
+  // .catch( error => {
+  //   res.status(400).json({
+  //     message: 'Error on note_get_label',
+  //     error : error
+  //   });
+  // });
 };
 
 
 module.exports.get_all_note = (req, res, next)=>{
-   if(req.decoded && req.decoded.user_id){
-      let user_id = req.decoded.user_id;
-      let query = `
-         match (a:Account)-[:Linked]->(n:Note:Container)-[l:Linked{commitNbr:last(n.commitList)}]->(x)
-         where id(a)= ${user_id}
-         return case
-            when count(n) >= 1 then {note_id: id(n), content:x.value}
-            else {}
-         end
-
-      `;
-      driver.session()
-      .run(query)
-      .then((data)=>{
-
-         let token = jwt.sign({
-            exp: Math.floor(Date.now() / 1000) + (60 * 60), // expiration in 1 hour
-            user_id:user_id
-         },secret);
-
-         if(data.records[0]){
-            let f = data.records;
-            let list = [];
-            for (var i = 0; i < f.length; i++) {
-               list.push({
-                  note_id:f[i]._fields[0].note_id.low,
-                  content:f[i]._fields[0].content
-               });
-            }
-            res.status(200).json({
-               token:token,
-               list: list
-            });
-         }else {
-            res.status(200).json({
-               token:token,
-               list: {}
-            });
-         }
-      })
-      .catch((error)=>{
-         console.log(error);
-         res.status(404).json({error: error, message:'error basic error'});
+    let user_id = req.decoded.user_id;
+    let session = driver.session();
+    let query = `
+    match (a:Account)-[:Linked]->(n:Container{type:'note'})-[l:Has{commit:last(n.commitList)}]->(x:Property)
+       where id(a)= ${user_id}
+       return case
+          when count(n) >= 1 then {note_id: id(n), title:x.value}
+          else {}
+       end
+    `;
+    session.readTransaction(tx => tx.run(query))
+    .then((data)=>{
+       if(data.records[0]){
+          let f = data.records;
+          let list = [];
+          for (var i = 0; i < f.length; i++) {
+             list.push({
+                note_id:f[i]._fields[0].note_id.low,
+                title:f[i]._fields[0].title
+             });
+          };
+          return list;
+       }else {
+          return {};
+       };
+    })
+    .then( data => {
+      res.status(200).json({
+         token:tokenGen(user_id),
+         list: data
       });
-   }else {
-      res.status(401).json({message: 'Error token params'});
-   }
+    })
+    .catch((error)=>{
+       console.log(error);
+       res.status(400).json({error: error, message:'error basic error'});
+    });
 
 }
 
 module.exports.get_note_detail = (req, res, next)=>{
-   if(req.decoded && req.decoded.user_id){
-      let user_id = req.decoded.user_id;
-      let _ = req.params;
-      let query = `
-      match (a:Account)-[l1:Linked]->(n:Note:Container)-[l:Linked*{commitNbr:last(n.commitList)}]->(x:Property)
-      where id(a)= ${user_id} and id(n) = ${_.id}
-      with l1, x
-      return
-      case
-         when count(l1)>=1 then collect(x)
-         else {data:{message: 'No access user'}}
-      end
-      `;
-         //se call apoc.path.spanningTree(n, 'Linked>') yield path
-      driver.session()
-      .run(query)
-      .then((data)=>{
-         console.log(data);
-         if(data.records && data.records[0]){
-            // let d = data.records;
-            // let detail = [];
-            let d = data.records[0]._fields[0];
-            let it = 0;
-            let mapped = d.map(x=>{
-               it++;
-               return {
-                  node_id: x.identity.low,
-                  value:x.properties.value,
-                  labels:x.labels,
-                  order:it
-               };
-            });
 
-            let token = jwt.sign({
-               exp: Math.floor(Date.now() / 1000) + (60 * 60), // expiration in 1 hour
-               user_id:user_id
-            },secret);
-            res.status(200).json({
-               token:token,
-               // detail: detail
-               detail:mapped
-            });
-         }else {
-            res.status(403).json({message: 'No access user'});
-         }
-      })
-      .catch((error)=>{
-         res.status(404).json({error: error, message:'error basic error'});
-      });
-   }else {
-      res.status(401).json({message: 'Error token params'});
-   }
+    let user_id = req.decoded.user_id;
+    let _ = req.params;
+    let query = `
+    match (a:Account)-[l1:Linked]->(n:Container)-[l:Has*{commit:last(n.commitList)}]->(x:Property)
+    where id(a)= ${user_id} and id(n) = ${_.id}
+    with l1, x
+    return
+    case
+       when count(l1)>=1 then collect(x)
+       else {data:{message: 'No access user'}}
+    end
+    `;
+       //se call apoc.path.spanningTree(n, 'Linked>') yield path
+    driver.session()
+    .run(query)
+    .then((data)=>{
+       console.log('data', data);
+       if(data.records && data.records[0]){
+          // let d = data.records;
+          // let detail = [];
+          let d = data.records[0]._fields[0];
+          let it = 0;
+          let mapped = d.map(x=>{
+             it++;
+             return {
+                node_id: x.identity.low,
+                value:x.properties.value,
+                labels:x.labels,
+                order:it
+             };
+          });
 
-}
+          let token = jwt.sign({
+             exp: Math.floor(Date.now() / 1000) + (60 * 60), // expiration in 1 hour
+             user_id:user_id
+          },secret);
+          res.status(200).json({
+             token:token,
+             // detail: detail
+             detail:mapped
+          });
+       }else {
+          res.status(403).json({message: 'No access user'});
+       }
+    })
+    .catch((error)=>{
+       res.status(400).json({error: error, message:'error basic error'});
+    });
+
+};
 
 module.exports.update_property = (req, res, next)=>{
    if(req.decoded && req.decoded.user_id){
