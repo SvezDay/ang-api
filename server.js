@@ -75,45 +75,40 @@ const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687"
 const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
 const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
 const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, graphenedbPass));
-
+// const Integer = require('neo4j-driver/src/v1/integer.js');
 const schemas = require('./api/models/schema');
 
 
 app.post('/test', (req, res)=>{
-  let user_id = 181;
+
+  // Till it is difficult to extract the date time, the commit will be the last one by default
+  let user_id = 443;
+  let _ = {
+    id: 485
+  }
+  let commit = req.body.commit || null;
   let session = driver.session();
+  let today = new Date().getTime();
+
+
   let query = `
-  match (a:Account)-[:Linked]->(n:Container{type:'note'})-[l:Has{commit:last(n.commitList)}]->(x:Property)
-     where id(a)= ${user_id}
-     return case
-        when count(n) >= 1 then {note_id: id(n), title:x.value}
-        else {}
-     end
+    match (a:Account)-[l:Linked*]->(c:Container)-[o*]->(p)
+    where id(a) = ${user_id} and id(c) = ${_.id}
+    with distinct last(l) as link, o, c, p
+    with collect(last(o)) as olist, link, c, p
+    foreach(x in olist | delete x )
+    delete link, c, p
   `;
-  session.readTransaction(tx => tx.run(query))
-  .then((data)=>{
-     if(data.records[0]){
-        let f = data.records;
-        let list = [];
-        for (var i = 0; i < f.length; i++) {
-           list.push({
-              note_id:f[i]._fields[0].note_id.low,
-              title:f[i]._fields[0].title
-           });
-        };
-        return list;
-     }else {
-        return {};
-     };
+
+
+  session
+  .readTransaction(tx => tx.run(query))
+  .then( () => {
+    res.status(200).json({message:"deleted!"})
   })
-  .then( data => {
-    res.status(200).json({
-       token:tokenGen(user_id),
-       list: data
-    });
-  })
-  .catch((error)=>{
-     console.log(error);
-     res.status(400).json({error: error, message:'error basic error'});
+  .catch( error => {
+    console.log(error);
+    res.status(400).json({error:error});
   });
+
 });

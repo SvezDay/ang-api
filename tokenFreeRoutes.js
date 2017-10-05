@@ -84,9 +84,10 @@ module.exports.register = (req, res, next)=>{
       RETURN value
       `;
    session
-   .readTransaction( tx => tx.run(query, {}))
+   .readTransaction( tx => tx.run(query))
    .then( data => {
       if(data.records[0] && data.records[0]._fields[0]){
+        console.log(data.records[0]._fields[0])
          res.status(200).json(data.records[0]._fields[0]);
       }else {
          res.status(401).json({message: 'not found'});
