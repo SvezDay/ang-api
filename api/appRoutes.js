@@ -39,7 +39,7 @@ module.exports = ()=>{
       .post('/note_add_property', note.add_property)
       // .delete('/delete_property/:note_id/:property_id', note.delete_property)
       .delete('/delete_container/:id', note.delete_container)
-      // .post('/drop_property', note.drop_property)
+      .post('/note_drop_property', note.drop_property)
     // COURSE
       .post('/create_course', course.create_course)
       .get('/get_all_course', course.get_all_course)

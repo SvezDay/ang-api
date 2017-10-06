@@ -567,143 +567,118 @@ module.exports.delete_property = (req, res, next)=>{
 };
 
 module.exports.drop_property = (req, res, next)=>{
-   if(req.decoded && req.decoded.user_id){
-      let user_id = req.decoded.user_id;
-      let _ = req.body;
-      let date = new Date().getTime();
-      const session = driver.session();
-      const readA = `
-         match (a:Account)-[l:Linked]->(n:Note)
-         where id(a) = ${user_id} and id(n) = ${_.note_id}
-         return count(l)
-      `;
-      const readB = `
-         match (n:Note)
-         where id(n) = ${_.note_id}
-         match (n)-[l:Linked*{commitNbr:last(n.commitList)}]->(p:Property)
-         set n.commitList = n.commitList + ${date}
-         return extract(x in collect(p)| id(x))
-      `;
+  // Since it ain't possible to parse the commit, it'll be the last by default
+    let user_id = req.decoded.user_id;
+    let _ = req.body;
+    let now = new Date().getTime();
+    let session = driver.session();
 
-      session
-      .readTransaction(tx => tx.run(readA, {}))
-      .then(result => {
-         if(result.records[0].get(0).low == 1){
+    let Q1 = `
+       match (a:Account)-[l:Linked]->(n:Container)
+       where id(a) = ${user_id} and id(n) = ${_.container_id}
+       return count(l)
+    `;
 
-            session
-            .readTransaction(tx => tx.run(readB, {}))
-            .then(result2 => {
-               let data2 = result2.records[0].get(0).map(x=>{
-                  return x.low;
-               });
+    let Q2 = `
+       match (n:Container)-[l:Has*{commit:last(n.commitList)}]->(p:Property)
+       where id(n) = ${_.container_id}
+       return collect(p)
+    `;
+    // set n.commitList = n.commitList + ${now}
 
-               let readD = readD1 = readD2 = "";
-               let toDrop = 0;
-
-               transaction = ()=>{
-                  session
-                  .readTransaction(tx => tx.run(readD, {}))
-                  .then(() => {
-                     let token = jwt.sign({
-                        exp: Math.floor(Date.now() / 1000) + (60 * 60), // expiration in 1 hour
-                        user_id:user_id
-                     },secret);
-                     console.log('finish');
-                     res.status(200).json({
-                        token:token,
-                        message:'finish'
-                     });
-                  })
-                  .catch(function (error) {
-                     console.log("========================== CHECK 4 ERROR ==============");
-                    console.log(error);
-                    res.status(200).json({error:error});
-                  });
-               }
-               dropUp = ()=>{
-                  return new Promise((resolve, reject)=>{
-                     // init the query
-                     readD2 = ` create`;
-                     //So invere order of the list to a drop Up
-                     data2.reverse();
-                     // Reverse the sens of the request
-                     for(let x of data2){
-                        if(x == _.property_id){
-                           toDrop = _.property_id;
-                        }else if(toDrop){
-                           readD1 = readD1 +
-                              ` match (x${x}) where id(x${x}) = ${x}
-                               match (x${toDrop}) where id(x${toDrop}) = ${toDrop}`;
-                           readD2 = readD2 +
-                              `(x${x})<-[l${x}:Linked{commitNbr:${date}}]-
-                              (x${toDrop})<-[l${toDrop}:Linked{commitNbr:${date}}]-`;
-                           toDrop = 0;
-                        }else{
-                           readD1 = readD1 + ` match (x${x}) where id(x${x}) = ${x}`;
-                           readD2 = readD2 + `(x${x})<-[l${x}:Linked{commitNbr:${date}}]-`;
-                        };
-                     };
-                     readD1 = readD1 + ` match (note) where id(note) = ${_.note_id}`;
-                     readD2 = readD2 + `(note)`;
-                     readD = readD1 + readD2;
-                     resolve(readD);
-                  })
-               }
-               dropDown = ()=>{
-                  return new Promise((resolve, reject)=>{
-                     readD1 = `match (note) where id(note) = ${_.note_id}`;
-                     readD2 = ` create (note)`;
-                     for(let x of data2){
-                        if(x == _.property_id){
-                           console.log('CHECK 1');
-                           toDrop = _.property_id;
-                        }else if(toDrop){
-                           console.log('CHECK 2');
-                           readD1 = readD1 +
-                              ` match (x${x}) where id(x${x}) = ${x}
-                              match (x${toDrop}) where id(x${toDrop}) = ${toDrop}`;
-                           readD2 = readD2 +
-                              `-[l${x}:Linked{commitNbr:${date}}]->(x${x})
-                              -[l${toDrop}:Linked{commitNbr:${date}}]->(x${toDrop})`;
-                           toDrop = 0;
-                        }else{
-                           console.log('CHECK 3');
-                           readD1 = readD1 + ` match (x${x}) where id(x${x}) = ${x}`;
-                           readD2 = readD2 + `-[l${x}:Linked{commitNbr:${date}}]->(x${x})`;
-                        }
-                     };
-                     readD = readD1 + readD2;
-                     resolve(readD);
-                  })
-               }
-
-               if(_.drop=='up'){
-                  dropUp().then( readD =>{
-                     transaction(readD);
-                  })
-               }else{
-                  dropDown().then( readD => {
-                     transaction(readD);
-                  })
-               }
+    let Q3_1 = `
+      match (n:Container) where id(n) = ${_.container_id}
+    `;
+    let Q3_2 = ` create (n)`;
 
 
-            })
-            .catch(function (error) {
-               console.log("========================== CHECK 2 ERROR ==============");
-              console.log(error);
-              res.status(200).json({error:error});
-            });
-         }else {
-            console.log('no access user');
-            session.close();
-            res.status(200).json({error:"No access user"});
-         }
-      })
-      .catch(function (error) {
-         console.log("========================== CHECK 1 ERROR ==============");
-        console.log(error);
-        res.status(200).json({error:error});
+    session.readTransaction(tx => tx.run(Q1))
+    .then( data => {
+      // Check the user access to the container
+      if(data.records[0].get(0).low) {
+        return;
+      }else{
+        res.status(400).json({message: 'no access user'})
+      };
+    })
+    .then( () => {
+      // Get the property list
+      return session.readTransaction(tx=>tx.run(Q2))
+    })
+    .then( data => {
+      // Add the title to the query
+      let f = data.records[0]._fields[0];
+      let j = 0;
+      let titleIndex;
+      f.map(x=>{
+        x.labels.filter(x => x != 'Property')[0] == 'Title' ? titleIndex = j : null
+        j++;
       });
-   }
+      let title = f.splice(titleIndex, 1);
+      let i = title[0].identity.low;
+      Q3_1 += ` match (x${i}:Property) where id(x${i}) = ${i}`;
+      Q3_2 += `-[:Has{commit:${now}}]->(x${i})`;
+      return f;
+    })
+    .then( f => {
+      // Check the limit up and down
+      if (_.direction == 'up' && f[0].identity.low == _.property_id){
+        res.status(400).json({message: 'Unauthorized query'})
+      }else if(_.direction == 'down' && f.reverse()[0].identity.low == _.property_id){
+        res.status(400).json({message: 'Unauthorized query'})
+      }else{
+        return f;
+      };
+    })
+    .then( f => {
+      // Finalisation of the query
+      let todrop;
+      let previous;
+      f.map( x => {
+        let i = x.identity.low;
+        if(i == _.property_id && _.direction == 'down'){
+          console.log('conditionnal 1')
+          todrop = i;
+        }else if(i == _.property_id && _.direction == 'up'){
+          console.log('conditionnal 2')
+          Q3_1 += `
+          match (x${i}:Property) where id(x${i}) = ${i}
+          match (x${previous}:Property) where id(x${previous}) = ${previous}`;
+          Q3_2 += `-[:Has{commit:${now}}]->(x${i})-[:Has{commit:${now}}]->(x${previous})`;
+          previous = null;
+        }else if(previous){
+          console.log('conditionnal 3')
+          Q3_1 += ` match (x${previous}:Property) where id(x${previous}) = ${previous}`;
+          Q3_2 += `-[:Has{commit:${now}}]->(x${previous})`;
+          previous = i;
+        }else if(todrop){
+          console.log('conditionnal 4')
+          Q3_1 += `
+          match (x${i}:Property) where id(x${i}) = ${i}
+          match (x${todrop}:Property) where id(x${todrop}) = ${todrop}`;
+          Q3_2 += `-[:Has{commit:${now}}]->(x${i})-[:Has{commit:${now}}]->(x${todrop})`;
+          todrop = null;
+        }else if(_.direction == 'down'){
+          console.log('conditionnal 5')
+          Q3_1 += ` match (x${i}:Property) where id(x${i}) = ${i}`;
+          Q3_2 += `-[:Has{commit:${now}}]->(x${i})`;
+        }else if(_.direction == 'up'){
+          console.log('conditionnal 6')
+          previous = i;
+        };
+      });
+      if(_.direction == 'up'){
+        Q3_1 += ` match (x${previous}:Property) where id(x${previous}) = ${previous}`;
+        Q3_2 += `-[:Has{commit:${now}}]->(x${previous})`;
+      };
+      return;
+    })
+    .then( () =>{
+      res.status(200).json({q: Q3_1+Q3_2})
+    })
+    .catch(function (error) {
+       console.log("========================== CHECK 1 ERROR ==============");
+      console.log(error);
+      res.status(400).json({error:error});
+    });
 }
