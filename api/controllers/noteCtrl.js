@@ -200,7 +200,7 @@ module.exports.get_note_detail = (req, res, next)=>{
       };
     })
     .then( data => {
-      // console.log(data.title)
+      console.log(data)
         res.status(200).json({
            token:tokenGen(user_id),
            data:data
@@ -573,6 +573,8 @@ module.exports.drop_property = (req, res, next)=>{
     let now = new Date().getTime();
     let session = driver.session();
 
+    let last_com = Number;
+
     let Q1 = `
        match (a:Account)-[l:Linked]->(n:Container)
        where id(a) = ${user_id} and id(n) = ${_.container_id}
@@ -584,13 +586,12 @@ module.exports.drop_property = (req, res, next)=>{
        where id(n) = ${_.container_id}
        return collect(p)
     `;
-    // set n.commitList = n.commitList + ${now}
 
     let Q3_1 = `
       match (n:Container) where id(n) = ${_.container_id}
     `;
     let Q3_2 = ` create (n)`;
-
+    let Q3_3 = ` set n.commitList = n.commitList + ${now}`;
 
     session.readTransaction(tx => tx.run(Q1))
     .then( data => {
@@ -624,9 +625,15 @@ module.exports.drop_property = (req, res, next)=>{
       // Check the limit up and down
       if (_.direction == 'up' && f[0].identity.low == _.property_id){
         res.status(400).json({message: 'Unauthorized query'})
+      // }else if(_.direction == 'down' && f.reverse()[0].identity.low == _.property_id){
       }else if(_.direction == 'down' && f.reverse()[0].identity.low == _.property_id){
         res.status(400).json({message: 'Unauthorized query'})
       }else{
+        // Because the previous conditionnal has not just check the reverse,
+        // but modified it todrop, so we reverse again 
+        if(_.direction == 'down'){
+          f.reverse();
+        };
         return f;
       };
     })
@@ -635,6 +642,7 @@ module.exports.drop_property = (req, res, next)=>{
       let todrop;
       let previous;
       f.map( x => {
+        console.log('===========', x)
         let i = x.identity.low;
         if(i == _.property_id && _.direction == 'down'){
           console.log('conditionnal 1')
@@ -645,7 +653,7 @@ module.exports.drop_property = (req, res, next)=>{
           match (x${i}:Property) where id(x${i}) = ${i}
           match (x${previous}:Property) where id(x${previous}) = ${previous}`;
           Q3_2 += `-[:Has{commit:${now}}]->(x${i})-[:Has{commit:${now}}]->(x${previous})`;
-          previous = null;
+          previous = 0;
         }else if(previous){
           console.log('conditionnal 3')
           Q3_1 += ` match (x${previous}:Property) where id(x${previous}) = ${previous}`;
@@ -657,7 +665,7 @@ module.exports.drop_property = (req, res, next)=>{
           match (x${i}:Property) where id(x${i}) = ${i}
           match (x${todrop}:Property) where id(x${todrop}) = ${todrop}`;
           Q3_2 += `-[:Has{commit:${now}}]->(x${i})-[:Has{commit:${now}}]->(x${todrop})`;
-          todrop = null;
+          todrop = 0;
         }else if(_.direction == 'down'){
           console.log('conditionnal 5')
           Q3_1 += ` match (x${i}:Property) where id(x${i}) = ${i}`;
@@ -667,14 +675,21 @@ module.exports.drop_property = (req, res, next)=>{
           previous = i;
         };
       });
-      if(_.direction == 'up'){
+      if(_.direction == 'up' && previous){
         Q3_1 += ` match (x${previous}:Property) where id(x${previous}) = ${previous}`;
         Q3_2 += `-[:Has{commit:${now}}]->(x${previous})`;
       };
       return;
     })
     .then( () =>{
-      res.status(200).json({q: Q3_1+Q3_2})
+      return session.readTransaction(tx=>tx.run(Q3_1+Q3_2+Q3_3))
+    })
+    .then( ()=>{
+      console.log('==========================')
+      console.log(Q3_1)
+      console.log('==========================')
+      console.log(Q3_2)
+      res.status(200).json({message: 'Done !'})
     })
     .catch(function (error) {
        console.log("========================== CHECK 1 ERROR ==============");
