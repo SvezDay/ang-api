@@ -25,6 +25,7 @@ process.env.NEO4J_PASSWORD="futur$";
 let appRoutes = require('./api/appRoutes');
 let tokenRoutes = require('./api/tokenRoutes');
 let freeRoutes = require('./tokenFreeRoutes');
+let myeasytest = require('./myeasytest');
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -58,57 +59,7 @@ app.use('/api', tokenRoutes, appRoutes());
 
 app.post('/authenticate', freeRoutes.authenticate);
 app.post('/register', freeRoutes.register);
+app.post('/test', myeasytest);
 
 app.listen(port);
 console.log('API server started on: localhost:' + port);
-
-
-const jwt = require('jsonwebtoken');
-const apoc = require('apoc');
-const neo4j = require('neo4j-driver').v1;
-// const secret = require('./config/tokenSecret').secret;
-
-let parser = require('./api/services/parser');
-let tokenGen = require('./api/services/token.service');
-let schema = require('./api/models/schema');
-const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
-const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
-const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
-const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, graphenedbPass));
-// const Integer = require('neo4j-driver/src/v1/integer.js');
-const schemas = require('./api/models/schema');
-
-
-app.post('/test', (req, res)=>{
-
-  // Till it is difficult to extract the date time, the commit will be the last one by default
-  let user_id = 443;
-  let _ = {
-    id: 485
-  }
-  let commit = req.body.commit || null;
-  let session = driver.session();
-  let today = new Date().getTime();
-
-
-  let query = `
-    match (a:Account)-[l:Linked*]->(c:Container)-[o*]->(p)
-    where id(a) = ${user_id} and id(c) = ${_.id}
-    with distinct last(l) as link, o, c, p
-    with collect(last(o)) as olist, link, c, p
-    foreach(x in olist | delete x )
-    delete link, c, p
-  `;
-
-
-  session
-  .readTransaction(tx => tx.run(query))
-  .then( () => {
-    res.status(200).json({message:"deleted!"})
-  })
-  .catch( error => {
-    console.log(error);
-    res.status(400).json({error:error});
-  });
-
-});

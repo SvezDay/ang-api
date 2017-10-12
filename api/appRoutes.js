@@ -13,9 +13,10 @@ let version = require('../package.json').version;
 // let learningSchema = require('./controllers/learningSchemaCtrl.js');
 // let course = require('./controllers/learnings/coursesCtrl.js');
 let user = require('./controllers/user.controller');
-let note = require('./controllers/noteCtrl.js');
-let course = require('./controllers/courseCtrl.js');
-let game = require('./controllers/gameCtrl.js');
+let note = require('./controllers/note.controller');
+let course = require('./controllers/courseCtrl');
+let game = require('./controllers/gameCtrl');
+let container = require('./controllers/container.controller');
 
 const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
 const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
@@ -37,7 +38,7 @@ module.exports = ()=>{
       // .post('/update_property', note.update_property)
       .post('/note_update_value', note.update_value)
       .post('/note_add_property', note.add_property)
-      // .delete('/delete_property/:note_id/:property_id', note.delete_property)
+      .delete('/delete_property/:container_id/:property_id', note.delete_property)
       .delete('/delete_container/:id', note.delete_container)
       .post('/note_drop_property', note.drop_property)
     // COURSE
@@ -57,6 +58,8 @@ module.exports = ()=>{
       .post('/game_toggle_out_from_recallable', game.toggle_out_from_recallable)
       .post('/game_toggle_in_to_recallable', game.toggle_in_to_recallable)
       .post('/game_answering', game.answering)
+    // CONTAINER & ARBORESCENCE
+      .post('/container_get_sub_container', container.get_sub_container)
 
 
 //    .get('/users', user.getAll)
