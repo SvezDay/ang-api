@@ -8,6 +8,7 @@ module.exports.get_sub_container = (req, res, next)=>{
   let user_id = req.decoded.user_id;
   let _ = req.body;
 
+
   let Q1 = `match (a:Account)`;
   let Q2 = ``;
   let Q3 = `-[:Linked]->(last:Container)`;
@@ -16,10 +17,9 @@ module.exports.get_sub_container = (req, res, next)=>{
   let Q6 = ``;
   let Q7 = ``;
 
-  if(_.path.length != 0){
-    let cont = _.path.pop();
+  if(_.container_id){
     Q2 += `-[l:Linked*]->(c:Container)`;
-    Q5 += ` and id(c)= ${cont.container_id}`;
+    Q5 += ` and id(c)= ${_.container_id}`;
     Q7 += ` with last, count(l) as count
     return case when count <> 0 then collect(last) else {} end `;
   }else{
@@ -31,8 +31,10 @@ module.exports.get_sub_container = (req, res, next)=>{
   session.readTransaction(tx=>tx.run(Q1+Q2+Q3+Q4+Q5+Q6+Q7))
   .then( data => {
     if(data.records.length == 0){
+      console.log('======================= 1')
       return res.status(204).json({message:'empty'});
     }else{
+      console.log('======================= 2')
       return data.records[0]._fields[0];
     };
   })
@@ -60,6 +62,8 @@ module.exports.get_sub_container = (req, res, next)=>{
     });
   })
   .then(data => {
+    console.log('======================= data')
+    console.log(data)
     res.status(200).json({data:data})
   })
   .catch(err => {
