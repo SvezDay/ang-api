@@ -60,6 +60,7 @@ module.exports = ()=>{
       .post('/game_answering', game.answering)
     // CONTAINER & ARBORESCENCE
       .post('/container_get_sub_container', container.get_sub_container)
+      .post('/change_container_path', container.change_container_path)
 
 
 //    .get('/users', user.getAll)
