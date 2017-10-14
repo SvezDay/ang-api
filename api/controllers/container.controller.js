@@ -115,6 +115,9 @@ module.exports.change_container_path = (req, res, next)=>{
   cth == user_id ? Q = Q2 : Q = Q1
 
   session.readTransaction(tx=>tx.run(Q))
+  .then(data=>{
+    return data.records[0]._fields;
+  })
   .then(data => {
     res.status(200).json({data:data});
   })
