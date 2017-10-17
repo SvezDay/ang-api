@@ -28,48 +28,64 @@ module.exports.get_sub_container = (req, res, next)=>{
 
   let Q8 = ``;
   let Q9 = ` return `;
-  session.readTransaction(tx=>tx.run(Q1+Q2+Q3+Q4+Q5+Q6+Q7))
-  .then( data => {
+
+  // This tx return the list of the container
+  let p1 = session.readTransaction(tx=>tx.run(Q1+Q2+Q3+Q4+Q5+Q6+Q7))
+  let p2 = p1.then( data => {
     if(data.records.length == 0){
       console.log('======================= 1')
-      return res.status(204).json({message:'empty'});
+      return false;
     }else{
       console.log('======================= 2')
       return data.records[0]._fields[0];
     };
   })
-  .then(data=>{
-    let t = 0;
-    data.map(x => {
-      t != 0 ? Q9 += " , " : null
-      let i = x.identity.low;
-      Q8 += ` match(c${i}:Container)-[:Has{commit:last(c${i}.commitList)}]->(ct${i}:Title)
-        where id(c${i}) = ${i}`;
-      Q9 += `
-        {container_id: id(c${i}), title_id:id(ct${i}), value:ct${i}.value}`;
-      t++;
-    })
+
+  p2.then(data =>{
+    if( data == false){
+      return res.status(204).json({message:'empty'});
+    }else{
+      p2.then(data=>{
+        console.log('CONTINUE')
+        let t = 0;
+        data.map(x => {
+          t != 0 ? Q9 += " , " : null
+          let i = x.identity.low;
+          Q8 += ` match(c${i}:Container)-[:Has{commit:last(c${i}.commitList)}]->(ct${i}:Title)
+          where id(c${i}) = ${i}`;
+          Q9 += `
+          {container_id: id(c${i}), title_id:id(ct${i}), value:ct${i}.value}`;
+          t++;
+        })
+      })
+      .then( ()=> {
+        // console.log(Q8+Q9)
+        // This tx return the title properties of each containers founds
+        return session.readTransaction(tx=>tx.run(Q8+Q9))
+      })
+      .then( data => {
+        return data.records[0]._fields.map(x => {
+          x.container_id = x.container_id.low;
+          x.title_id = x.title_id.low;
+          return x;
+        });
+      })
+      .then(data => {
+        console.log('======================= data')
+        console.log(data)
+        res.status(200).json({
+          token: tokenGen(user_id),
+          data:data
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        res.status(400).json({err:err});
+      });
+
+    }
   })
-  .then( ()=> {
-    console.log(Q8+Q9)
-    return session.readTransaction(tx=>tx.run(Q8+Q9))
-  })
-  .then( data => {
-    return data.records[0]._fields.map(x => {
-      x.container_id = x.container_id.low;
-      x.title_id = x.title_id.low;
-      return x;
-    });
-  })
-  .then(data => {
-    console.log('======================= data')
-    console.log(data)
-    res.status(200).json({data:data})
-  })
-  .catch(err => {
-    console.log(err);
-    res.status(400).json({err:err});
-  });
+
 
 };
 
