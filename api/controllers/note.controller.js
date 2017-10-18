@@ -132,7 +132,7 @@ module.exports.get_note_detail = (req, res, next)=>{
     let user_id = req.decoded.user_id;
     let _ = req.params;
     let query = `
-      match (a:Account)-[l1:Linked]->(n:Container)-[ly:Has{commit:last(n.commitList)}]->(y:Property:Title)-[lx:Has*{commit:last(n.commitList)}]->(x:Property)
+      match (a:Account)-[l1:Linked*]->(n:Container)-[ly:Has{commit:last(n.commitList)}]->(y:Property:Title)-[lx:Has*{commit:last(n.commitList)}]->(x:Property)
       where id(a)= ${user_id} and id(n) = ${_.id}
       with l1, y, x, n
       return
@@ -142,6 +142,13 @@ module.exports.get_note_detail = (req, res, next)=>{
       end
     `;
     session.readTransaction(tx=>tx.run(query))
+    .then( data => {
+      if(data.records && data.records[0]._fields[0]){
+        return data;
+      }else{
+
+      }
+    })
     .then((data)=>{
       let f = data.records[0]._fields[0];
       return {
@@ -169,7 +176,8 @@ module.exports.get_note_detail = (req, res, next)=>{
            data:data
         });
     })
-    .catch((error)=>{
+    .catch( error =>{
+      console.log(error)
        res.status(400).json({error: error, message:'error basic error'});
     });
 };
