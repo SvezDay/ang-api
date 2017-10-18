@@ -145,7 +145,7 @@ module.exports.get_note_detail = (req, res, next)=>{
     .then((data)=>{
       let f = data.records[0]._fields[0];
       return {
-        detail: f.property.map(x=>{
+        main: f.property.map(x=>{
            return {
               id: x.identity.low,
               value:x.properties.value,
