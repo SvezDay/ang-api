@@ -1,7 +1,9 @@
 'use-strict';
 let driver = require('../../config/driver');
 let tokenGen = require('../services/token.service');
-let labels_service = require('../services/labels.service');
+let labelService = require('../services/label.service');
+let utils = require('../services/utility.service');
+
 
 module.exports.create_note = (req, res, next)=>{
   let session = driver.session();
@@ -53,7 +55,7 @@ module.exports.create_empty_note = (req, res, next)=>{
      create (t:Property:Title {value:'Undefined'})
      create (u:Property:Undefined {value:''})
      create (a)-[:Linked]->(n)-[:Has{commit:${today}}]->(t)-[:Has{commit:${today}}]->(u)
-     return {note_id: id(n), title_id:id(t), first_property_id: id(u)}
+     return {container_id: id(n), title_id:id(t), first_property_id: id(u)}
   `;
 
 
@@ -80,10 +82,14 @@ module.exports.create_empty_note = (req, res, next)=>{
 
 module.exports.get_label = (req, res, next)=>{
   let user_id = req.decoded.user_id;
-  let u = labels_service.get_sub_label('Property');
-  res.status(200).json({
-    token: tokenGen(user_id),
-    data: u
+  labelService.getPropertyLabel().then( list => {
+    console.log('list', list)
+    res.status(200).json({
+      token: tokenGen(user_id),
+      exp: new Date().getTime(),
+      data: list
+    });
+
   });
 };
 
@@ -143,42 +149,47 @@ module.exports.get_note_detail = (req, res, next)=>{
     `;
     session.readTransaction(tx=>tx.run(query))
     .then( data => {
-      if(data.records && data.records[0]._fields[0]){
-        return data;
+      let r = data.records;
+      if(r.length && r[0]._fields[0].length){
+        return r[0]._fields[0];
+      }else if(r.length && r[0]._fields.length){
+        return r[0]._fields;
       }else{
-
+        throw {status: 403, err: 'no user access'}
       }
     })
-    .then((data)=>{
-      let f = data.records[0]._fields[0];
+    .then(data =>{
       return {
-        main: f.property.map(x=>{
+        main: data[0].property.map(x=>{
            return {
               id: x.identity.low,
               value:x.properties.value,
-              labels:x.labels.filter( p => { return p != 'Property' })[0]
+              label:x.labels.filter( p => { return p != 'Property' })[0]
            };
         }),
         container: {
-          id: f.container.identity.low,
+          id: data[0].container.identity.low,
           // NEED commit list on the correct format date
         },
         title: {
-          id: f.title.identity.low,
-          value: f.title.properties.value,
-          labels:f.title.labels.filter( p => { return p != 'Property' })[0]
+          id: data[0].title.identity.low,
+          value: data[0].title.properties.value,
+          label:data[0].title.labels.filter( p => { return p != 'Property' })[0]
         }
       };
     })
     .then( data => {
-        res.status(200).json({
-           token:tokenGen(user_id),
-           data:data
-        });
+      res.status(200).json({
+         token:tokenGen(user_id),
+         exp: new Date().getTime(),
+         data:data
+      });
     })
-    .catch( error =>{
-      console.log(error)
-       res.status(400).json({error: error, message:'error basic error'});
+    .catch( err =>{
+       console.log(err);
+       let status = err.status || 400;
+       let e = err.err || err;
+       res.status(status).json(e);
     });
 };
 
@@ -294,7 +305,7 @@ module.exports.update_value = (req, res, next)=>{
 
   let commit = req.body.commit || null;
   let properties = [];
-  let update;
+  let updates;
   let Q3 = ``,
       Q3_1 = `match (c) where id(c)=${_.container_id}`,
       Q3_2 = ` create (c)`;
@@ -312,29 +323,45 @@ module.exports.update_value = (req, res, next)=>{
   let Q2 = `
     match(c:Container) where id(c) = ${_.container_id}
     set c.commitList =  c.commitList + ${today}
-    create (new:Property:${_.labels}{value:'${_.value}'}) return new
+    create (new:Property:${_.label}{value:'${_.value}'}) return new
   `;
-  session.readTransaction(tx=>tx.run(Q1))
+
+
+  // CHECKING DATA
+  utils.num(_.container_id)
+  .then(()=>{ return utils.str(_.value)})
+  .then(()=>{ return labelService.isPropertyLabel(_.label)})
+  // Q1 => check user access and return properties list of the container
+  // including the title
+  .then(()=>{
+    console.log('Q1', Q1)
+    return session.readTransaction(tx=>tx.run(Q1)) })
   .then((data)=>{
-      if(data.records.length){
-        return data.records[0]._fields[0];
-      }else {
-        res.status(403).json({message: 'no access'})
-      };
+    console.log('result of Q1', data.records[0]._fields[0])
+    let r = data.records;
+    if(r.length && r[0]._fields[0].length){
+      return r[0]._fields[0];
+    }else if(r.length && r[0]._fields.length){
+      return r[0]._fields;
+    }else {
+      throw {status: 403, err: 'no user access'}
+    };
   })
   .then( data =>{
-    // save the properties for next
+    // save the properties for after
     properties = data;
     // Create the update and return it
+    console.log('Q2', Q2)
     return session.readTransaction(tx=>tx.run(Q2))
   })
   .then( data => {
-    update = data.records[0]._fields[0];
+    console.log('result of Q2', data.records[0]._fields)
+    updates = data.records[0]._fields[0];
     // Iterate the properties list to create the 3rd query
     properties.map(x => {
       // replace by the last update value
       let i = x.identity.low;
-      let u = update.identity.low;
+      let u = updates.identity.low;
       if( i == _.id){
         Q3_1 += ` match (x${u}) where id(x${u})=${u}`;
         Q3_2 += `-[:Has{commit:${today}}]->(x${u})`;
@@ -342,24 +369,50 @@ module.exports.update_value = (req, res, next)=>{
         Q3_1 += ` match (x${i}) where id(x${i})=${i}`;
         Q3_2 += `-[:Has{commit:${today}}]->(x${i})`;
       };
+      Q3_3 = ` return x${u}`
     });
     return;
   })
   .then( () => {
-    Q3 = Q3_1 + Q3_2;
-    return session.readTransaction(tx=>tx.run(Q3))
+    console.log('***************************************')
+    console.log(Q3_1+Q3_2+Q3_3)
+    return session.readTransaction(tx=>tx.run(Q3_1+Q3_2+Q3_3))
   })
-  .then( () => {
+  .then((data)=>{
+    let r = data.records;
+    if(r.length && r[0]._fields[0].length){
+      console.log('result of Q3', r[0]._fields[0])
+      return r[0]._fields[0];
+    }else if(r.length && r[0]._fields.length){
+      console.log('result of Q3', r[0]._fields)
+      return r[0]._fields;
+    }else {
+      throw {status: 403, err: 'no data found'}
+    };
+  })
+  .then( data => {
+    console.log('at the end', data)
+    let f = data[0];
+    f.id = f.identity.low;
+    f.label = f.labels.filter(l => { return l != 'Property' })[0];
+    f.value = f.properties.value;
+    delete f.identity;
+    delete f.properties;
+    delete f.labels;
+    return f;
+  })
+  .then( data => {
     res.status(200).json({
        token:tokenGen(user_id),
-      //  list: data,
-       now: today
-
+       exp: new Date().getTime(),
+       data: data
     });
   })
-  .catch((error)=>{
-     console.log(error);
-     res.status(400).json({error: error, message:'error basic error'});
+  .catch((err)=>{
+     console.log(err);
+     let status = err.status || 400;
+     let e = err.err || err;
+     res.status(status).json(e);
   });
 };
 
@@ -522,6 +575,8 @@ module.exports.drop_property = (req, res, next)=>{
     let now = new Date().getTime();
     let session = driver.session();
 
+    console.log('//////////////////// ', req.body)
+
     let last_com = Number;
 
     let Q1 = `
@@ -544,18 +599,23 @@ module.exports.drop_property = (req, res, next)=>{
 
     session.readTransaction(tx => tx.run(Q1))
     .then( data => {
+      console.log('============================= CHECK 1')
       // Check the user access to the container
       if(data.records[0].get(0).low) {
+        console.log('============================= CHECK 1.1')
         return;
       }else{
+        console.log('============================= CHECK 1.2')
         res.status(400).json({message: 'no access user'})
       };
     })
     .then( () => {
+      console.log('============================= CHECK 2')
       // Get the property list
       return session.readTransaction(tx=>tx.run(Q2))
     })
     .then( data => {
+      console.log('============================= CHECK 3')
       // Add the title to the query
       let f = data.records[0]._fields[0];
       let j = 0;
@@ -571,22 +631,30 @@ module.exports.drop_property = (req, res, next)=>{
       return f;
     })
     .then( f => {
+      console.log('============================= CHECK 4')
+      console.log('**************************')
+      console.log(req.body)
+      console.log('**************************')
+      f.map(x => { console.log(x) })
+
       // Check the limit up and down
       if (_.direction == 'up' && f[0].identity.low == _.property_id){
+        console.log('============================= CHECK 4.1')
         res.status(400).json({message: 'Unauthorized query'})
-      // }else if(_.direction == 'down' && f.reverse()[0].identity.low == _.property_id){
       }else if(_.direction == 'down' && f.reverse()[0].identity.low == _.property_id){
+        console.log('============================= CHECK 4.2')
         res.status(400).json({message: 'Unauthorized query'})
-      }else{
-        // Because the previous conditionnal has not just check the reverse,
-        // but modified it todrop, so we reverse again
-        if(_.direction == 'down'){
-          f.reverse();
-        };
-        return f;
       };
+      // Because the previous conditionnal has not just check the reverse,
+      // but modified it todrop, so we reverse again
+      if(_.direction == 'down'){
+        console.log('============================= CHECK 4.3')
+        f.reverse();
+      };
+      return f;
     })
     .then( f => {
+      console.log('============================= CHECK 5')
       // Finalisation of the query
       let todrop;
       let previous;
@@ -594,54 +662,60 @@ module.exports.drop_property = (req, res, next)=>{
         console.log('===========', x)
         let i = x.identity.low;
         if(i == _.property_id && _.direction == 'down'){
-          console.log('conditionnal 1')
+          console.log('============================= CHECK 5.1')
           todrop = i;
         }else if(i == _.property_id && _.direction == 'up'){
-          console.log('conditionnal 2')
+          console.log('============================= CHECK 5.2')
           Q3_1 += `
           match (x${i}:Property) where id(x${i}) = ${i}
           match (x${previous}:Property) where id(x${previous}) = ${previous}`;
           Q3_2 += `-[:Has{commit:${now}}]->(x${i})-[:Has{commit:${now}}]->(x${previous})`;
           previous = 0;
         }else if(previous){
-          console.log('conditionnal 3')
+          console.log('============================= CHECK 5.3')
           Q3_1 += ` match (x${previous}:Property) where id(x${previous}) = ${previous}`;
           Q3_2 += `-[:Has{commit:${now}}]->(x${previous})`;
           previous = i;
         }else if(todrop){
-          console.log('conditionnal 4')
+          console.log('============================= CHECK 5.4')
           Q3_1 += `
           match (x${i}:Property) where id(x${i}) = ${i}
           match (x${todrop}:Property) where id(x${todrop}) = ${todrop}`;
           Q3_2 += `-[:Has{commit:${now}}]->(x${i})-[:Has{commit:${now}}]->(x${todrop})`;
           todrop = 0;
         }else if(_.direction == 'down'){
-          console.log('conditionnal 5')
+          console.log('============================= CHECK 5.5')
           Q3_1 += ` match (x${i}:Property) where id(x${i}) = ${i}`;
           Q3_2 += `-[:Has{commit:${now}}]->(x${i})`;
         }else if(_.direction == 'up'){
+          console.log('============================= CHECK 5.6')
           console.log('conditionnal 6')
           previous = i;
         };
       });
       if(_.direction == 'up' && previous){
+        console.log('============================= CHECK 5.7')
         Q3_1 += ` match (x${previous}:Property) where id(x${previous}) = ${previous}`;
         Q3_2 += `-[:Has{commit:${now}}]->(x${previous})`;
       };
       return;
     })
     .then( () =>{
+      console.log('============================= CHECK 6')
       return session.readTransaction(tx=>tx.run(Q3_1+Q3_2+Q3_3))
+      // return;
     })
     .then( ()=>{
+      console.log('============================= CHECK 7')
       console.log('==========================')
       console.log(Q3_1)
       console.log('==========================')
       console.log(Q3_2)
+      console.log('==========================')
+      console.log(Q3_3)
       res.status(200).json({message: 'Done !'})
     })
     .catch(function (error) {
-       console.log("========================== CHECK 1 ERROR ==============");
       console.log(error);
       res.status(400).json({error:error});
     });

@@ -7,7 +7,6 @@ const neo4j = require('neo4j-driver').v1;
 const secret = require('../../config/tokenSecret').secret;
 
 let tokenGen = require('../services/token.service');
-let labels_service = require('../services/labels.service');
 
 const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
 const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";

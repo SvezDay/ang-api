@@ -1,10 +1,9 @@
 'use-strict';
 let driver = require('../../config/driver');
 let tokenGen = require('../services/token.service');
-let labels_service = require('../services/labels.service');
+let labelService = require('../services/label.service');
 
 module.exports.get_sub_container = (req, res, next)=>{
-  console.log("=================================== CHECK =================")
   let session = driver.session();
   let user_id = req.decoded.user_id;
   let _ = req.body;
@@ -34,20 +33,17 @@ module.exports.get_sub_container = (req, res, next)=>{
   let p1 = session.readTransaction(tx=>tx.run(Q1+Q2+Q3+Q4+Q5+Q6+Q7))
   let p2 = p1.then( data => {
     if(data.records.length == 0){
-      console.log('======================= 1')
       return false;
     }else{
-      console.log('======================= 2')
       return data.records[0]._fields[0];
     };
   })
 
-  p2.then(data =>{
+  p2.then( data => {
     if( data == false){
       return res.status(204).json({message:'empty'});
     }else{
-      p2.then(data=>{
-        console.log('CONTINUE')
+      p2.then( data => {
         let t = 0;
         data.map(x => {
           t != 0 ? Q9 += " , " : null
@@ -60,7 +56,6 @@ module.exports.get_sub_container = (req, res, next)=>{
         })
       })
       .then( ()=> {
-        // console.log(Q8+Q9)
         // This tx return the title properties of each containers founds
         return session.readTransaction(tx=>tx.run(Q8+Q9))
       })
@@ -72,8 +67,6 @@ module.exports.get_sub_container = (req, res, next)=>{
         });
       })
       .then(data => {
-        console.log('======================= data')
-        console.log(data)
         res.status(200).json({
           token: tokenGen(user_id),
           data:data

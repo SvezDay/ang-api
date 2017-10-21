@@ -8,7 +8,7 @@ const secret = require('../../config/tokenSecret').secret;
 const schemas = require('../models/schema');
 
 const labels_model = require('../models/labels.model');
-const labels_service = require('../services/labels.service');
+const labelService = require('../services/label.service');
 const utility = require('../services/utility.service');
 
 let parser = require('../services/parser');
