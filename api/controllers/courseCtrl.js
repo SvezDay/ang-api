@@ -9,7 +9,7 @@ const schemas = require('../models/schema');
 
 const labels_model = require('../models/labels.model');
 const labelService = require('../services/label.service');
-const utility = require('../services/utility.service');
+const utility = require('../services/utils.service');
 
 let parser = require('../services/parser');
 let tokenGen = require('../services/token.service');

@@ -1,6 +1,7 @@
 'use-strict';
 let driver = require('./config/driver');
 let tokenGen = require('./api/services/token.service');
+let utils = require('./api/services/utils.service');
 
 module.exports.authenticate = (req, res, next)=>{
    if(!req.body.email || !req.body.password){
@@ -20,12 +21,12 @@ module.exports.authenticate = (req, res, next)=>{
           let f = data.records[0]._fields[0];
           let prop = f.properties;
           let uid = f.id.low;
-          let exp = new Date().getTime() + (1000 * 60 * 30);
+          // let exp = new Date().getTime() + (1000 * 60 * 30);
           let now = new Date().getTime();
 
           res.status(200).json({
              token:tokenGen(uid),
-             exp: exp,
+             exp: utils.expire(),
              first: prop.first
           });
        }else {
@@ -73,7 +74,7 @@ module.exports.register = (req, res, next)=>{
         let uid = f.id.low;
         res.status(200).json({
           token:tokenGen(uid),
-          exp: new Date().getTime(),
+          exp: utils.expire(),
           first: prop.first
         });
       }else {

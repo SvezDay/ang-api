@@ -2,7 +2,7 @@
 let driver = require('../../config/driver');
 let tokenGen = require('../services/token.service');
 let labelService = require('../services/label.service');
-let utils = require('../services/utility.service');
+let utils = require('../services/utils.service');
 
 
 module.exports.create_note = (req, res, next)=>{
@@ -34,6 +34,7 @@ module.exports.create_note = (req, res, next)=>{
   .then( data =>{
     res.status(200).json({
       token: tokenGen(user_id),
+      exp: utils.expire(),
       data: data
     });
   })
@@ -71,6 +72,7 @@ module.exports.create_empty_note = (req, res, next)=>{
   .then( data =>{
     res.status(200).json({
       token: tokenGen(user_id),
+      exp:utils.expire(),
       data: data
     });
   })
@@ -86,7 +88,7 @@ module.exports.get_label = (req, res, next)=>{
     console.log('list', list)
     res.status(200).json({
       token: tokenGen(user_id),
-      exp: new Date().getTime(),
+      exp: utils.expire(),
       data: list
     });
 
@@ -123,6 +125,7 @@ module.exports.get_all_note = (req, res, next)=>{
     .then( data => {
       res.status(200).json({
          token:tokenGen(user_id),
+         exp:utils.expire(),
          list: data
       });
     })
@@ -181,7 +184,7 @@ module.exports.get_note_detail = (req, res, next)=>{
     .then( data => {
       res.status(200).json({
          token:tokenGen(user_id),
-         exp: new Date().getTime(),
+         exp: utils.expire(),
          data:data
       });
     })
@@ -404,7 +407,7 @@ module.exports.update_value = (req, res, next)=>{
   .then( data => {
     res.status(200).json({
        token:tokenGen(user_id),
-       exp: new Date().getTime(),
+       exp: utils.expire(),
        data: data
     });
   })
@@ -462,12 +465,13 @@ module.exports.add_property = (req, res, next)=>{
     return {
       id: f.identity.low,
       value: '',
-      labels: f.labels.filter(p => { return p != 'Property'})[0]
+      label: f.labels.filter(p => { return p != 'Property'})[0]
     };
   })
   .then( data => {
      res.status(200).json({
         token:tokenGen(user_id),
+        exp:utils.expire(),
         data:data
      });
   })
@@ -493,8 +497,7 @@ module.exports.delete_container = (req, res, next)=>{
   `;
 
 
-  session
-  .readTransaction(tx => tx.run(query))
+  session.readTransaction(tx => tx.run(query))
   .then( () => {
     res.status(200).json({message:"deleted!"})
   })
@@ -559,6 +562,7 @@ module.exports.delete_property = (req, res, next)=>{
   .then( () => {
     res.status(200).json({
       token: tokenGen(user_id),
+      exp: utils.expire(),
       message: 'deleted !'
     })
   })

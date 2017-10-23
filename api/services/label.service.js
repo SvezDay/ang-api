@@ -1,5 +1,5 @@
 let labels = require('../models/labels.model');
-let util = require('./utility.service');
+let util = require('./utils.service');
 
 module.exports = {
 
