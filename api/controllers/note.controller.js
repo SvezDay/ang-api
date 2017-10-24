@@ -575,11 +575,9 @@ module.exports.delete_property = (req, res, next)=>{
 module.exports.drop_property = (req, res, next)=>{
   // Since it ain't possible to parse the commit, it'll be the last by default
     let user_id = req.decoded.user_id;
+    let session = driver.session();
     let _ = req.body;
     let now = new Date().getTime();
-    let session = driver.session();
-
-    console.log('//////////////////// ', req.body)
 
     let last_com = Number;
 
@@ -601,7 +599,19 @@ module.exports.drop_property = (req, res, next)=>{
     let Q3_2 = ` create (n)`;
     let Q3_3 = ` set n.commitList = n.commitList + ${now}`;
 
-    session.readTransaction(tx => tx.run(Q1))
+    utils.num(_.container_id).then(()=>{
+      return utils.num(_.property_id)
+    })
+    .then(()=>{
+      if(_.direction == 'up' || _.direction == 'down'){
+        return;
+      }else{
+        throw {status: 400, err: "Wrong type of the 'direction' variable"}
+      }
+    })
+    .then(()=>{
+      return session.readTransaction(tx => tx.run(Q1))
+    })
     .then( data => {
       console.log('============================= CHECK 1')
       // Check the user access to the container
@@ -610,7 +620,7 @@ module.exports.drop_property = (req, res, next)=>{
         return;
       }else{
         console.log('============================= CHECK 1.2')
-        res.status(400).json({message: 'no access user'})
+        throw {status: 400, err: "no acces user"}
       };
     })
     .then( () => {
@@ -644,10 +654,11 @@ module.exports.drop_property = (req, res, next)=>{
       // Check the limit up and down
       if (_.direction == 'up' && f[0].identity.low == _.property_id){
         console.log('============================= CHECK 4.1')
-        res.status(400).json({message: 'Unauthorized query'})
+        throw {status: 400, err: "Unauthorized query"}
+
       }else if(_.direction == 'down' && f.reverse()[0].identity.low == _.property_id){
         console.log('============================= CHECK 4.2')
-        res.status(400).json({message: 'Unauthorized query'})
+        throw {status: 400, err: "Unauthorized query"}
       };
       // Because the previous conditionnal has not just check the reverse,
       // but modified it todrop, so we reverse again
@@ -719,8 +730,10 @@ module.exports.drop_property = (req, res, next)=>{
       console.log(Q3_3)
       res.status(200).json({message: 'Done !'})
     })
-    .catch(function (error) {
-      console.log(error);
-      res.status(400).json({error:error});
+    .catch(err => {
+      console.log(err);
+      let status = err.status || 400;
+      let e = err.err || err;
+      res.status(status).json(e);
     });
 }
