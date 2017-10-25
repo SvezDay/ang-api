@@ -41,6 +41,7 @@ module.exports = ()=>{
       .delete('/delete_property/:container_id/:property_id', note.delete_property)
       .delete('/delete_container/:id', note.delete_container)
       .post('/note_drop_property', note.drop_property)
+      .post('/note_udpate_label', note.update_label)
     // COURSE
       .post('/create_course', course.create_course)
       .get('/get_all_course', course.get_all_course)

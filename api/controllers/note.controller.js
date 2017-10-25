@@ -737,3 +737,14 @@ module.exports.drop_property = (req, res, next)=>{
       res.status(status).json(e);
     });
 }
+
+module.exports.update_label = (req, res, next)=>{
+  // Since it ain't possible to parse the commit, it'll be the last by default
+    let user_id = req.decoded.user_id;
+    let session = driver.session();
+    let _ = req.body;
+    let now = new Date().getTime();
+
+    // utils.
+    res.status(200).json({})
+}
