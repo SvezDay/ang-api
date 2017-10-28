@@ -298,24 +298,142 @@ module.exports.get_note_detail = (req, res, next)=>{
 //    }
 // }
 
-module.exports.update_value = (req, res, next)=>{
+// module.exports.update_value = (req, res, next)=>{
+//   // Till it is difficult to extract the date time, the commit will be the last one by default
+//
+//   let session = driver.session();
+//   let user_id = req.decoded.user_id;
+//   let _ = req.body;
+//   let today = new Date().getTime();
+//
+//   let commit = req.body.commit || null;
+//   let properties = [];
+//   let updates;
+//   let Q3 = ``,
+//       Q3_1 = `match (c) where id(c)=${_.container_id}`,
+//       Q3_2 = ` create (c)`;
+//
+//   let Q1 = `
+//     match (a:Account)-[l:Linked]->(c:Container)-[be:Has*]->(p:Property)
+//     where id(a) = ${user_id} and id(c) = ${_.container_id}
+//     with count(l) as count, c, p
+//     call apoc.do.when(count <> 0,
+//       "match (c)-[:Has*{commit:com}]->(p:Property) where c=co return collect(p) as list",
+//       "", {co:c, com:last(c.commitList)}) yield value
+//     return value.list
+//   `;
+//
+//   let Q2 = `
+//     match(c:Container) where id(c) = ${_.container_id}
+//     set c.commitList =  c.commitList + ${today}
+//     create (new:Property:${_.label}{value:'${_.value}'}) return new
+//   `;
+//
+//
+//   // CHECKING DATA
+//   utils.num(_.container_id)
+//   .then(()=>{ return utils.str(_.value)})
+//   .then(()=>{ return labelService.isPropertyLabel(_.label)})
+//   // Q1 => check user access and return properties list of the container
+//   // including the title
+//   .then(()=>{
+//     console.log('Q1', Q1)
+//     return session.readTransaction(tx=>tx.run(Q1)) })
+//   .then((data)=>{
+//     console.log('result of Q1', data.records[0]._fields[0])
+//     let r = data.records;
+//     if(r.length && r[0]._fields[0].length){
+//       return r[0]._fields[0];
+//     }else if(r.length && r[0]._fields.length){
+//       return r[0]._fields;
+//     }else {
+//       throw {status: 403, err: 'no user access'}
+//     };
+//   })
+//   .then( data =>{
+//     // save the properties for after
+//     properties = data;
+//     // Create the update and return it
+//     console.log('Q2', Q2)
+//     return session.readTransaction(tx=>tx.run(Q2))
+//   })
+//   .then( data => {
+//     console.log('result of Q2', data.records[0]._fields)
+//     updates = data.records[0]._fields[0];
+//     // Iterate the properties list to create the 3rd query
+//     properties.map(x => {
+//       // replace by the last update value
+//       let i = x.identity.low;
+//       let u = updates.identity.low;
+//       if( i == _.id){
+//         Q3_1 += ` match (x${u}) where id(x${u})=${u}`;
+//         Q3_2 += `-[:Has{commit:${today}}]->(x${u})`;
+//       }else{
+//         Q3_1 += ` match (x${i}) where id(x${i})=${i}`;
+//         Q3_2 += `-[:Has{commit:${today}}]->(x${i})`;
+//       };
+//       Q3_3 = ` return x${u}`
+//     });
+//     return;
+//   })
+//   .then( () => {
+//     console.log('***************************************')
+//     console.log(Q3_1+Q3_2+Q3_3)
+//     return session.readTransaction(tx=>tx.run(Q3_1+Q3_2+Q3_3))
+//   })
+//   .then((data)=>{
+//     let r = data.records;
+//     if(r.length && r[0]._fields[0].length){
+//       console.log('result of Q3', r[0]._fields[0])
+//       return r[0]._fields[0];
+//     }else if(r.length && r[0]._fields.length){
+//       console.log('result of Q3', r[0]._fields)
+//       return r[0]._fields;
+//     }else {
+//       throw {status: 403, err: 'no data found'}
+//     };
+//   })
+//   .then( data => {
+//     console.log('at the end', data)
+//     let f = data[0];
+//     f.id = f.identity.low;
+//     f.label = f.labels.filter(l => { return l != 'Property' })[0];
+//     f.value = f.properties.value;
+//     delete f.identity;
+//     delete f.properties;
+//     delete f.labels;
+//     return f;
+//   })
+//   .then( data => {
+//     res.status(200).json({
+//        token:tokenGen(user_id),
+//        exp: utils.expire(),
+//        data: data
+//     });
+//   })
+//   .catch((err)=>{
+//      console.log(err);
+//      let status = err.status || 400;
+//      let e = err.err || err;
+//      res.status(status).json(e);
+//   });
+// };
+
+module.exports.update = (req, res, next)=>{
   // Till it is difficult to extract the date time, the commit will be the last one by default
 
   let session = driver.session();
   let user_id = req.decoded.user_id;
-  let _ = req.body;
+  let bo = req.body;
   let today = new Date().getTime();
 
   let commit = req.body.commit || null;
   let properties = [];
   let updates;
-  let Q3 = ``,
-      Q3_1 = `match (c) where id(c)=${_.container_id}`,
-      Q3_2 = ` create (c)`;
 
   let Q1 = `
     match (a:Account)-[l:Linked]->(c:Container)-[be:Has*]->(p:Property)
-    where id(a) = ${user_id} and id(c) = ${_.container_id}
+    where id(a) = ${user_id} and id(c) = ${bo.container_id}
     with count(l) as count, c, p
     call apoc.do.when(count <> 0,
       "match (c)-[:Has*{commit:com}]->(p:Property) where c=co return collect(p) as list",
@@ -324,16 +442,21 @@ module.exports.update_value = (req, res, next)=>{
   `;
 
   let Q2 = `
-    match(c:Container) where id(c) = ${_.container_id}
+    match(c:Container) where id(c) = ${bo.container_id}
     set c.commitList =  c.commitList + ${today}
-    create (new:Property:${_.label}{value:'${_.value}'}) return new
+    create (new:Property:${bo.label}{value:'${bo.value}'}) return new
   `;
+
+  let Q3 = ``,
+  Q3_1 = `match (c) where id(c)=${bo.container_id}`,
+  Q3_2 = ` create (c)`;
 
 
   // CHECKING DATA
-  utils.num(_.container_id)
-  .then(()=>{ return utils.str(_.value)})
-  .then(()=>{ return labelService.isPropertyLabel(_.label)})
+  utils.num(bo.container_id)
+  .then(()=>{ return utils.num(bo.id)})
+  .then(()=>{ return utils.str(bo.value)})
+  .then(()=>{ return labelService.isPropertyLabel(bo.label)})
   // Q1 => check user access and return properties list of the container
   // including the title
   .then(()=>{
@@ -365,7 +488,7 @@ module.exports.update_value = (req, res, next)=>{
       // replace by the last update value
       let i = x.identity.low;
       let u = updates.identity.low;
-      if( i == _.id){
+      if( i == bo.id){
         Q3_1 += ` match (x${u}) where id(x${u})=${u}`;
         Q3_2 += `-[:Has{commit:${today}}]->(x${u})`;
       }else{
@@ -418,6 +541,7 @@ module.exports.update_value = (req, res, next)=>{
      res.status(status).json(e);
   });
 };
+
 
 module.exports.add_property = (req, res, next)=>{
   // Till it is difficult to extract the date time, the commit will be the last one by default
