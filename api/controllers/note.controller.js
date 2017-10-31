@@ -420,21 +420,22 @@ module.exports.get_note_detail = (req, res, next)=>{
 // };
 
 module.exports.update = (req, res, next)=>{
+  console.log("=========================================== METHOD in func: ", req.method)
   // Till it is difficult to extract the date time, the commit will be the last one by default
 
   let session = driver.session();
   let user_id = req.decoded.user_id;
   let bo = req.body;
-  let today = new Date().getTime();
+  let now = new Date().getTime();
 
   let commit = req.body.commit || null;
   let properties = [];
   let updates;
 
   let Q1 = `
-    match (a:Account)-[l:Linked]->(c:Container)-[be:Has*]->(p:Property)
+    match (a:Account)-[l:Linked]->(c:Container)
     where id(a) = ${user_id} and id(c) = ${bo.container_id}
-    with count(l) as count, c, p
+    with count(l) as count, c
     call apoc.do.when(count <> 0,
       "match (c)-[:Has*{commit:com}]->(p:Property) where c=co return collect(p) as list",
       "", {co:c, com:last(c.commitList)}) yield value
@@ -443,7 +444,7 @@ module.exports.update = (req, res, next)=>{
 
   let Q2 = `
     match(c:Container) where id(c) = ${bo.container_id}
-    set c.commitList =  c.commitList + ${today}
+    set c.commitList =  c.commitList + ${now}
     create (new:Property:${bo.label}{value:'${bo.value}'}) return new
   `;
 
@@ -463,7 +464,6 @@ module.exports.update = (req, res, next)=>{
     console.log('Q1', Q1)
     return session.readTransaction(tx=>tx.run(Q1)) })
   .then((data)=>{
-    console.log('result of Q1', data.records[0]._fields[0])
     let r = data.records;
     if(r.length && r[0]._fields[0].length){
       return r[0]._fields[0];
@@ -474,8 +474,17 @@ module.exports.update = (req, res, next)=>{
     };
   })
   .then( data =>{
+    console.log(data)
     // save the properties for after
     properties = data;
+    let first = properties[0].labels.filter(x => { return x != 'Property'})
+    console.log('first ===============: ', first)
+    console.log(properties)
+    if(first[0] != 'Title' ){
+      console.log('into the reverse')
+      properties.reverse();
+    }
+    console.log(properties)
     // Create the update and return it
     console.log('Q2', Q2)
     return session.readTransaction(tx=>tx.run(Q2))
@@ -488,12 +497,15 @@ module.exports.update = (req, res, next)=>{
       // replace by the last update value
       let i = x.identity.low;
       let u = updates.identity.low;
+      console.log('prepa Q3 =====================')
+      console.log('i : ', i)
+      console.log('u : ', u)
       if( i == bo.id){
         Q3_1 += ` match (x${u}) where id(x${u})=${u}`;
-        Q3_2 += `-[:Has{commit:${today}}]->(x${u})`;
+        Q3_2 += `-[:Has{commit:${now}}]->(x${u})`;
       }else{
         Q3_1 += ` match (x${i}) where id(x${i})=${i}`;
-        Q3_2 += `-[:Has{commit:${today}}]->(x${i})`;
+        Q3_2 += `-[:Has{commit:${now}}]->(x${i})`;
       };
       Q3_3 = ` return x${u}`
     });
@@ -541,7 +553,6 @@ module.exports.update = (req, res, next)=>{
      res.status(status).json(e);
   });
 };
-
 
 module.exports.add_property = (req, res, next)=>{
   // Till it is difficult to extract the date time, the commit will be the last one by default
@@ -600,32 +611,6 @@ module.exports.add_property = (req, res, next)=>{
      });
   })
   .catch(function (error) {
-    console.log(error);
-    res.status(400).json({error:error});
-  });
-};
-
-module.exports.delete_container = (req, res, next)=>{
-  let user_id = req.decoded.user_id;
-  let _ = req.params;
-  let session = driver.session();
-
-
-  let query = `
-    match (a:Account)-[l:Linked*]->(c:Container)-[o*]->(p)
-    where id(a) = ${user_id} and id(c) = ${_.id}
-    with distinct last(l) as link, o, c, p
-    with collect(last(o)) as olist, link, c, p
-    foreach(x in olist | delete x )
-    delete link, c, p
-  `;
-
-
-  session.readTransaction(tx => tx.run(query))
-  .then( () => {
-    res.status(200).json({message:"deleted!"})
-  })
-  .catch( error => {
     console.log(error);
     res.status(400).json({error:error});
   });

@@ -8,58 +8,72 @@ https://www.npmjs.com/package/apoc
 */
 let express = require('express');
 let bodyParser = require('body-parser');
-
 let cors = require('cors');
 let morgan = require('morgan');
 
-let app = express();
-let port = process.env.PORT || 3200;
-process.env.NEO4J_PROTOCOL="http";
-// process.env.NEO4J_HOST=192+"."+168+"."+.0+"."+5
-// process.env.NEO4J_HOST=127+"."+0+"."+.0+"."+1
-process.env.NEO4J_HOST="127.0.0.1";
-process.env.NEO4J_PORT=7474;
-process.env.NEO4J_USERNAME="neo4j";
-process.env.NEO4J_PASSWORD="futur$";
-
+let conf = require('./config/config');
 let appRoutes = require('./api/appRoutes');
 let tokenRoutes = require('./api/tokenRoutes');
 let freeRoutes = require('./tokenFreeRoutes');
 let myeasytest = require('./myeasytest');
 
+let app = express();
+let port = process.env.PORT || 3200;
+
+process.env.NEO4J_PROTOCOL="http";
+// process.env.NEO4J_HOST=192+"."+168+"."+.0+"."+5
+process.env.NEO4J_HOST=conf.back.host;
+process.env.NEO4J_PORT=conf.back.port;
+process.env.NEO4J_USERNAME=conf.back.neousr;
+process.env.NEO4J_PASSWORD=conf.back.neopwd;
+
+
+
+let allowCrossDomain = (req, res, next)=>{
+   res.header("Access-Control-Allow-Origin", "https://ang-app.herokuapp.com", "http://localhost:4200");
+   res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");
+   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Auth-Token, x-access-token");
+   next();
+};
+
+let corsOptions = {
+  origin: (origin, callback)=>{
+    if(conf.app.whiteList.indexOf(origin) !== -1){
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
+
+// return error message for unauthorized requests
+let handleError = (err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({message:'Missing or invalid token'});
+  }
+};
+
+
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use((req, res, next)=>{
-   // res.header("Access-Control-Allow-Origin", "http://localhost:4200");
-   res.header("Access-Control-Allow-Origin", "https://ang-app.herokuapp.com", "http://localhost:4200");
-   res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
-   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Auth-Token, x-access-token");
-   next();
-});
+app.post('/test', myeasytest);
+app.use(allowCrossDomain);
+app.use(handleError);
 
-// return error message for unauthorized requests
-app.use(function (err, req, res, next) {
-   if (err.name === 'UnauthorizedError') {
-      res.status(401).json({message:'Missing or invalid token'});
-   }
-});
+app.use(cors(corsOptions));
 
 // Add cors protection
-app.use(cors());
-
 // Add the bodyParser limits
-
 // Add the error module
-
 // Add the scope checking
-
-app.use('/api', tokenRoutes, appRoutes());
 
 app.post('/authenticate', freeRoutes.authenticate);
 app.post('/register', freeRoutes.register);
-app.post('/test', myeasytest);
+
+app.use('/api', tokenRoutes, appRoutes());
+
 
 app.listen(port);
 console.log('API server started on: localhost:' + port);

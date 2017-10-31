@@ -40,7 +40,6 @@ module.exports = ()=>{
       .post('/note_update', note.update)
       .post('/note_add_property', note.add_property)
       .delete('/delete_property/:container_id/:property_id', note.delete_property)
-      .delete('/delete_container/:id', note.delete_container)
       .post('/note_drop_property', note.drop_property)
       .post('/note_udpate_label', note.update_label)
     // COURSE
@@ -63,6 +62,7 @@ module.exports = ()=>{
     // CONTAINER & ARBORESCENCE
       .post('/container_get_sub_container', container.get_sub_container)
       .post('/change_container_path', container.change_container_path)
+      .delete('/delete_container/:id', container.delete_container)
 
 
 //    .get('/users', user.getAll)

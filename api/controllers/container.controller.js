@@ -2,6 +2,7 @@
 let driver = require('../../config/driver');
 let tokenGen = require('../services/token.service');
 let labelService = require('../services/label.service');
+let utils = require('../services/utils.service');
 
 module.exports.get_sub_container = (req, res, next)=>{
   let session = driver.session();
@@ -84,7 +85,6 @@ module.exports.get_sub_container = (req, res, next)=>{
 
 };
 
-
 module.exports.change_container_path = (req, res, next)=>{
   let session = driver.session();
   let user_id = req.decoded.user_id;
@@ -137,3 +137,42 @@ module.exports.change_container_path = (req, res, next)=>{
     res.status(400).json({err:err});
   })
 };
+
+module.exports.delete_container = (req, res, next)=>{
+  let user_id = req.decoded.user_id;
+  let session = driver.session();
+  let ps = req.params;
+
+  let q = `
+    optional match (a:Account)-[l:Linked*]->(c:Container) where id(c)=236 and id(a)=${user_id}
+    with count(l) as count, last(l) as link, c
+    call apoc.do.when(
+      count >= 1,
+      "call apoc.path.subgraphAll(c, {relationshipFilter:'Has', filterStartNode: true, limit:-1})"
+      +" yield nodes, relationships"
+      +" delete link"
+      +" foreach(x in relationships | delete x)"
+      +" foreach(x in nodes | delete x)"
+      +" return true",
+      "return false", {c:c, link:link}) yield value
+    return value
+  `;
+
+  utils.num(Number(ps.id))
+  .then( () =>{
+    return session.readTransaction(tx => tx.run(q));
+  })
+  .then( data => {
+    // Check if user access
+    if(data.records[0] && data.records[0]._fields[0].false == false){
+      throw {status: 400, err: "Wrong type of the 'direction' variable"}
+    }
+  })
+  .then( () => {
+    res.status(200).json({message:"deleted!"})
+  })
+  .catch( err => {
+    console.log(err);
+    res.status(err.status || 400).json(err.err || err);
+  });
+}
