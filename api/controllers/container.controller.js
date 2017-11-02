@@ -7,7 +7,7 @@ let utils = require('../services/utils.service');
 module.exports.get_sub_container = (req, res, next)=>{
   let session = driver.session();
   let user_id = req.decoded.user_id;
-  let _ = req.body;
+  let ps = req.body;
 
 
   let Q1 = `match (a:Account)`;
@@ -18,9 +18,9 @@ module.exports.get_sub_container = (req, res, next)=>{
   let Q6 = ``;
   let Q7 = ``;
 
-  if(_.container_id){
+  if(ps.container_id){
     Q2 += `-[l:Linked*]->(c:Container)`;
-    Q5 += ` and id(c)= ${_.container_id}`;
+    Q5 += ` and id(c)= ${ps.container_id}`;
     Q7 += ` with last, count(l) as count
     return case when count <> 0 then collect(last) else {} end `;
   }else{
@@ -61,6 +61,11 @@ module.exports.get_sub_container = (req, res, next)=>{
         return session.readTransaction(tx=>tx.run(Q8+Q9))
       })
       .then( data => {
+        if(!data.records[0]) {
+          throw {
+            status: 400, err: "container get sub container err on Q8 et Q9"}
+        }
+
         return data.records[0]._fields.map(x => {
           x.container_id = x.container_id.low;
           x.title_id = x.title_id.low;
@@ -144,7 +149,7 @@ module.exports.delete_container = (req, res, next)=>{
   let ps = req.params;
 
   let q = `
-    optional match (a:Account)-[l:Linked*]->(c:Container) where id(c)=236 and id(a)=${user_id}
+    optional match (a:Account)-[l:Linked*]->(c:Container) where id(c)=${ps.id} and id(a)=${user_id}
     with count(l) as count, last(l) as link, c
     call apoc.do.when(
       count >= 1,
@@ -165,7 +170,7 @@ module.exports.delete_container = (req, res, next)=>{
   .then( data => {
     // Check if user access
     if(data.records[0] && data.records[0]._fields[0].false == false){
-      throw {status: 400, err: "Wrong type of the 'direction' variable"}
+      throw {status: 400, err: "no access user"}
     }
   })
   .then( () => {

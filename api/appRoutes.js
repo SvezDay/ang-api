@@ -35,13 +35,10 @@ module.exports = ()=>{
       .get('/note_get_label', note.get_label)
       .get('/get_all_note', note.get_all_note)
       .get('/get_note_detail/:id', note.get_note_detail)
-      // .post('/update_property', note.update_property)
-      // .post('/note_update_value', note.update_value)
       .post('/note_update', note.update)
       .post('/note_add_property', note.add_property)
       .delete('/delete_property/:container_id/:property_id', note.delete_property)
       .post('/note_drop_property', note.drop_property)
-      .post('/note_udpate_label', note.update_label)
     // COURSE
       .post('/create_course', course.create_course)
       .get('/get_all_course', course.get_all_course)

@@ -10,6 +10,7 @@ let express = require('express');
 let bodyParser = require('body-parser');
 let cors = require('cors');
 let morgan = require('morgan');
+const _ = require('lodash');
 
 let conf = require('./config/config');
 let appRoutes = require('./api/appRoutes');

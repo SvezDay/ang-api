@@ -9,14 +9,14 @@ module.exports.create_note = (req, res, next)=>{
   let session = driver.session();
   let today = new Date().getTime();
   let user_id = req.decoded.user_id;
-  let _ = req.body;
+  let ps = req.body;
 
 
   let query = `
      match (a:Account) where id(a) = ${user_id}
      create (n:Container{commitList: [${today}], type: 'note'})
-     create (t:Property:Title {value:'${_.title_value}'})
-     create (u:Property:${_.content_label}{value:'${_.content_value}'})
+     create (t:Property:Title {value:'${ps.title_value}'})
+     create (u:Property:${ps.content_label}{value:'${ps.content_value}'})
      create (a)-[:Linked]->(n)-[:Has{commit:${today}}]->(t)-[:Has{commit:${today}}]->(u)
      return {note_id: id(n), title_id:id(t), first_property_id: id(u)}
   `;
@@ -139,10 +139,10 @@ module.exports.get_all_note = (req, res, next)=>{
 module.exports.get_note_detail = (req, res, next)=>{
     let session = driver.session();
     let user_id = req.decoded.user_id;
-    let _ = req.params;
+    let ps = req.params;
     let query = `
       match (a:Account)-[l1:Linked*]->(n:Container)-[ly:Has{commit:last(n.commitList)}]->(y:Property:Title)-[lx:Has*{commit:last(n.commitList)}]->(x:Property)
-      where id(a)= ${user_id} and id(n) = ${_.id}
+      where id(a)= ${user_id} and id(n) = ${ps.id}
       with l1, y, x, n
       return
       case
@@ -196,272 +196,193 @@ module.exports.get_note_detail = (req, res, next)=>{
     });
 };
 
-// module.exports.update_property = (req, res, next)=>{
-//    if(req.decoded && req.decoded.user_id){
-//       let user_id = req.decoded.user_id;
-//       let _ = req.body;
-//       let date = new Date().getTime();
-//       const session = driver.session();
-//       const readA = `
-//          match (a:Account)-[l:Linked]->(n:Note)
-//          where id(a) = ${user_id} and id(n) = ${_.note_id}
-//          return count(l)
-//       `;
-//       const readB = `
-//          match (n:Note)
-//          where id(n) = ${_.note_id}
-//          match (n)-[l:Linked*{commitNbr:last(n.commitList)}]->(p:Property)
-//          set n.commitList = n.commitList + ${date}
-//          return extract(x in collect(p)| id(x))
-//       `;
-//       const readC = `
-//          create (new:Property:Undefined{value:"${_.value}"})
-//          return id(new)
-//       `;
-//
-//       session
-//       .readTransaction(tx => tx.run(readA, {}))
-//       .then(result => {
-//          if(result.records[0].get(0).low == 1){
-//
-//             session
-//             .readTransaction(tx => tx.run(readB, {}))
-//             .then(result2 => {
-//                let data2 = result2.records[0].get(0).map(x=>{
-//                   return x.low;
-//                });
-//
-//                session
-//                .readTransaction(tx => tx.run(readC, {}))
-//                .then((result3) => {
-//                   let newOne = result3.records[0].get(0).low;
-//                   console.log(result3.records[0].get(0).low)
-//                   let readD1 = `match (note) where id(note) = ${_.note_id}`;
-//                   let readD2 = ` create (note)`;
-//                   let order = 1;
-//                   data2.forEach(x => {
-//                      console.log(x);
-//                      if(x == _.excluded_id){
-//                         readD1 = readD1 + ` match (x${newOne}) where id(x${newOne}) = ${newOne}`;
-//                         readD2 = readD2 + `-[l${newOne}:Linked{commitNbr:${date}, orderNbr:${order}}]->(x${newOne})`;
-//                      }else {
-//                         readD1 = readD1 + ` match (x${x}) where id(x${x}) = ${x}`;
-//                         readD2 = readD2 + `-[l${x}:Linked{commitNbr:${date}, orderNbr:${order}}]->(x${x})`;
-//                      }
-//                      order++;
-//                   });
-//                   const readD = readD1 + readD2;
-//                   console.log(readD);
-//
-//                   session
-//                   .readTransaction(tx => tx.run(readD, {}))
-//                   .then(() => {
-//                      let token = jwt.sign({
-//                         exp: Math.floor(Date.now() / 1000) + (60 * 60), // expiration in 1 hour
-//                         user_id:user_id
-//                      },secret);
-//                      console.log('finish');
-//                      res.status(200).json({
-//                         token:token,
-//                         message:'finish'
-//                      });
-//                   })
-//                   .catch(function (error) {
-//                      console.log("========================== CHECK 4 ERROR ==============");
-//                     console.log(error);
-//                     res.status(200).json({error:error});
-//                   });
-//
-//                })
-//                .catch(function (error) {
-//                   console.log("========================== CHECK 3 ERROR ==============");
-//                  console.log(error);
-//                  res.status(200).json({error:error});
-//                });
-//             })
-//             .catch(function (error) {
-//                console.log("========================== CHECK 2 ERROR ==============");
-//               console.log(error);
-//               res.status(200).json({error:error});
-//             });
-//          }else {
-//             console.log('no access user');
-//             session.close();
-//             res.status(200).json({error:"No access user"});
-//          }
-//       })
-//       .catch(function (error) {
-//          console.log("========================== CHECK 1 ERROR ==============");
-//         console.log(error);
-//         res.status(200).json({error:error});
-//       });
-//    }
-// }
-
-// module.exports.update_value = (req, res, next)=>{
-//   // Till it is difficult to extract the date time, the commit will be the last one by default
-//
-//   let session = driver.session();
-//   let user_id = req.decoded.user_id;
-//   let _ = req.body;
-//   let today = new Date().getTime();
-//
-//   let commit = req.body.commit || null;
-//   let properties = [];
-//   let updates;
-//   let Q3 = ``,
-//       Q3_1 = `match (c) where id(c)=${_.container_id}`,
-//       Q3_2 = ` create (c)`;
-//
-//   let Q1 = `
-//     match (a:Account)-[l:Linked]->(c:Container)-[be:Has*]->(p:Property)
-//     where id(a) = ${user_id} and id(c) = ${_.container_id}
-//     with count(l) as count, c, p
-//     call apoc.do.when(count <> 0,
-//       "match (c)-[:Has*{commit:com}]->(p:Property) where c=co return collect(p) as list",
-//       "", {co:c, com:last(c.commitList)}) yield value
-//     return value.list
-//   `;
-//
-//   let Q2 = `
-//     match(c:Container) where id(c) = ${_.container_id}
-//     set c.commitList =  c.commitList + ${today}
-//     create (new:Property:${_.label}{value:'${_.value}'}) return new
-//   `;
-//
-//
-//   // CHECKING DATA
-//   utils.num(_.container_id)
-//   .then(()=>{ return utils.str(_.value)})
-//   .then(()=>{ return labelService.isPropertyLabel(_.label)})
-//   // Q1 => check user access and return properties list of the container
-//   // including the title
-//   .then(()=>{
-//     console.log('Q1', Q1)
-//     return session.readTransaction(tx=>tx.run(Q1)) })
-//   .then((data)=>{
-//     console.log('result of Q1', data.records[0]._fields[0])
-//     let r = data.records;
-//     if(r.length && r[0]._fields[0].length){
-//       return r[0]._fields[0];
-//     }else if(r.length && r[0]._fields.length){
-//       return r[0]._fields;
-//     }else {
-//       throw {status: 403, err: 'no user access'}
-//     };
-//   })
-//   .then( data =>{
-//     // save the properties for after
-//     properties = data;
-//     // Create the update and return it
-//     console.log('Q2', Q2)
-//     return session.readTransaction(tx=>tx.run(Q2))
-//   })
-//   .then( data => {
-//     console.log('result of Q2', data.records[0]._fields)
-//     updates = data.records[0]._fields[0];
-//     // Iterate the properties list to create the 3rd query
-//     properties.map(x => {
-//       // replace by the last update value
-//       let i = x.identity.low;
-//       let u = updates.identity.low;
-//       if( i == _.id){
-//         Q3_1 += ` match (x${u}) where id(x${u})=${u}`;
-//         Q3_2 += `-[:Has{commit:${today}}]->(x${u})`;
-//       }else{
-//         Q3_1 += ` match (x${i}) where id(x${i})=${i}`;
-//         Q3_2 += `-[:Has{commit:${today}}]->(x${i})`;
-//       };
-//       Q3_3 = ` return x${u}`
-//     });
-//     return;
-//   })
-//   .then( () => {
-//     console.log('***************************************')
-//     console.log(Q3_1+Q3_2+Q3_3)
-//     return session.readTransaction(tx=>tx.run(Q3_1+Q3_2+Q3_3))
-//   })
-//   .then((data)=>{
-//     let r = data.records;
-//     if(r.length && r[0]._fields[0].length){
-//       console.log('result of Q3', r[0]._fields[0])
-//       return r[0]._fields[0];
-//     }else if(r.length && r[0]._fields.length){
-//       console.log('result of Q3', r[0]._fields)
-//       return r[0]._fields;
-//     }else {
-//       throw {status: 403, err: 'no data found'}
-//     };
-//   })
-//   .then( data => {
-//     console.log('at the end', data)
-//     let f = data[0];
-//     f.id = f.identity.low;
-//     f.label = f.labels.filter(l => { return l != 'Property' })[0];
-//     f.value = f.properties.value;
-//     delete f.identity;
-//     delete f.properties;
-//     delete f.labels;
-//     return f;
-//   })
-//   .then( data => {
-//     res.status(200).json({
-//        token:tokenGen(user_id),
-//        exp: utils.expire(),
-//        data: data
-//     });
-//   })
-//   .catch((err)=>{
-//      console.log(err);
-//      let status = err.status || 400;
-//      let e = err.err || err;
-//      res.status(status).json(e);
-//   });
-// };
-
 module.exports.update = (req, res, next)=>{
-  console.log("=========================================== METHOD in func: ", req.method)
   // Till it is difficult to extract the date time, the commit will be the last one by default
+
+  // let session = driver.session();
+  // let user_id = req.decoded.user_id;
+  // let ps = req.body;
+  // let now = new Date().getTime();
+  //
+  // let commit = req.body.commit || null;
+  // let properties = [];
+  // let updates;
+  //
+  // let Q1 = `
+  //   match (a:Account)-[l:Linked]->(c:Container)
+  //   where id(a) = ${user_id} and id(c) = ${ps.container_id}
+  //   with count(l) as count, c
+  //   call apoc.do.when(count <> 0,
+  //     "match (c)-[:Has*{commit:com}]->(p:Property) where c=co return collect(p) as list",
+  //     "", {co:c, com:last(c.commitList)}) yield value
+  //   return value.list
+  // `;
+  //
+  // let Q2 = `
+  //   match(c:Container) where id(c) = ${ps.container_id}
+  //   set c.commitList =  c.commitList + ${now}
+  //   create (new:Property:${ps.label}{value:'${ps.value}'}) return new
+  // `;
+  //
+  // let Q3 = ``,
+  // Q3_1 = `match (c) where id(c)=${ps.container_id}`,
+  // Q3_2 = ` create (c)`;
+  //
+  //
+  // // CHECKING DATA
+  // utils.num(ps.container_id)
+  // .then(()=>{ return utils.num(ps.id)})
+  // .then(()=>{ return utils.str(ps.value)})
+  // .then(()=>{ return labelService.isPropertyLabel(ps.label)})
+  // // Q1 => check user access and return properties list of the container
+  // // including the title
+  // .then(()=>{
+  //   console.log('Q1', Q1)
+  //   return session.readTransaction(tx=>tx.run(Q1)) })
+  // .then((data)=>{
+  //   let r = data.records;
+  //   if(r.length && r[0]._fields[0].length){
+  //     return r[0]._fields[0];
+  //   }else if(r.length && r[0]._fields.length){
+  //     return r[0]._fields;
+  //   }else {
+  //     throw {status: 403, err: 'no user access'}
+  //   };
+  // })
+  // .then( data =>{
+  //   console.log(data)
+  //   // save the properties for after
+  //   properties = data;
+  //   let first = properties[0].labels.filter(x => { return x != 'Property'})
+  //   console.log('first ===============: ', first)
+  //   console.log(properties)
+  //   if(first[0] != 'Title' ){
+  //     console.log('into the reverse')
+  //     properties.reverse();
+  //   }
+  //   console.log(properties)
+  //   // Create the update and return it
+  //   console.log('Q2', Q2)
+  //   return session.readTransaction(tx=>tx.run(Q2))
+  // })
+  // .then( data => {
+  //   console.log('result of Q2', data.records[0]._fields)
+  //   updates = data.records[0]._fields[0];
+  //   // Iterate the properties list to create the 3rd query
+  //   properties.map(x => {
+  //     // replace by the last update value
+  //     let i = x.identity.low;
+  //     let u = updates.identity.low;
+  //     console.log('prepa Q3 =====================')
+  //     console.log('i : ', i)
+  //     console.log('u : ', u)
+  //     if( i == ps.id){
+  //       Q3_1 += ` match (x${u}) where id(x${u})=${u}`;
+  //       Q3_2 += `-[:Has{commit:${now}}]->(x${u})`;
+  //     }else{
+  //       Q3_1 += ` match (x${i}) where id(x${i})=${i}`;
+  //       Q3_2 += `-[:Has{commit:${now}}]->(x${i})`;
+  //     };
+  //     Q3_3 = ` return x${u}`
+  //   });
+  //   return;
+  //
+  // })
+  // .then( () => {
+  //   console.log('***************************************')
+  //   console.log(Q3_1+Q3_2+Q3_3)
+  //   return session.readTransaction(tx=>tx.run(Q3_1+Q3_2+Q3_3))
+  // })
+  // .then((data)=>{
+  //   let r = data.records;
+  //   if(r.length && r[0]._fields[0].length){
+  //     console.log('result of Q3', r[0]._fields[0])
+  //     return r[0]._fields[0];
+  //   }else if(r.length && r[0]._fields.length){
+  //     console.log('result of Q3', r[0]._fields)
+  //     return r[0]._fields;
+  //   }else {
+  //     throw {status: 403, err: 'no data found'}
+  //   };
+  // })
+  // .then( data => {
+  //   console.log('at the end', data)
+  //   let f = data[0];
+  //   f.id = f.identity.low;
+  //   f.label = f.labels.filter(l => { return l != 'Property' })[0];
+  //   f.value = f.properties.value;
+  //   delete f.identity;
+  //   delete f.properties;
+  //   delete f.labels;
+  //   return f;
+  // })
+  // .then( data => {
+  //   res.status(200).json({
+  //      token:tokenGen(user_id),
+  //      exp: utils.expire(),
+  //      data: data
+  //   });
+  // })
+  // .catch((err)=>{
+  //    console.log(err);
+  //    let status = err.status || 400;
+  //    let e = err.err || err;
+  //    res.status(status).json(e);
+  // });
 
   let session = driver.session();
   let user_id = req.decoded.user_id;
-  let bo = req.body;
+  let ps = req.body;
   let now = new Date().getTime();
 
   let commit = req.body.commit || null;
-  let properties = [];
+  let lastlist = headlist = [];
+  let commitSize;
   let updates;
+  let updatedData;
 
+  // let Q1 = `
+  //   match (a:Account)-[l:Linked]->(c:Container)
+  //   where id(a) = ${user_id} and id(c) = ${ps.container_id}
+  //   with count(l) as count, c
+  //   call apoc.do.when(count <> 0,
+  //     "match (c)-[:Has*{commit:com}]->(p:Property) where c=co return collect(p) as list",
+  //     "", {co:c, com:last(c.commitList)}) yield value
+  //   return value.list
+  // `;
   let Q1 = `
     match (a:Account)-[l:Linked]->(c:Container)
-    where id(a) = ${user_id} and id(c) = ${bo.container_id}
+    where id(a) = ${user_id} and id(c) = ${ps.container_id}
     with count(l) as count, c
     call apoc.do.when(count <> 0,
-      "match (c)-[:Has*{commit:com}]->(p:Property) where c=co return collect(p) as list",
-      "", {co:c, com:last(c.commitList)}) yield value
-    return value.list
+    " match (c:Container)-[:Has*{commit:1509458797312}]->(plast:Property)"
+    +" match (c:Container)-[:Has*{commit:1509458787784}]->(phead:Property)"
+    +" return collect(distinct plast) as lastlist,collect(distinct phead)"
+    +" as headlist, head as headcommit, size(c.commitList) as commitSize",
+      "", {c:c, last:last(c.commitList), head:head(c.commitList)}) yield value
+    return value
   `;
 
   let Q2 = `
-    match(c:Container) where id(c) = ${bo.container_id}
+    match(c:Container) where id(c) = ${ps.container_id}
     set c.commitList =  c.commitList + ${now}
-    create (new:Property:${bo.label}{value:'${bo.value}'}) return new
+    create (new:Property:${ps.label}{value:'${ps.value}'}) return new
   `;
 
   let Q3 = ``,
-  Q3_1 = `match (c) where id(c)=${bo.container_id}`,
-  Q3_2 = ` create (c)`;
+      Q3_1 = `match (c) where id(c)=${ps.container_id}`,
+      Q3_2 = ` create (c)`;
+
 
 
   // CHECKING DATA
-  utils.num(bo.container_id)
-  .then(()=>{ return utils.num(bo.id)})
-  .then(()=>{ return utils.str(bo.value)})
-  .then(()=>{ return labelService.isPropertyLabel(bo.label)})
+  utils.num(ps.container_id)
+  .then(()=>{ return utils.num(ps.id)})
+  .then(()=>{ return utils.str(ps.value)})
+  .then(()=>{ return labelService.isPropertyLabel(ps.label)})
   // Q1 => check user access and return properties list of the container
   // including the title
   .then(()=>{
-    console.log('Q1', Q1)
     return session.readTransaction(tx=>tx.run(Q1)) })
   .then((data)=>{
     let r = data.records;
@@ -474,33 +395,27 @@ module.exports.update = (req, res, next)=>{
     };
   })
   .then( data =>{
-    console.log(data)
     // save the properties for after
-    properties = data;
-    let first = properties[0].labels.filter(x => { return x != 'Property'})
-    console.log('first ===============: ', first)
-    console.log(properties)
+    lastlist = data[0].lastlist;
+    headlist = data[0].headlist;
+    headcommit = data[0].headcommit;
+    commitSize = data[0].commitSize;
+
+    let first = lastlist[0].labels.filter(x => { return x != 'Property'})
     if(first[0] != 'Title' ){
-      console.log('into the reverse')
-      properties.reverse();
+      lastlist.reverse();
     }
-    console.log(properties)
     // Create the update and return it
-    console.log('Q2', Q2)
     return session.readTransaction(tx=>tx.run(Q2))
   })
   .then( data => {
-    console.log('result of Q2', data.records[0]._fields)
     updates = data.records[0]._fields[0];
     // Iterate the properties list to create the 3rd query
-    properties.map(x => {
+    lastlist.map(x => {
       // replace by the last update value
       let i = x.identity.low;
       let u = updates.identity.low;
-      console.log('prepa Q3 =====================')
-      console.log('i : ', i)
-      console.log('u : ', u)
-      if( i == bo.id){
+      if( i == ps.id){
         Q3_1 += ` match (x${u}) where id(x${u})=${u}`;
         Q3_2 += `-[:Has{commit:${now}}]->(x${u})`;
       }else{
@@ -512,8 +427,6 @@ module.exports.update = (req, res, next)=>{
     return;
   })
   .then( () => {
-    console.log('***************************************')
-    console.log(Q3_1+Q3_2+Q3_3)
     return session.readTransaction(tx=>tx.run(Q3_1+Q3_2+Q3_3))
   })
   .then((data)=>{
@@ -540,17 +453,39 @@ module.exports.update = (req, res, next)=>{
     return f;
   })
   .then( data => {
+    updatedData = data;
+    if(commitSize > 10){
+      let Q4 = `call apoc.do.when(true,
+        "match ()-[r{commit:${headcommit}}]->() delete r ", "", {}) yield value `;
+      headlist.map(x => {
+        Q4 += `
+        match (x) where id(x)=${x}
+        optional match ()-[r1]->(x)
+        optional match (x)-[r2]->()
+        call apoc.do.when(r1 is null and r2 is null, 'delete x', '', {x:x, r1:r1, r2:r2}) yield value`;
+      });
+      Q4 += " return 'done'"
+      return session.readTransaction(tx=>tx.run(Q4));
+    }else{
+      return;
+    }
+  })
+  .then( () => {
     res.status(200).json({
        token:tokenGen(user_id),
        exp: utils.expire(),
-       data: data
+       data: updatedData
     });
   })
   .catch((err)=>{
-     console.log(err);
-     let status = err.status || 400;
-     let e = err.err || err;
-     res.status(status).json(e);
+    console.log(err);
+    if(!_.isEmpty(updates)){
+        session.readTransaction(tx=>tx.run())
+    }else{
+      let status = err.status || 400;
+      let e = err.err || err;
+      res.status(status).json(e);
+    }
   });
 };
 
@@ -558,13 +493,13 @@ module.exports.add_property = (req, res, next)=>{
   // Till it is difficult to extract the date time, the commit will be the last one by default
   let session = driver.session();
   let user_id = req.decoded.user_id;
-  let _ = req.body;
+  let ps = req.body;
   let today = new Date().getTime();
 
 
   let Q1 = `
      match (a:Account)-[l:Linked]->(c:Container)
-     where id(a) = ${user_id} and id(c) = ${_.container_id}
+     where id(a) = ${user_id} and id(c) = ${ps.container_id}
      with count(l) as count, c
      call apoc.do.when(
         count <> 0,
@@ -576,7 +511,7 @@ module.exports.add_property = (req, res, next)=>{
   `;
   let Q2_1 =
     `match (c:Container)-[:Has{commit:last(c.commitList)}]->(t:Title)
-    where id(c)= ${_.container_id}`;
+    where id(c)= ${ps.container_id}`;
   let Q2_2 =
     ` set c.commitList = c.commitList + ${today}
     create (new:Property:Undefined{value:''})
@@ -625,14 +560,14 @@ module.exports.delete_property = (req, res, next)=>{
 
   let user_id = req.decoded.user_id;
   let session = driver.session();
-  let _ = req.params
+  let ps = req.params
   let now = new Date().getTime();
-  let commit = _.commit || null;
+  let commit = ps.commit || null;
 
   // this query check the user access and return the list of
   let Q1 = `
     match (a:Account)-[l:Linked*]->(c:Container)
-    where id(a) = ${user_id} and id(c) = ${_.container_id}
+    where id(a) = ${user_id} and id(c) = ${ps.container_id}
     with count(l) as count, c, last(c.commitList) as com
     call apoc.do.when(count <> 0,
     "match(c)-[:Has*{commit:com}]->(p) where c = co return collect(p) as list"
@@ -640,7 +575,7 @@ module.exports.delete_property = (req, res, next)=>{
     return value
   `;
 
-  let Q2_1 = ` match(c) where id(c) = ${_.container_id}`;
+  let Q2_1 = ` match(c) where id(c) = ${ps.container_id}`;
   let Q2_2 = ` create (c)`;
   let Q2_3 = ` set c.commitList = c.commitList + ${now}`;
 
@@ -659,7 +594,7 @@ module.exports.delete_property = (req, res, next)=>{
       if(p.labels.filter(l=>{ return l != 'Property'})[0] == 'Title'){
         Q2_1 += ` match (t:Title) where id(t)=${i}`;
         Q2_2 += `-[:Has{commit:${now}}]->(t)`;
-      }else if(i != _.property_id){
+      }else if(i != ps.property_id){
         Q2_1 += ` match (x${i}:Property) where id(x${i})=${i}`;
         Q2_2 += `-[:Has{commit:${now}}]->(x${i})`;
       }
@@ -685,34 +620,34 @@ module.exports.drop_property = (req, res, next)=>{
   // Since it ain't possible to parse the commit, it'll be the last by default
     let user_id = req.decoded.user_id;
     let session = driver.session();
-    let _ = req.body;
+    let ps = req.body;
     let now = new Date().getTime();
 
     let last_com = Number;
 
     let Q1 = `
        match (a:Account)-[l:Linked]->(n:Container)
-       where id(a) = ${user_id} and id(n) = ${_.container_id}
+       where id(a) = ${user_id} and id(n) = ${ps.container_id}
        return count(l)
     `;
 
     let Q2 = `
        match (n:Container)-[l:Has*{commit:last(n.commitList)}]->(p:Property)
-       where id(n) = ${_.container_id}
+       where id(n) = ${ps.container_id}
        return collect(p)
     `;
 
     let Q3_1 = `
-      match (n:Container) where id(n) = ${_.container_id}
+      match (n:Container) where id(n) = ${ps.container_id}
     `;
     let Q3_2 = ` create (n)`;
     let Q3_3 = ` set n.commitList = n.commitList + ${now}`;
 
-    utils.num(_.container_id).then(()=>{
-      return utils.num(_.property_id)
+    utils.num(ps.container_id).then(()=>{
+      return utils.num(ps.property_id)
     })
     .then(()=>{
-      if(_.direction == 'up' || _.direction == 'down'){
+      if(ps.direction == 'up' || ps.direction == 'down'){
         return;
       }else{
         throw {status: 400, err: "Wrong type of the 'direction' variable"}
@@ -761,17 +696,17 @@ module.exports.drop_property = (req, res, next)=>{
       f.map(x => { console.log(x) })
 
       // Check the limit up and down
-      if (_.direction == 'up' && f[0].identity.low == _.property_id){
+      if (ps.direction == 'up' && f[0].identity.low == ps.property_id){
         console.log('============================= CHECK 4.1')
         throw {status: 400, err: "Unauthorized query"}
 
-      }else if(_.direction == 'down' && f.reverse()[0].identity.low == _.property_id){
+      }else if(ps.direction == 'down' && f.reverse()[0].identity.low == ps.property_id){
         console.log('============================= CHECK 4.2')
         throw {status: 400, err: "Unauthorized query"}
       };
       // Because the previous conditionnal has not just check the reverse,
       // but modified it todrop, so we reverse again
-      if(_.direction == 'down'){
+      if(ps.direction == 'down'){
         console.log('============================= CHECK 4.3')
         f.reverse();
       };
@@ -785,10 +720,10 @@ module.exports.drop_property = (req, res, next)=>{
       f.map( x => {
         console.log('===========', x)
         let i = x.identity.low;
-        if(i == _.property_id && _.direction == 'down'){
+        if(i == ps.property_id && ps.direction == 'down'){
           console.log('============================= CHECK 5.1')
           todrop = i;
-        }else if(i == _.property_id && _.direction == 'up'){
+        }else if(i == ps.property_id && ps.direction == 'up'){
           console.log('============================= CHECK 5.2')
           Q3_1 += `
           match (x${i}:Property) where id(x${i}) = ${i}
@@ -807,17 +742,17 @@ module.exports.drop_property = (req, res, next)=>{
           match (x${todrop}:Property) where id(x${todrop}) = ${todrop}`;
           Q3_2 += `-[:Has{commit:${now}}]->(x${i})-[:Has{commit:${now}}]->(x${todrop})`;
           todrop = 0;
-        }else if(_.direction == 'down'){
+        }else if(ps.direction == 'down'){
           console.log('============================= CHECK 5.5')
           Q3_1 += ` match (x${i}:Property) where id(x${i}) = ${i}`;
           Q3_2 += `-[:Has{commit:${now}}]->(x${i})`;
-        }else if(_.direction == 'up'){
+        }else if(ps.direction == 'up'){
           console.log('============================= CHECK 5.6')
           console.log('conditionnal 6')
           previous = i;
         };
       });
-      if(_.direction == 'up' && previous){
+      if(ps.direction == 'up' && previous){
         console.log('============================= CHECK 5.7')
         Q3_1 += ` match (x${previous}:Property) where id(x${previous}) = ${previous}`;
         Q3_2 += `-[:Has{commit:${now}}]->(x${previous})`;
@@ -845,15 +780,4 @@ module.exports.drop_property = (req, res, next)=>{
       let e = err.err || err;
       res.status(status).json(e);
     });
-}
-
-module.exports.update_label = (req, res, next)=>{
-  // Since it ain't possible to parse the commit, it'll be the last by default
-    let user_id = req.decoded.user_id;
-    let session = driver.session();
-    let _ = req.body;
-    let now = new Date().getTime();
-
-    // utils.
-    res.status(200).json({})
 }
