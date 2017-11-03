@@ -1,9 +1,31 @@
 'use-strict';
-let driver = require('../../config/driver');
-let tokenGen = require('../services/token.service');
-let labelService = require('../services/label.service');
-let utils = require('../services/utils.service');
+const driver = require('../../config/driver');
+const tokenGen = require('../services/token.service');
+const labelService = require('../services/label.service');
+const utils = require('../services/utils.service');
 
+const crash = (transaction, response,  status, message, error)=>{
+  transaction.rollback();
+  response.status(status).json({mess: message, error})
+}
+
+const commit = (transaction, response, status, user, data)=>{
+  transaction.commit()
+  .subscribe({
+    onCompleted: () => {
+      // this transaction is now committed
+      response.status(status).json({
+        token:tokenGen(user),
+        exp: utils.expire(),
+        data: data
+      })
+    },
+    onError: (error) => {
+      console.log('error', error);
+      crash(transaction, response, 400, "Error on the commit", error);
+    }
+  });
+}
 
 module.exports.create_note = (req, res, next)=>{
   let session = driver.session();
@@ -330,49 +352,49 @@ module.exports.update = (req, res, next)=>{
   //    res.status(status).json(e);
   // });
 
-  let session = driver.session();
+  let tx = driver.session().beginTransaction();
   let user_id = req.decoded.user_id;
   let ps = req.body;
   let now = new Date().getTime();
 
-  let commit = req.body.commit || null;
-  let lastlist = headlist = [];
-  let commitSize;
+  // let commit = req.body.commit || null;
+  let Q1_data = {};
   let updates;
-  let updatedData;
+  let updatedNode;
+  let limitCommitLength = 10; // NOTE: Default value, can be modify by profile
 
-  // let Q1 = `
-  //   match (a:Account)-[l:Linked]->(c:Container)
-  //   where id(a) = ${user_id} and id(c) = ${ps.container_id}
-  //   with count(l) as count, c
-  //   call apoc.do.when(count <> 0,
-  //     "match (c)-[:Has*{commit:com}]->(p:Property) where c=co return collect(p) as list",
-  //     "", {co:c, com:last(c.commitList)}) yield value
-  //   return value.list
-  // `;
+  // Check user access and return the properties list of the container
   let Q1 = `
-    match (a:Account)-[l:Linked]->(c:Container)
-    where id(a) = ${user_id} and id(c) = ${ps.container_id}
-    with count(l) as count, c
-    call apoc.do.when(count <> 0,
-    " match (c:Container)-[:Has*{commit:1509458797312}]->(plast:Property)"
-    +" match (c:Container)-[:Has*{commit:1509458787784}]->(phead:Property)"
-    +" return collect(distinct plast) as lastlist,collect(distinct phead)"
-    +" as headlist, head as headcommit, size(c.commitList) as commitSize",
-      "", {c:c, last:last(c.commitList), head:head(c.commitList)}) yield value
-    return value
+  match (a:Account)-[l:Linked]->(c:Container)
+      where id(a) = ${user_id} and id(c) = ${ps.container_id}
+      with count(l) as count, c, a.subscription_commit_length as subCommit
+      call apoc.do.when(count <> 0,
+      	" match (c:Container)-[:Has*{commit:last(c.commitList)}]->(plast:Property)"
+     		+" match (c:Container)-[:Has*{commit:head(c.commitList)}]->(phead:Property)"
+   	  	+" return collect(distinct plast) as lastlist, last(c.commitList) as lastCommit,"
+     		+"  size(c.commitList) as commitLength",
+     		"", {c:c, last:last(c.commitList), head:head(c.commitList)}) yield value as v1
+      call apoc.do.when(v1.commitLength > subCommit,
+      	"match (c:Container)-[:Has*{commit:head(c.commitList)}]->(phead:Property)"
+          +"return collect(distinct phead) as headlist,  head(c.commitList) as headcommit",
+      	"return [] as headlist, 0 as headcommit",
+          {c:c, v1:v1, subCommit:subCommit}) yield value as v2
+      return {last:v1, head:v2};
   `;
 
+  // Add new commit to the container commit list and create the updater node
   let Q2 = `
     match(c:Container) where id(c) = ${ps.container_id}
     set c.commitList =  c.commitList + ${now}
     create (new:Property:${ps.label}{value:'${ps.value}'}) return new
   `;
 
+  // Store the new relationship flow of the new commit
   let Q3 = ``,
       Q3_1 = `match (c) where id(c)=${ps.container_id}`,
       Q3_2 = ` create (c)`;
 
+  // Remove the old commit
 
 
   // CHECKING DATA
@@ -380,38 +402,27 @@ module.exports.update = (req, res, next)=>{
   .then(()=>{ return utils.num(ps.id)})
   .then(()=>{ return utils.str(ps.value)})
   .then(()=>{ return labelService.isPropertyLabel(ps.label)})
-  // Q1 => check user access and return properties list of the container
-  // including the title
-  .then(()=>{
-    return session.readTransaction(tx=>tx.run(Q1)) })
-  .then((data)=>{
-    let r = data.records;
-    if(r.length && r[0]._fields[0].length){
-      return r[0]._fields[0];
-    }else if(r.length && r[0]._fields.length){
-      return r[0]._fields;
+  .then(()=>{ return tx.run(Q1) })
+  .then( data => {
+    if(data.records.length && data.records[0]._fields.length){
+      Q1_data = data.records[0]._fields[0];
     }else {
-      throw {status: 403, err: 'no user access'}
+      console.log()
+      console.log("Q1", Q1)
+      throw {status: 403, mess: 'no feedbaack data of Q1'}
     };
   })
-  .then( data =>{
-    // save the properties for after
-    lastlist = data[0].lastlist;
-    headlist = data[0].headlist;
-    headcommit = data[0].headcommit;
-    commitSize = data[0].commitSize;
-
-    let first = lastlist[0].labels.filter(x => { return x != 'Property'})
+  .then( () =>{
+    let first = Q1_data.last.lastlist[0].labels.filter(x => { return x != 'Property'})
     if(first[0] != 'Title' ){
       lastlist.reverse();
     }
-    // Create the update and return it
-    return session.readTransaction(tx=>tx.run(Q2))
   })
+  .then(()=>{ return tx.run(Q2) })
   .then( data => {
     updates = data.records[0]._fields[0];
     // Iterate the properties list to create the 3rd query
-    lastlist.map(x => {
+    Q1_data.last.lastlist.map(x => {
       // replace by the last update value
       let i = x.identity.low;
       let u = updates.identity.low;
@@ -427,22 +438,19 @@ module.exports.update = (req, res, next)=>{
     return;
   })
   .then( () => {
-    return session.readTransaction(tx=>tx.run(Q3_1+Q3_2+Q3_3))
+    return tx.run(Q3_1+Q3_2+Q3_3);
   })
-  .then((data)=>{
+  .then( data => {
     let r = data.records;
     if(r.length && r[0]._fields[0].length){
-      console.log('result of Q3', r[0]._fields[0])
       return r[0]._fields[0];
     }else if(r.length && r[0]._fields.length){
-      console.log('result of Q3', r[0]._fields)
       return r[0]._fields;
     }else {
-      throw {status: 403, err: 'no data found'}
+      throw {status: 403, mess: 'no data found'}
     };
   })
   .then( data => {
-    console.log('at the end', data)
     let f = data[0];
     f.id = f.identity.low;
     f.label = f.labels.filter(l => { return l != 'Property' })[0];
@@ -453,11 +461,11 @@ module.exports.update = (req, res, next)=>{
     return f;
   })
   .then( data => {
-    updatedData = data;
-    if(commitSize > 10){
+    updatedNode = data;
+    if(Q1_data.last.commitLength > limitCommitLength){
       let Q4 = `call apoc.do.when(true,
-        "match ()-[r{commit:${headcommit}}]->() delete r ", "", {}) yield value `;
-      headlist.map(x => {
+        "match ()-[r{commit:${Q1_data.head.headcommit}}]->() delete r ", "", {}) yield value `;
+      Q1_data.head.headlist.map(x => {
         Q4 += `
         match (x) where id(x)=${x}
         optional match ()-[r1]->(x)
@@ -465,27 +473,15 @@ module.exports.update = (req, res, next)=>{
         call apoc.do.when(r1 is null and r2 is null, 'delete x', '', {x:x, r1:r1, r2:r2}) yield value`;
       });
       Q4 += " return 'done'"
-      return session.readTransaction(tx=>tx.run(Q4));
-    }else{
-      return;
-    }
+      return tx.run(Q4);
+    };
   })
   .then( () => {
-    res.status(200).json({
-       token:tokenGen(user_id),
-       exp: utils.expire(),
-       data: updatedData
-    });
+    commit(tx, res, 200, user_id, updatedNode);
   })
   .catch((err)=>{
     console.log(err);
-    if(!_.isEmpty(updates)){
-        session.readTransaction(tx=>tx.run())
-    }else{
-      let status = err.status || 400;
-      let e = err.err || err;
-      res.status(status).json(e);
-    }
+    crash(tx, res, err.status || 400, err.mess || null, err.err || err)
   });
 };
 

@@ -56,7 +56,8 @@ module.exports.register = (req, res, next)=>{
             password:'${_.password}',
             first:'${_.first}',
             last:'${_.last}',
-            middle:'${_.middle}'
+            middle:'${_.middle}',
+            subscription_commit_length: 10
          })
          CREATE (b:Board_Activity{course_wait_recall:[]})
          CREATE (n)-[:Linked]->(b)
