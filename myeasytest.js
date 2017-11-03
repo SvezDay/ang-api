@@ -12,6 +12,7 @@ const crash = (response, transaction, status, message, error)=>{
 }
 
 const commit = (response, transaction, status, data)=>{
+  console.log('check commit')
   transaction.commit()
   .subscribe({
     onCompleted: () => {
@@ -36,81 +37,93 @@ module.exports = (req, res, next)=>{
   let query2_2 = "create (a:Account)";
   let query2_3 = " ";
 
-    // let tx = session.beginTransaction();
-
-    // let match = (datas)=>{
-    //   tx.run(query2_1 + query2_2 + query2_3)
-    //   .subscribe({
-    //     onNext: function () {
-    //     },
-    //     onCompleted: function () {
-    //       if(false){
-    //         crash(res, tx, 400, "no user access");
-    //       }else{
-    //         commit(res, tx, 200)
-    //       }
-    //     },
-    //     onError: function (error) {
-    //       console.log('error', error);
-    //       crash(res, tx, 400, "Error on the match", error);
-    //     }
-    //   });
-    // }
-    //
-    // let create = ()=>{
-    //   tx.run(`
-    //     create (t:Testing{name:${now}})
-    //     create (u:Testing{name:${now}}) return u, t
-    //     `)
-    //   .subscribe({
-    //     onNext: function (record) {
-    //       record._fields.map(x => {
-    //         let i = x.identity.low
-    //         query2_1 += ` match (t${i}:Testing) where id(t${i}) = ${i} `;
-    //         query2_2 += `-[:TestHas]->(t${i})`;
-    //       })
-    //       console.log('query2', query2_1 + query2_2)
-    //     },
-    //     onCompleted: function () {
-    //       match(store)
-    //     },
-    //     onError: function (error) {
-    //       console.log('error', error);
-    //       crash(res, tx, 400, "Error on the create", error);
-    //     }
-    //   });
-    // }
+  // match (a:Account)-[l:Linked]->(c:Container)
+  // where id(a) = 560 and id(c) = 309
+  // with count(l) as count, c, a.subscription_commit_length as subCommit
+  // call apoc.do.when(count <> 0,
+  //   " match (c:Container)-[:Has*{commit:last(c.commitList)}]->(plast:Property)"
+  //   +" match (c:Container)-[:Has*{commit:head(c.commitList)}]->(phead:Property)"
+  //   +" return collect(distinct plast) as lastlist, last(c.commitList) as lastCommit,"
+  //   +"  size(c.commitList) as commitLength",
+  //   "", {c:c, last:last(c.commitList), head:head(c.commitList)}) yield value as v1
+  // call apoc.do.when(v1.commitLength > subCommit,
+  //   "match (c:Container)-[:Has*{commit:head(c.commitList)}]->(phead:Property)"
+  //     +"return collect(distinct phead) as headlist,  head(c.commitList) as headcommit",
+  //   "return [] as headlist, 0 as headcommit",
+  //     {c:c, v1:v1, subCommit:subCommit}) yield value as v2
+  // return {last:v1, head:v2};
 
     // create();
+    // let Q1_data;
+    // tx.run(`
+    //   match (a:Account)-[l:Linked]->(c:Container)
+    //   where id(a) = 560 and id(c) = 309
+    //   with count(l) as count, c, a.subscription_commit_length as subCommit
+    //   call apoc.do.when(count <> 0,
+      //   	" match (c:Container)-[:Has*{commit:last(c.commitList)}]->(plast:Property)"
+   // 	  	+" return collect(distinct plast) as lastlist, last(c.commitList) as lastCommit,"
+    //  		+"  size(c.commitList) as commitLength",
+    //  		"", {c:c, last:last(c.commitList), head:head(c.commitList)}) yield value
+    //   return {last: value, subCommit:subCommit};
+    //   `)
+    // .then( data => {
+    //   console.log(data.records[0]._fields[0])
+    //   return Q1_data = data.records[0]._fields[0];
+    // })
+    // .then( () => {
+    //   if( Q1_data.subCommit.low > 10){
+    //     tx.run(`
+    //       match (c:Container)-[:Has*{commit:head(c.commitList)}]->(phead:Property)
+    //       where id(c) = 309
+    //       with count(l) as count, c, a.subscription_commit_length as subCommit
+    //       call apoc.do.when(v1.commitLength > subCommit,
+    //         "match (c:Container)-[:Has*{commit:head(c.commitList)}]->(phead:Property)"
+    //           +"return collect(distinct phead) as headlist,  head(c.commitList) as headcommit",
+    //         "return [] as headlist, 0 as headcommit",
+    //           {c:c, v1:v1, subCommit:subCommit}) yield value as v2
+    //       return {last:v1, head:v2};
+    //       `);
+    //   }
+    // })
+    // let i = 2;
+    // let loop = ()=>{
+    //   console.log('check cleanCommit')
+    //   return new Promise( resolve => {
+    //     setTimeout(()=>{
+    //        i > 0 ? ( i-- , loop().then(() => resolve() ) ) : resolve()
+    //     }, 2000)
+    //   })
+    // };
+    // let deleteCommit = ()=>{
+    //   return new Promise( resolve => {
+    //     tx.run('match (a:Account) return a')
+    //     .then( data => {
+    //       console.log(data.records[0]._fields[0])
+    //        i > 0 ? ( i-- , deleteCommit().then( data => resolve() ) ) : resolve()
+    //     })
+    //   })
+    // }
+
 
     tx.run(`
       match (a:Account)-[l:Linked]->(c:Container)
-          where id(a) = 560 and id(c) = 309
-          with count(l) as count, c, a.subscription_commit_length as subCommit
-          call apoc.do.when(count <> 0,
-          	" match (c:Container)-[:Has*{commit:last(c.commitList)}]->(plast:Property)"
-         		+" match (c:Container)-[:Has*{commit:head(c.commitList)}]->(phead:Property)"
-       	  	+" return collect(distinct plast) as lastlist, last(c.commitList) as lastCommit,"
-         		+"  size(c.commitList) as commitLength",
-         		"", {c:c, last:last(c.commitList), head:head(c.commitList)}) yield value as v1
-          call apoc.do.when(v1.commitLength > subCommit,
-          	"match (c:Container)-[:Has*{commit:head(c.commitList)}]->(phead:Property)"
-              +"return collect(distinct phead) as headlist,  head(c.commitList) as headcommit",
-          	"return [] as headlist, 0 as headcommit",
-              {c:c, v1:v1, subCommit:subCommit}) yield value as v2
-          return {last:v1, head:v2};
+      where id(a) = ${user_id} and id(c) = ${ps.container_id}
+      with count(l) as count, c, a.subscription_commit_length as subCommit
+      call apoc.do.when(count <> 0,
+          " match (c:Container)-[:Has*{commit:last(c.commitList)}]->(plast:Property)"
+        +" return collect(distinct plast) as lastlist, last(c.commitList) as lastCommit,"
+        +"  size(c.commitList) as commitLength",
+        "", {c:c, last:last(c.commitList), head:head(c.commitList)}) yield value
+      return {last: value, subCommit:subCommit};
       `)
-      // return v1 as last, v2 as head;
     .then( data => {
-      let f = data.records[0]._fields[0].head.headcommit;
-      return f
+      // return loop();
+      console.log(data.records[0]._fields[0])
+      // return deleteCommit()
     })
-    .then( data => {
-      if(false){
-        throw {mess:'Crash the function'}
-      }else{
-        commit(res, tx, 200, data)
-      }
+    .then( () => {
+      console.log('check after then')
+      commit(res, tx, 200)
     })
     .catch( err => {
       console.log(err);

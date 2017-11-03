@@ -27,6 +27,44 @@ const commit = (transaction, response, status, user, data)=>{
   });
 }
 
+const deleteCommit = (tx, container_id, subCommit, commitLength) =>{
+  return new Promise(resolve => {
+    let q = `
+      match (c)-[r:Has*{commit:head(c.commitList)}]->(p:Property)
+      where id(c) = ${container_id}
+      set c.commitList = filter(x in c.commitList where x <> head(c.commitList))
+      foreach(x in r | delete x)
+      return collect(p)
+    `;
+    let q2 = "";
+    if(commitLength > subCommit){
+      tx.run(q)
+      .then( data => {
+        let f = data.records[0]._fields[0];
+        // console.log('ffff', f)
+        f.map(x => {
+          // console.log('xxxxx', x)
+          let i = x.identity.low
+          q2 += `
+          match (x${i}) where id(x${i})=${i}
+          optional match ()-[r1]->(x${i})
+          optional match (x${i})-[r2]->()
+          call apoc.do.when(r1 is null and r2 is null, 'delete x', '',
+          {x:x${i}, r1:r1, r2:r2}) yield value as vx${i}`;
+        })
+        q2 += " return 'done'";
+        console.log("q2", q2)
+      })
+      .then( () => { return tx.run(q2)})
+      .then( () => {
+        commitLength--;
+        deleteCommit(tx, container_id, subCommit, commitLength)
+        .then( ()=> resolve() );
+      })
+    }else{ resolve() };
+  })
+}
+
 module.exports.create_note = (req, res, next)=>{
   let session = driver.session();
   let today = new Date().getTime();
@@ -365,21 +403,15 @@ module.exports.update = (req, res, next)=>{
 
   // Check user access and return the properties list of the container
   let Q1 = `
-  match (a:Account)-[l:Linked]->(c:Container)
-      where id(a) = ${user_id} and id(c) = ${ps.container_id}
-      with count(l) as count, c, a.subscription_commit_length as subCommit
-      call apoc.do.when(count <> 0,
+    match (a:Account)-[l:Linked]->(c:Container)
+    where id(a) = ${user_id} and id(c) = ${ps.container_id}
+    with count(l) as count, c, a.subscription_commit_length as subCommit
+    call apoc.do.when(count <> 0,
       	" match (c:Container)-[:Has*{commit:last(c.commitList)}]->(plast:Property)"
-     		+" match (c:Container)-[:Has*{commit:head(c.commitList)}]->(phead:Property)"
-   	  	+" return collect(distinct plast) as lastlist, last(c.commitList) as lastCommit,"
-     		+"  size(c.commitList) as commitLength",
-     		"", {c:c, last:last(c.commitList), head:head(c.commitList)}) yield value as v1
-      call apoc.do.when(v1.commitLength > subCommit,
-      	"match (c:Container)-[:Has*{commit:head(c.commitList)}]->(phead:Property)"
-          +"return collect(distinct phead) as headlist,  head(c.commitList) as headcommit",
-      	"return [] as headlist, 0 as headcommit",
-          {c:c, v1:v1, subCommit:subCommit}) yield value as v2
-      return {last:v1, head:v2};
+ 	  	+" return collect(distinct plast) as lastlist, last(c.commitList) as lastCommit,"
+   		+"  size(c.commitList) as commitLength",
+   		"", {c:c, last:last(c.commitList), head:head(c.commitList)}) yield value
+    return {last: value, subCommit:subCommit};
   `;
 
   // Add new commit to the container commit list and create the updater node
@@ -407,8 +439,8 @@ module.exports.update = (req, res, next)=>{
     if(data.records.length && data.records[0]._fields.length){
       Q1_data = data.records[0]._fields[0];
     }else {
-      console.log()
-      console.log("Q1", Q1)
+      // console.log()
+      // console.log("Q1", Q1)
       throw {status: 403, mess: 'no feedbaack data of Q1'}
     };
   })
@@ -435,9 +467,10 @@ module.exports.update = (req, res, next)=>{
       };
       Q3_3 = ` return x${u}`
     });
-    return;
+    // return;
   })
   .then( () => {
+    // console.log('Q3_1+Q3_2+Q3_3', Q3_1+Q3_2+Q3_3)
     return tx.run(Q3_1+Q3_2+Q3_3);
   })
   .then( data => {
@@ -458,24 +491,28 @@ module.exports.update = (req, res, next)=>{
     delete f.identity;
     delete f.properties;
     delete f.labels;
-    return f;
+    updatedNode = f;
+  }).then( () => {
+    return deleteCommit(tx, ps.container_id, Q1_data.subCommit, Q1_data.last.commitLength);
   })
-  .then( data => {
-    updatedNode = data;
-    if(Q1_data.last.commitLength > limitCommitLength){
-      let Q4 = `call apoc.do.when(true,
-        "match ()-[r{commit:${Q1_data.head.headcommit}}]->() delete r ", "", {}) yield value `;
-      Q1_data.head.headlist.map(x => {
-        Q4 += `
-        match (x) where id(x)=${x}
-        optional match ()-[r1]->(x)
-        optional match (x)-[r2]->()
-        call apoc.do.when(r1 is null and r2 is null, 'delete x', '', {x:x, r1:r1, r2:r2}) yield value`;
-      });
-      Q4 += " return 'done'"
-      return tx.run(Q4);
-    };
-  })
+  // .then( () => {
+  //   updatedNode = data;
+  //   console.log('Q1_data.last.commitLength', Q1_data.last.commitLength)
+  //   console.log('limitCommitLength', limitCommitLength)
+  //   if(Q1_data.last.commitLength.low > limitCommitLength){
+  //     let Q4 = `call apoc.do.when(true,
+  //       "match ()-[r{commit:${Q1_data.head.headcommit}}]->() delete r ", "", {}) yield value `;
+  //     Q1_data.head.headlist.map(x => {
+  //       Q4 += `
+  //       match (x) where id(x)=${x}
+  //       optional match ()-[r1]->(x)
+  //       optional match (x)-[r2]->()
+  //       call apoc.do.when(r1 is null and r2 is null, 'delete x', '', {x:x, r1:r1, r2:r2}) yield value`;
+  //     });
+  //     Q4 += " return 'done'"
+  //     return tx.run(Q4);
+  //   };
+  // })
   .then( () => {
     commit(tx, res, 200, user_id, updatedNode);
   })
