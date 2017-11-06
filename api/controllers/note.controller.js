@@ -3,8 +3,10 @@ const driver = require('../../config/driver');
 const tokenGen = require('../services/token.service');
 const labelService = require('../services/label.service');
 const utils = require('../services/utils.service');
+const dbService = require('../services/db.service');
 
 const crash = (transaction, response,  status, message, error)=>{
+  console.log(message)
   transaction.rollback();
   response.status(status).json({mess: message, error})
 }
@@ -38,12 +40,11 @@ const deleteCommit = (tx, container_id, subCommit, commitLength) =>{
     `;
     let q2 = "";
     if(commitLength > subCommit){
+      console.log('commitLength: ', commitLength)
       tx.run(q)
       .then( data => {
         let f = data.records[0]._fields[0];
-        // console.log('ffff', f)
         f.map(x => {
-          // console.log('xxxxx', x)
           let i = x.identity.low
           q2 += `
           match (x${i}) where id(x${i})=${i}
@@ -53,7 +54,6 @@ const deleteCommit = (tx, container_id, subCommit, commitLength) =>{
           {x:x${i}, r1:r1, r2:r2}) yield value as vx${i}`;
         })
         q2 += " return 'done'";
-        console.log("q2", q2)
       })
       .then( () => { return tx.run(q2)})
       .then( () => {
@@ -145,11 +145,10 @@ module.exports.create_empty_note = (req, res, next)=>{
 module.exports.get_label = (req, res, next)=>{
   let user_id = req.decoded.user_id;
   labelService.getPropertyLabel().then( list => {
-    console.log('list', list)
     res.status(200).json({
       token: tokenGen(user_id),
       exp: utils.expire(),
-      data: list
+      data: list.filter(x => {return x != 'Title'})
     });
 
   });
@@ -390,7 +389,8 @@ module.exports.update = (req, res, next)=>{
   //    res.status(status).json(e);
   // });
 
-  let tx = driver.session().beginTransaction();
+  let session = driver.session();
+  let tx = session.beginTransaction();
   let user_id = req.decoded.user_id;
   let ps = req.body;
   let now = new Date().getTime();
@@ -434,13 +434,12 @@ module.exports.update = (req, res, next)=>{
   .then(()=>{ return utils.num(ps.id)})
   .then(()=>{ return utils.str(ps.value)})
   .then(()=>{ return labelService.isPropertyLabel(ps.label)})
-  .then(()=>{ return tx.run(Q1) })
+  .then(()=>{
+    return tx.run(Q1) })
   .then( data => {
     if(data.records.length && data.records[0]._fields.length){
       Q1_data = data.records[0]._fields[0];
     }else {
-      // console.log()
-      // console.log("Q1", Q1)
       throw {status: 403, mess: 'no feedbaack data of Q1'}
     };
   })
@@ -458,7 +457,12 @@ module.exports.update = (req, res, next)=>{
       // replace by the last update value
       let i = x.identity.low;
       let u = updates.identity.low;
-      if( i == ps.id){
+      // Crash if update label with a second title // Only one is accepted
+      if(i == ps.id && ps.label == 'Title' &&
+          x.labels.filter(y => {return y != 'Property'})[0] != 'Title'){
+        let ff = x.labels.filter(y => {return y != 'Property'})[0]
+        return crash(tx, res, 400, 'Cannot update label to Title');
+      }else if( i == ps.id){
         Q3_1 += ` match (x${u}) where id(x${u})=${u}`;
         Q3_2 += `-[:Has{commit:${now}}]->(x${u})`;
       }else{
@@ -467,10 +471,8 @@ module.exports.update = (req, res, next)=>{
       };
       Q3_3 = ` return x${u}`
     });
-    // return;
   })
   .then( () => {
-    // console.log('Q3_1+Q3_2+Q3_3', Q3_1+Q3_2+Q3_3)
     return tx.run(Q3_1+Q3_2+Q3_3);
   })
   .then( data => {
@@ -492,27 +494,12 @@ module.exports.update = (req, res, next)=>{
     delete f.properties;
     delete f.labels;
     updatedNode = f;
-  }).then( () => {
-    return deleteCommit(tx, ps.container_id, Q1_data.subCommit, Q1_data.last.commitLength);
   })
-  // .then( () => {
-  //   updatedNode = data;
-  //   console.log('Q1_data.last.commitLength', Q1_data.last.commitLength)
-  //   console.log('limitCommitLength', limitCommitLength)
-  //   if(Q1_data.last.commitLength.low > limitCommitLength){
-  //     let Q4 = `call apoc.do.when(true,
-  //       "match ()-[r{commit:${Q1_data.head.headcommit}}]->() delete r ", "", {}) yield value `;
-  //     Q1_data.head.headlist.map(x => {
-  //       Q4 += `
-  //       match (x) where id(x)=${x}
-  //       optional match ()-[r1]->(x)
-  //       optional match (x)-[r2]->()
-  //       call apoc.do.when(r1 is null and r2 is null, 'delete x', '', {x:x, r1:r1, r2:r2}) yield value`;
-  //     });
-  //     Q4 += " return 'done'"
-  //     return tx.run(Q4);
-  //   };
-  // })
+  .then( () => {
+    // NOTE: The adding of 1 to commitLength is for the current update
+    return deleteCommit(tx, ps.container_id, Q1_data.subCommit.low,
+                                          Q1_data.last.commitLength.low + 1);
+  })
   .then( () => {
     commit(tx, res, 200, user_id, updatedNode);
   })
@@ -620,10 +607,6 @@ module.exports.delete_property = (req, res, next)=>{
     // preparation of Q2
     data.map(p => {
       let i = p.identity.low;
-      console.log(p.labels.filter(l=>{
-        console.log(l)
-        l == l
-      }))
       if(p.labels.filter(l=>{ return l != 'Property'})[0] == 'Title'){
         Q2_1 += ` match (t:Title) where id(t)=${i}`;
         Q2_2 += `-[:Has{commit:${now}}]->(t)`;
@@ -690,23 +673,18 @@ module.exports.drop_property = (req, res, next)=>{
       return session.readTransaction(tx => tx.run(Q1))
     })
     .then( data => {
-      console.log('============================= CHECK 1')
       // Check the user access to the container
       if(data.records[0].get(0).low) {
-        console.log('============================= CHECK 1.1')
         return;
       }else{
-        console.log('============================= CHECK 1.2')
         throw {status: 400, err: "no acces user"}
       };
     })
     .then( () => {
-      console.log('============================= CHECK 2')
       // Get the property list
       return session.readTransaction(tx=>tx.run(Q2))
     })
     .then( data => {
-      console.log('============================= CHECK 3')
       // Add the title to the query
       let f = data.records[0]._fields[0];
       let j = 0;
@@ -722,89 +700,60 @@ module.exports.drop_property = (req, res, next)=>{
       return f;
     })
     .then( f => {
-      console.log('============================= CHECK 4')
-      console.log('**************************')
-      console.log(req.body)
-      console.log('**************************')
-      f.map(x => { console.log(x) })
-
       // Check the limit up and down
       if (ps.direction == 'up' && f[0].identity.low == ps.property_id){
-        console.log('============================= CHECK 4.1')
         throw {status: 400, err: "Unauthorized query"}
-
       }else if(ps.direction == 'down' && f.reverse()[0].identity.low == ps.property_id){
-        console.log('============================= CHECK 4.2')
         throw {status: 400, err: "Unauthorized query"}
       };
       // Because the previous conditionnal has not just check the reverse,
       // but modified it todrop, so we reverse again
       if(ps.direction == 'down'){
-        console.log('============================= CHECK 4.3')
         f.reverse();
       };
       return f;
     })
     .then( f => {
-      console.log('============================= CHECK 5')
       // Finalisation of the query
       let todrop;
       let previous;
       f.map( x => {
-        console.log('===========', x)
         let i = x.identity.low;
         if(i == ps.property_id && ps.direction == 'down'){
-          console.log('============================= CHECK 5.1')
           todrop = i;
         }else if(i == ps.property_id && ps.direction == 'up'){
-          console.log('============================= CHECK 5.2')
           Q3_1 += `
           match (x${i}:Property) where id(x${i}) = ${i}
           match (x${previous}:Property) where id(x${previous}) = ${previous}`;
           Q3_2 += `-[:Has{commit:${now}}]->(x${i})-[:Has{commit:${now}}]->(x${previous})`;
           previous = 0;
         }else if(previous){
-          console.log('============================= CHECK 5.3')
           Q3_1 += ` match (x${previous}:Property) where id(x${previous}) = ${previous}`;
           Q3_2 += `-[:Has{commit:${now}}]->(x${previous})`;
           previous = i;
         }else if(todrop){
-          console.log('============================= CHECK 5.4')
           Q3_1 += `
           match (x${i}:Property) where id(x${i}) = ${i}
           match (x${todrop}:Property) where id(x${todrop}) = ${todrop}`;
           Q3_2 += `-[:Has{commit:${now}}]->(x${i})-[:Has{commit:${now}}]->(x${todrop})`;
           todrop = 0;
         }else if(ps.direction == 'down'){
-          console.log('============================= CHECK 5.5')
           Q3_1 += ` match (x${i}:Property) where id(x${i}) = ${i}`;
           Q3_2 += `-[:Has{commit:${now}}]->(x${i})`;
         }else if(ps.direction == 'up'){
-          console.log('============================= CHECK 5.6')
-          console.log('conditionnal 6')
           previous = i;
         };
       });
       if(ps.direction == 'up' && previous){
-        console.log('============================= CHECK 5.7')
         Q3_1 += ` match (x${previous}:Property) where id(x${previous}) = ${previous}`;
         Q3_2 += `-[:Has{commit:${now}}]->(x${previous})`;
       };
       return;
     })
     .then( () =>{
-      console.log('============================= CHECK 6')
       return session.readTransaction(tx=>tx.run(Q3_1+Q3_2+Q3_3))
-      // return;
     })
     .then( ()=>{
-      console.log('============================= CHECK 7')
-      console.log('==========================')
-      console.log(Q3_1)
-      console.log('==========================')
-      console.log(Q3_2)
-      console.log('==========================')
-      console.log(Q3_3)
       res.status(200).json({message: 'Done !'})
     })
     .catch(err => {
