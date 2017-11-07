@@ -15,7 +15,6 @@ const commit = (transaction, response, status, user, data)=>{
   transaction.commit()
   .subscribe({
     onCompleted: () => {
-      // this transaction is now committed
       response.status(status).json({
         token:tokenGen(user),
         exp: utils.expire(),
@@ -58,3 +57,28 @@ module.exports.user_profile = (req, res, next)=>{
 
 
 };
+
+module.exports.update_properties = (req, res, next)=>{
+  let session = driver.session();
+  let tx = session.beginTransaction();
+  let user_id =  req.decoded.user_id;
+  let ps = req.body;
+  console.log('CONTROL PARAMS ps', ps)
+
+  let q = `
+    match (a:Account) where id(a)= ${user_id}
+    set a.${ps.key} = ${ps.value}
+  `;
+
+  tx.run(q)
+  .then( data => {
+    console.log(data.records)
+  })
+  .then( ()=>{
+    commit(tx, res, 200, user_id);
+  })
+  .catch(err => {
+    crash(tx, res, 400, "error on the user update properties", err);
+  })
+
+}

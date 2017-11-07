@@ -29,6 +29,7 @@ module.exports = ()=>{
    routes
    // USER
       .get('/user_profile', user.user_profile)
+      .put('/user_update_properties', user.update_properties)
    // NOTES
       // .post('/create_note', note.create_note)
       .post('/create_empty_note', note.create_empty_note)

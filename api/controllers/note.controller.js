@@ -32,15 +32,15 @@ const commit = (transaction, response, status, user, data)=>{
 const deleteCommit = (tx, container_id, subCommit, commitLength) =>{
   return new Promise(resolve => {
     let q = `
-      match (c)-[r:Has*{commit:head(c.commitList)}]->(p:Property)
-      where id(c) = ${container_id}
-      set c.commitList = filter(x in c.commitList where x <> head(c.commitList))
-      foreach(x in r | delete x)
-      return collect(p)
+    match (c)-[r:Has*{commit:head(c.commitList)}]->(p:Property)
+    where id(c) = ${container_id}
+    with c, r, p, c.commitList as firstList, filter(x in c.commitList where x <> head(c.commitList)) as filtered
+    foreach(x in r | delete x)
+    set c.commitList = filtered
+    return collect(p), count(firstList), count(filtered)
     `;
     let q2 = "";
     if(commitLength > subCommit){
-      console.log('commitLength: ', commitLength)
       tx.run(q)
       .then( data => {
         let f = data.records[0]._fields[0];
@@ -59,7 +59,7 @@ const deleteCommit = (tx, container_id, subCommit, commitLength) =>{
       .then( () => {
         commitLength--;
         deleteCommit(tx, container_id, subCommit, commitLength)
-        .then( ()=> resolve() );
+        .then( ()=> { resolve() });
       })
     }else{ resolve() };
   })
