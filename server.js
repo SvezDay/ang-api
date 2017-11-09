@@ -6,6 +6,18 @@ https://www.youtube.com/watch?v=fDHihQ5hB5I
 ------------------------------------------------- Apoc
 https://www.npmjs.com/package/apoc
 */
+
+
+// WARNING VERY IMPORTANT
+
+// Modification on the neo4j file system
+// neo4j.config
+/*
+  #dbms.directories.import=import // was commented
+  apoc.import.file.enabled=true   // was added
+  apoc.export.file.enabled=true   // was added
+*/
+
 let express = require('express');
 let bodyParser = require('body-parser');
 let cors = require('cors');
@@ -59,7 +71,9 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.post('/test', myeasytest);
+app.post('/test', myeasytest.test);
+app.post('/test2', myeasytest.test2);
+app.post('/test3', myeasytest.test3);
 app.use(allowCrossDomain);
 app.use(handleError);
 
