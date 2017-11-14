@@ -24,6 +24,44 @@ const commit = (response, transaction, status, data)=>{
     }
   });
 }
+const noLow = (obj)=>{
+  return new Promise((resolve)=>{
+    for( let v in obj){
+      if(obj[v] instanceof Array){
+        noLow(obj[v]).then(res => {
+          obj[v] = res;
+          resolve();
+        })
+      }else if(typeof obj[v] == 'object' && obj[v].low){
+        obj[v] = obj[v].low;
+      }else if(typeof obj[v] == 'object'){
+        noLow(obj[v]).then(res => {
+          obj[v] = res;
+          resolve()})
+      }
+    }
+    resolve(obj);
+  })
+}
+
+const sortLabel = (obj)=>{
+  return new Promise((resolve)=>{
+    if(obj.labels){
+      obj.labels = obj.labels.filter(x => {return x != 'Property'})[0];
+    }else{
+      for( let v in obj){
+        if(typeof obj[v] == 'object'){
+          sortLabel(obj[v]).then(res => {
+            obj[v] = res;
+            resolve()})
+        }
+      }
+    }
+    resolve(obj);
+  })
+}
+const json2csv = require('json2csv');
+const fs = require('fs');
 
 module.exports.test = (req, res, next)=>{
 
@@ -84,9 +122,6 @@ module.exports.test = (req, res, next)=>{
 
 };
 
-
-const json2csv = require('json2csv');
-const fs = require('fs');
 module.exports.test2 = (req, res, next)=>{
 
   let user_id = 560;
@@ -106,42 +141,7 @@ module.exports.test2 = (req, res, next)=>{
     return nodes, relationships
   `;
 
-  const noLow = (obj)=>{
-    return new Promise((resolve)=>{
-      for( let v in obj){
-        if(obj[v] instanceof Array){
-          noLow(obj[v]).then(res => {
-            obj[v] = res;
-            resolve();
-          })
-        }else if(typeof obj[v] == 'object' && obj[v].low){
-          obj[v] = obj[v].low;
-        }else if(typeof obj[v] == 'object'){
-          noLow(obj[v]).then(res => {
-            obj[v] = res;
-            resolve()})
-        }
-      }
-      resolve(obj);
-    })
-  }
 
-  const sortLabel = (obj)=>{
-    return new Promise((resolve)=>{
-      if(obj.labels){
-        obj.labels = obj.labels.filter(x => {return x != 'Property'})[0];
-      }else{
-        for( let v in obj){
-          if(typeof obj[v] == 'object'){
-            sortLabel(obj[v]).then(res => {
-              obj[v] = res;
-              resolve()})
-          }
-        }
-      }
-      resolve(obj);
-    })
-  }
   let nodes = relationships = [];
   tx.run(q)
   .then( data => { return data.records[0]._fields })
@@ -167,6 +167,7 @@ module.exports.test2 = (req, res, next)=>{
 
 };
 
+const recoverField = require('./api/services/recoverField.service')
 module.exports.test3 = (req, res, next)=>{
 
   let user_id = 560;
@@ -175,24 +176,49 @@ module.exports.test3 = (req, res, next)=>{
 
   let q = `
     match (a:Account) where id(a)=${user_id}
-    call apoc.path.subgraphAll(a, {relationshipFilter:'Linked'})
-        yield nodes as node, relationships as rel
-    call apoc.export.cypher.data(
-        node, rel,
-        "/tmp/friendships.cypher",
-        {format:'neo4j-shell',cypherFormat:'updateStructure'})
-        yield file, source, format, nodes, relationships, properties, time
-    return file
+    call apoc.path.subgraphAll(a, {relationshipFilter:'Linked|Has'})
+    yield nodes, relationships return nodes, relationships
   `;
+  // yield nodes as node, relationships as rel
+  // call apoc.export.cypher.data(
+  //     node, rel,
+  //     "/tmp/friendships.cypher",
+  //     {format:'neo4j-shell',cypherFormat:'updateStructure'})
+  //     yield file, source, format, nodes, relationships, properties, time
+  // return file
 
-  let nodes = relationships = [];
+  let nodes = relationships = nodeFields = relationFields = [];
+  let nodesCsv;
   tx.run(q)
+  // .then( data => { return data.records[0]._fields })
+  // .then( data => { return noLow(data) })
+  // .then( data => { return sortLabel(data)})
+  // .then( data => {
+  //   nodes = data[0]
+  //   relationships = data[1]
+  // })
+  // .then( () => {
+  //   nodeFields = recoverField(nodes, 'nodes');
+  // })
+  // .then( () => {
+  //   console.log(nodeFields)
+  // })
+  // .then( () => {
+  //   fields = ['identity', 'labels', 'properties'];
+  //
+  //   nodesCsv = json2csv({nodes, fields});
+  //   console.log(nodesCsv)
+  //   // fs.writeFile('myTest.csv', nodesCsv, 'wx', (err)=>{
+  //   //   console.log(err)
+  //   //   return
+  //   // })
+  // })
   .then( data => {
-    console.log(data)
+    commit(res, tx, 200, data)
   })
-  .then( () => {
-    commit(res, tx, 200, nodes)
-  })
+  // .then( () => {
+  //   commit(res, tx, 200, nodeFields)
+  // })
   .catch( err => {console.log(err);  crash(res, tx, 400, err)})
 
 
