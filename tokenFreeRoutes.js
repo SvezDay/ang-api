@@ -57,6 +57,7 @@ module.exports.register = (req, res, next)=>{
             first:'${_.first}',
             last:'${_.last}',
             middle:'${_.middle}',
+            admin:"user",
             subscription_commit_length: 10
          })
          CREATE (b:Board_Activity{course_wait_recall:[]})

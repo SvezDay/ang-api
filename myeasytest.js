@@ -11,7 +11,6 @@ const crash = (response, transaction, status, message, error)=>{
   response.json({status: status, mess: message, error:error})
 }
 const commit = (response, transaction, status, data)=>{
-  console.log('check commit')
   transaction.commit()
   .subscribe({
     onCompleted: () => {
@@ -24,26 +23,26 @@ const commit = (response, transaction, status, data)=>{
     }
   });
 }
-const noLow = (obj)=>{
-  return new Promise((resolve)=>{
-    for( let v in obj){
-      if(obj[v] instanceof Array){
-        noLow(obj[v]).then(res => {
-          obj[v] = res;
-          resolve();
-        })
-      }else if(typeof obj[v] == 'object' && obj[v].low){
-        obj[v] = obj[v].low;
-      }else if(typeof obj[v] == 'object'){
-        noLow(obj[v]).then(res => {
-          obj[v] = res;
-          resolve()})
-      }
-    }
-    resolve(obj);
-  })
-}
-
+// const parseInt = (obj)=>{
+//   return new Promise((resolve)=>{
+//     let promises = [];
+//
+//     for( let k in obj){
+//       if(obj instanceof Array){
+//         obj.map(x=>{  promises.push( parseInt(x) )  });
+//       }else if(obj[k] instanceof Array && typeof obj[k][0] == 'object'){
+//         promises.push( parseInt(obj[k]) );
+//       }else if(typeof obj[k] == 'object' && obj[k].hasOwnProperty("low")){
+//         promises.push(Promise.resolve(obj[k] = obj[k].low) )
+//       }else if(typeof obj[k] == 'object'){
+//         promises.push( parseInt(obj[k]) );
+//       }
+//     }
+//     Promise.all(promises).then(()=>{
+//       resolve(obj);
+//     })
+//   })
+// }
 const sortLabel = (obj)=>{
   return new Promise((resolve)=>{
     if(obj.labels){
@@ -60,6 +59,7 @@ const sortLabel = (obj)=>{
     resolve(obj);
   })
 }
+
 const json2csv = require('json2csv');
 const fs = require('fs');
 
@@ -145,7 +145,7 @@ module.exports.test2 = (req, res, next)=>{
   let nodes = relationships = [];
   tx.run(q)
   .then( data => { return data.records[0]._fields })
-  .then( data => { return noLow(data) })
+  .then( data => { return utils.parseInt(data) })
   .then( data => { return sortLabel(data)})
   .then( data => {
     nodes = data[0];
@@ -170,7 +170,7 @@ module.exports.test2 = (req, res, next)=>{
 const recoverField = require('./api/services/recoverField.service')
 module.exports.test3 = (req, res, next)=>{
 
-  let user_id = 560;
+  let user_id = 0;
   let session = driver.session();
   let tx = session.beginTransaction();
 
@@ -187,38 +187,46 @@ module.exports.test3 = (req, res, next)=>{
   //     yield file, source, format, nodes, relationships, properties, time
   // return file
 
-  let nodes = relationships = nodeFields = relationFields = [];
+
+  let nodes = relations = nodeFields = relationFields = [];
   let nodesCsv;
   tx.run(q)
-  // .then( data => { return data.records[0]._fields })
-  // .then( data => { return noLow(data) })
-  // .then( data => { return sortLabel(data)})
-  // .then( data => {
-  //   nodes = data[0]
-  //   relationships = data[1]
-  // })
-  // .then( () => {
-  //   nodeFields = recoverField(nodes, 'nodes');
-  // })
-  // .then( () => {
-  //   console.log(nodeFields)
-  // })
-  // .then( () => {
-  //   fields = ['identity', 'labels', 'properties'];
-  //
-  //   nodesCsv = json2csv({nodes, fields});
-  //   console.log(nodesCsv)
-  //   // fs.writeFile('myTest.csv', nodesCsv, 'wx', (err)=>{
-  //   //   console.log(err)
-  //   //   return
-  //   // })
-  // })
+  .then( data => { return data.records[0]._fields })
+  .then( data => { return utils.parseInt(data) })
+  .then( data => { return sortLabel(data)})
+  .then( data => {
+    function cbe(err){ console.log(err) };
+    recoverField(data[0]).then(nf =>{
+      fs.writeFile('backupNodes.csv',
+      json2csv({ data:data[0], fields: nf}), cbe )
+    })
+    recoverField(data[1]).then(rf=>{
+      fs.writeFile('backupRelations.csv',
+      json2csv({ data:data[1], fields:rf}), cbe )
+    })
+  })
+  .then( data => {
+    nodes = data[0]
+    relations = data[1]
+  })
+  .then( () => { return recoverField(nodes) })
+  .then( data => { nodeFields = data; return;  })
+  .then( () => { return recoverField(relations) })
+  .then( data => { relationFields = data; return;  })
+  .then( () => {
+    nodesCsv = json2csv({data:nodes, fields:nodeFields});
+    console.log(nodesCsv)
+    fs.writeFile('myTest.csv', nodesCsv, (err)=>{
+      console.log(err)
+      return
+    })
+  })
   .then( data => {
     commit(res, tx, 200, data)
   })
-  // .then( () => {
-  //   commit(res, tx, 200, nodeFields)
-  // })
+  .then( () => {
+    commit(res, tx, 200, nodeFields)
+  })
   .catch( err => {console.log(err);  crash(res, tx, 400, err)})
 
 

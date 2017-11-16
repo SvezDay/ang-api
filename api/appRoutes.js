@@ -17,6 +17,7 @@ let note = require('./controllers/note.controller');
 let course = require('./controllers/courseCtrl');
 let game = require('./controllers/gameCtrl');
 let container = require('./controllers/container.controller');
+let admin = require('./controllers/admin.controller');
 
 const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
 const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
@@ -27,9 +28,11 @@ const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, grap
 module.exports = ()=>{
    let routes = express.Router();
    routes
+   // ADMIN
    // USER
       .get('/user_profile', user.user_profile)
       .put('/user_update_properties', user.update_properties)
+      .get('/user_download_all', user.download_all)
    // NOTES
       // .post('/create_note', note.create_note)
       .post('/create_empty_note', note.create_empty_note)

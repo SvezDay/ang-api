@@ -1,32 +1,14 @@
 'use-strict';
+const json2csv = require('json2csv');
+const fs = require('fs');
+
 const driver = require('../../config/driver');
 const tokenGen = require('../services/token.service');
 const labelService = require('../services/label.service');
 const utils = require('../services/utils.service');
 const dbService = require('../services/db.service');
+const recoverField = require('../services/recoverField.service')
 
-const crash = (transaction, response,  status, message, error)=>{
-  console.log(message)
-  transaction.rollback();
-  response.status(status).json({mess: message, error})
-}
-
-const commit = (transaction, response, status, user, data)=>{
-  transaction.commit()
-  .subscribe({
-    onCompleted: () => {
-      response.status(status).json({
-        token:tokenGen(user),
-        exp: utils.expire(),
-        data: data
-      })
-    },
-    onError: (error) => {
-      console.log('error', error);
-      crash(transaction, response, 400, "Error on the commit", error);
-    }
-  });
-}
 
 module.exports.user_profile = (req, res, next)=>{
   let session = driver.session();
@@ -49,10 +31,10 @@ module.exports.user_profile = (req, res, next)=>{
     return u
   })
   .then(data=>{
-    commit(tx, res, 200, user_id, data);
+    utils.commit(tx, res, 200, user_id, data);
   })
   .catch(err => {
-    crash(tx, res, 400, "crash on the user_profile function", err)
+    utils.crash(tx, res, 400, "crash on the user_profile function", err)
   })
 
 
@@ -75,10 +57,71 @@ module.exports.update_properties = (req, res, next)=>{
     console.log(data.records)
   })
   .then( ()=>{
-    commit(tx, res, 200, user_id);
+    utils.commit(tx, res, 200, user_id);
   })
   .catch(err => {
-    crash(tx, res, 400, "error on the user update properties", err);
+    utils.crash(tx, res, 400, "error on the user update properties", err);
+  })
+
+}
+
+module.exports.download_all = (req, res, next)=>{
+  let session = driver.session();
+  let tx = session.beginTransaction();
+  let user_id = req.decoded.user_id;
+  let now = new Date();
+  let nodes = relations = nodeFields = relationFields = [];
+  let nodesCsv;
+
+  let q = `
+    match (a:Account) where id(a)=${user_id}
+    call apoc.path.subgraphAll(a, {relationshipFilter:'Linked|Has'})
+    yield nodes, relationships return nodes, relationships
+  `;
+  // yield nodes as node, relationships as rel
+  // call apoc.export.cypher.data(
+  //     node, rel,
+  //     "/tmp/friendships.cypher",
+  //     {format:'neo4j-shell',cypherFormat:'updateStructure'})
+  //     yield file, source, format, nodes, relationships, properties, time
+  // return file
+
+
+  tx.run(q)
+  .then( data => { return data.records[0]._fields })
+  .then( data => { return utils.parseInt(data) })
+  .then( data => { return utils.sortLabel(data)})
+  // .then( data => {
+  //   function cbe(err){ console.log(err) };
+  //   recoverField(data[0]).then(nf =>{
+  //     fs.writeFile('backupNodes.csv',
+  //     json2csv({ data:data[0], fields: nf}), cbe )
+  //   })
+  //   recoverField(data[1]).then(rf=>{
+  //     fs.writeFile('backupRelations.csv',
+  //     json2csv({ data:data[1], fields:rf}), cbe )
+  //   })
+  // })
+  .then( data => {
+    // function cbe(err){ console.log(err) };
+    recoverField(data[0]).then(nf => {
+      json2csv({data:data[0], fields:nf}, function (err, csv){
+        if(err){console.log(err); throw{status: 403, mess: 'no user access', err:err}}
+        console.log(csv);
+        res.status(200).json({
+          token:tokenGen(user_id),
+          exp: utils.expire(),
+          data: csv
+        })
+      })
+    })
+  })
+  // .then( () => {
+  //   commit(res, tx, 200, nodeFields)
+  // })
+  .catch( err => {
+    console.log(err);
+    utils.crash(tx, res, err.status || 400, err.mess || 'error on download_all',err.err || err);
   })
 
 }

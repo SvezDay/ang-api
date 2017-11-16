@@ -33,12 +33,12 @@ let myeasytest = require('./myeasytest');
 let app = express();
 let port = process.env.PORT || 3200;
 
-process.env.NEO4J_PROTOCOL="http";
-// process.env.NEO4J_HOST=192+"."+168+"."+.0+"."+5
-process.env.NEO4J_HOST=conf.back.host;
-process.env.NEO4J_PORT=conf.back.port;
-process.env.NEO4J_USERNAME=conf.back.neousr;
-process.env.NEO4J_PASSWORD=conf.back.neopwd;
+// process.env.NEO4J_PROTOCOL="http";
+// // process.env.NEO4J_HOST=192+"."+168+"."+.0+"."+5
+// process.env.NEO4J_HOST=conf.back.host;
+// process.env.NEO4J_PORT=conf.back.port;
+// process.env.NEO4J_USERNAME=conf.back.neousr;
+// process.env.NEO4J_PASSWORD=conf.back.neopwd;
 
 
 

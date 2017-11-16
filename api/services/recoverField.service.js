@@ -1,5 +1,4 @@
 module.exports = (object, staker)=>{
-
   let field = [];
 
   let recoverField = (obj, stack)=>{
@@ -24,11 +23,19 @@ module.exports = (object, staker)=>{
     })
   }
 
-  recoverField(object, staker || 'node')
+  return recoverField(object, staker ||'')
   .then(() => {
     return field.filter((item, pos, self) => {
       return self.indexOf(item)==pos;
     })
+  })
+  .then(data =>{
+    // Revove the first dote before each field
+    let a = [];
+    data.map(x => {
+      a.push( x.substr(1) )
+    })
+    return a
   })
   .then(fieldList => {
       // console.log('resul', fieldList)
