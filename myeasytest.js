@@ -65,49 +65,27 @@ const fs = require('fs');
 
 module.exports.test = (req, res, next)=>{
 
-  let tx = driver.session().beginTransaction();
-  let user_id = 560;
+  let session = driver.session()
+  let tx = session.beginTransaction();
+  let user_id = 0;
   let ps = {container_id:309 , label:"Definition" ,value:"hello world", id:313};
   let now = new Date().getTime();
-  let tomorrow = now + (1000 * 60 * 60 * 24* 180)
 
-  let d =
-  {
-    "node":{
-      "id":234,
-      "label":"Container",
-      "properties": {
-        "type":"note",
-        "commitList":["1510139053721", "1510139053721"]
-      }
-    },
-
+  let params = {
+    "psvalue": ps.value,
+    "reqbody": req.body.value
   }
-  let q = `create(x:${d.label}`
-  q+=`{`
-  for (let x in d.properties) {
-    if (d.properties.hasOwnProperty(x)) {
-      if(typeof d.properties[x] == 'string'){
-        q+=`,${x}:'${d.properties[x]}'`
-      }else if(d.properties[x] instanceof Array){
-        // Before set the query, we must set single quote in string
-        let arr = []; d.properties[x].map(y => arr.push("'"+y+"'"));
-        q+=`,${x}:[${arr}]`;
-      }else if(typeof d.properties[x] == 'object'){
-        throw {status: 400, mess: 'invalid object properties'}
-      }else{
-        q+=`,${x}:${d.properties[x]}`
-      }
-    }
-  }
-  q+=`}) return x`
-  q = q.replace("{,", "{")
+  let query = `
+  create (n1:Test{psvalue:'{psvalue}'})
+  create (n2:Test{reqbody:{reqbody}})
+  return n1, n2
+  `
   console.log(q)
-  tx.run(q)
+  // res.status(200).json({mess:q})
+
+  tx.run(query, params)
   .then( data => {
-    // return loop();
     console.log(data.records[0]._fields)
-    // return deleteCommit()
     return data.records
   })
   .then( data => {

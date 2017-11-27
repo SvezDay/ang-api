@@ -25,6 +25,8 @@ const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
 
 const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, graphenedbPass));
 
+const multer = require('multer');
+let upload = multer()
 module.exports = ()=>{
    let routes = express.Router();
    routes
@@ -33,6 +35,14 @@ module.exports = ()=>{
       .get('/user_profile', user.user_profile)
       .put('/user_update_properties', user.update_properties)
       .get('/user_download_all', user.download_all)
+      // .post('/user_upload_data', upload.any(), (req, res, next)=>{
+      //   console.log('req.body', req.files)
+      //   console.log('files', Object.keys(req))
+      //   res.status(200).json({mes: 'ok'})
+      // })
+      .post('/user_upload_data', upload.any(), user.upload_data)
+
+      // .post('/user_upload_data', user.upload_data)
    // NOTES
       // .post('/create_note', note.create_note)
       .post('/create_empty_note', note.create_empty_note)

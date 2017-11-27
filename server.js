@@ -51,6 +51,7 @@ let allowCrossDomain = (req, res, next)=>{
 
 let corsOptions = {
   origin: (origin, callback)=>{
+    if(origin == undefined){ callback(null, true) } else
     if(conf.app.whiteList.indexOf(origin) !== -1){
       callback(null, true);
     } else {

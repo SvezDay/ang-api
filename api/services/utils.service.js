@@ -61,11 +61,13 @@ const self = {
     .subscribe({
       onCompleted: () => {
         // this transaction is now committed
-        response.status(status).json({
+        let params = {
           token:tokenGen(user),
           exp: self.expire(),
           data: data
-        })
+        };
+        // status != 204 ? ( params.data = data ) : null
+        response.status(status).json(params);
       },
       onError: (error) => {
         console.log('error', error);

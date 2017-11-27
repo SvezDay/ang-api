@@ -10,6 +10,7 @@ exports.back = {
   post: 7474,
   neousr: "neo4J",
   neopwd:"futur$"
+  //neopwd:"UblimDev78"
 }
 exports.app = {
   whiteList: ["http://localhost:4200", "https://ang-app.herokuapp.com"]
