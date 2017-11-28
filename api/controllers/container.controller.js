@@ -6,21 +6,21 @@ let utils = require('../services/utils.service');
 
 module.exports.get_sub_container = (req, res, next)=>{
   let session = driver.session();
-  let user_id = req.decoded.user_id;
+  let uid = req.decoded.user_id;
   let ps = req.body;
 
-
+  let params = {uid, container_id:ps.container_id};
   let Q1 = `match (a:Account)`;
   let Q2 = ``;
   let Q3 = `-[:Linked]->(last:Container)`;
-  let Q4 = ` where id(a) = ${user_id}`;
+  let Q4 = ` where id(a) = $uid`;
   let Q5 = ``;
   let Q6 = ``;
   let Q7 = ``;
 
   if(ps.container_id){
     Q2 += `-[l:Linked*]->(c:Container)`;
-    Q5 += ` and id(c)= ${ps.container_id}`;
+    Q5 += ` and id(c)= $container_id`;
     Q7 += ` with last, count(l) as count
     return case when count <> 0 then collect(last) else {} end `;
   }else{
@@ -31,7 +31,7 @@ module.exports.get_sub_container = (req, res, next)=>{
   let Q9 = ` return `;
 
   // This tx return the list of the container
-  let p1 = session.readTransaction(tx=>tx.run(Q1+Q2+Q3+Q4+Q5+Q6+Q7))
+  let p1 = session.readTransaction(tx=>tx.run(Q1+Q2+Q3+Q4+Q5+Q6+Q7, params))
   let p2 = p1.then( data => {
     if(data.records.length == 0){
       return false;
@@ -72,16 +72,17 @@ module.exports.get_sub_container = (req, res, next)=>{
           return x;
         });
       })
-      .then(data => {
-        res.status(200).json({
-          token: tokenGen(user_id),
-          exp: new Date().getTime(),
-          data:data
-        });
+      .then( data => {
+        let params = {
+          token:tokenGen(uid),
+          exp: utils.expire(),
+          data: data
+        };
+        res.status(200).json(params);
       })
-      .catch(err => {
-        console.log(err);
-        res.status(400).json({err:err});
+      .catch( e =>{
+        console.log(e)
+        res.status(400).json({err:e})
       });
 
     }
@@ -92,14 +93,16 @@ module.exports.get_sub_container = (req, res, next)=>{
 
 module.exports.change_container_path = (req, res, next)=>{
   let session = driver.session();
-  let user_id = req.decoded.user_id;
-  let ctm = req.body.container_to_move;
-  let cth = req.body.container_to_host;
+  let tx = session.beginTransaction();
+  let uid = req.decoded.user_id;
+  let ps = req.body;
+  let ctm = ps.container_to_move;
+  let cth = ps.container_to_host;
+  let params = {uid, ctm:ps.container_to_move, cth:ps.container_to_host};
   let Q = "";
-
   let Q1 = `
   match(ctm:Container)<-[lm:Linked*]-(a:Account)-[lh:Linked*]->(cth:Container)
-  where id(a)=${user_id} and id(ctm) = ${ctm} and id(cth)=${cth}
+  where id(a)=$uid and id(ctm) = $ctm and id(cth)=$cth
   with count(lm) as countm, count(lh) as counth, ctm, lm, cth
   call apoc.do.when(countm <> 0 and counth <> 0,
     " match (ctm) where ctm = ctmp"
@@ -114,7 +117,7 @@ module.exports.change_container_path = (req, res, next)=>{
   // The same query if the host container is the account
   let Q2 = `
   match(ctm:Container)<-[lm:Linked*]-(a:Account)
-  where id(a)=${user_id} and id(ctm) = ${ctm}
+  where id(a)=$uid and id(ctm) = $ctm
   with count(lm) as countm, ctm, lm, a
   call apoc.do.when(countm <> 0,
     " match (ctm:Container) where ctm = ctmp"
@@ -130,26 +133,28 @@ module.exports.change_container_path = (req, res, next)=>{
   // Conditional if the host container is the account
   cth == user_id ? Q = Q2 : Q = Q1
 
-  session.readTransaction(tx=>tx.run(Q))
+  tx.run(Q, params)
   .then(data=>{
     return data.records[0]._fields;
   })
-  .then(data => {
-    res.status(200).json({data:data});
+  .then( data => {
+    utils.commit({tx, res, uid, data});
   })
-  .catch(err => {
-    console.log(err)
-    res.status(400).json({err:err});
-  })
+  .catch( e =>{
+    let mess = e.mess || null;
+    utils.crash({tx, res, mess, err: e.err || null })
+  });
 };
 
 module.exports.delete_container = (req, res, next)=>{
-  let user_id = req.decoded.user_id;
+  let uid = req.decoded.user_id;
   let session = driver.session();
+  let tx = session.beginTransaction();
   let ps = req.params;
 
-  let q = `
-    optional match (a:Account)-[l:Linked*]->(c:Container) where id(c)=${ps.id} and id(a)=${user_id}
+  let params = {uid, cont_id:ps.id}
+  let query = `
+    optional match (a:Account)-[l:Linked*]->(c:Container) where id(c)=$cont_id and id(a)=$uid
     with count(l) as count, last(l) as link, c
     call apoc.do.when(
       count >= 1,
@@ -164,20 +169,18 @@ module.exports.delete_container = (req, res, next)=>{
   `;
 
   utils.num(Number(ps.id))
-  .then( () =>{
-    return session.readTransaction(tx => tx.run(q));
-  })
+  .then( () =>{ return tx.run(query, params) })
   .then( data => {
     // Check if user access
     if(data.records[0] && data.records[0]._fields[0].false == false){
-      throw {status: 400, err: "no access user"}
+      throw {status: 400, mess: "no access user"}
     }
   })
   .then( () => {
-    res.status(200).json({message:"deleted!"})
+    utils.commit({tx, res, uid});
   })
-  .catch( err => {
-    console.log(err);
-    res.status(err.status || 400).json(err.err || err);
+  .catch( e =>{
+    let mess = e.mess || null;
+    utils.crash({tx, res, mess, err: e.err || null })
   });
 }

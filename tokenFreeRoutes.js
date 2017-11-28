@@ -3,126 +3,98 @@ let driver = require('./config/driver');
 let tokenGen = require('./api/services/token.service');
 let utils = require('./api/services/utils.service');
 
-// module.exports.authenticate = (req, res, next)=>{
-//    if(!req.body.email || !req.body.password){
-//      return res.status(400).json({message: 'Email or Password is missing'});
-//    }
-//     let _ = req.body;
-//     let session = driver.session();
-//     let query = `
-//        MATCH (a:Account{email:'${_.email}', password:'${_.password}'})
-//        RETURN {id: id(a), properties: properties(a)} as data
-//     `;
-//
-//     session.readTransaction(tx =>tx.run(query))
-//     .then((data)=>{
-//        if(data.records[0] && data.records[0]._fields[0]){
-//
-//           let f = data.records[0]._fields[0];
-//           let prop = f.properties;
-//           let uid = f.id.low;
-//           // let exp = new Date().getTime() + (1000 * 60 * 30);
-//           let now = new Date().getTime();
-//
-//           res.status(200).json({
-//              token:tokenGen(uid),
-//              exp: utils.expire(),
-//              first: prop.first
-//           });
-//        }else {
-//           res.status(201).json({message: 'not found'});
-//        }
-//     })
-//     .catch((error)=>{
-//        res.status(401).json({error: error, message:'error basic error'});
-//     });
-// };
+
 module.exports.authenticate = (req, res, next)=>{
-   if(!req.body.email || !req.body.password){
-     return res.status(400).json({message: 'Email or Password is missing'});
-   }
-    let _ = req.body;
-    let session = driver.session();
-    let tx = session.beginTransaction();
-    let query = `
-       MATCH (a:Account{email:$email, password:$password})
-       RETURN {id: id(a), properties: properties(a)} as data
-    `;
-    let params = {
-      email:_.email,
-      password:_.password
+  let ps = req.body;
+  let session = driver.session();
+  let tx = session.beginTransaction();
+
+  let params = {
+    email:ps.email,
+    password:ps.password
+  };
+  let query = `
+  MATCH (a:Account{email:$email, password:$password})
+  RETURN {id: id(a), properties: properties(a)} as data
+  `;
+  utils.str(ps.email)
+  .then( ()=>{ return utils.str(ps.password)})
+  .then( ()=>{ return tx.run(query, params) })
+  .then( data => {
+    // Check if response or not
+    if(data.records.length && data.records[0]._fields.length){
+      return data.records[0]._fields[0];
+    }else{
+      throw {status: 403, mess: "not found"}
     }
-    tx.run(query, params)
-    .then((data)=>{
-       if(data.records[0] && data.records[0]._fields[0]){
-
-          let f = data.records[0]._fields[0];
-          let prop = f.properties;
-          let uid = f.id.low;
-
-          utils.commit(tx, res, 200, uid, {first: prop.first})
-          // res.status(200).json({
-          //    token:tokenGen(uid),
-          //    exp: utils.expire(),
-          //    first: prop.first
-          // });
-       }else {
-          // res.status(201).json({message: 'not found'});
-          utils.crash(tx, res, 400, "not found")
-       }
-    })
-    .catch((error)=>{
-      utils.crash(tx, res, 400, "error", error)
-       // res.status(401).json({error: error, message:'error basic error'});
-    });
+  })
+  .then( data =>{
+    let prop = data.properties;
+    let uid = data.id.low;
+    // utils.commit(tx, res, 200, uid, {first: prop.first})
+    utils.commit({tx, res, uid, data:{first: prop.first}})
+  })
+  .catch( e =>{
+    // utils.crash(tx, res, err.status || 400, "error", err.err || err)
+    let mess = e.mess || null;
+    utils.crash({tx, res, stat: e.status || null , mess, err: e.err || e})
+  });
 };
+
 module.exports.register = (req, res, next)=>{
-   // Check the data in body
-   if(!req.body.first || !req.body.last || !req.body.email || !req.body.password) {
-      return res.status(401).json({message: "Parameters missing"});
-   }
-   let _ = req.body;
-   let session = driver.session();
-   let query = `
-      MATCH (a:Account{email:'${_.email}'})
-      WITH COUNT(a) as numb
-      CALL apoc.do.when(
-         numb=1,
-         "MATCH (e:Error) WHERE id(e)=170 RETURN e.name as data",
-         "CREATE (n:Account{
-            email:'${_.email}',
-            password:'${_.password}',
-            first:'${_.first}',
-            last:'${_.last}',
-            middle:'${_.middle}',
-            admin:'user',
-            subscription_commit_length:''
-         })
-         CREATE (b:Board_Activity{course_wait_recall:[]})
-         CREATE (n)-[:Linked]->(b)
-         RETURN {properties:properties(n), id:id(n)} as data"
-      ) YIELD value
-      RETURN value
-      `;
-      console.log(query)
-   session.readTransaction( tx => tx.run(query))
-   .then( data => {
-      if(data.records[0] && data.records[0]._fields[0]){
-        console.log(data.records[0]._fields[0])
-        let f = data.records[0]._fields[0].data;
-        let prop = f.properties;
-        let uid = f.id.low;
-        res.status(200).json({
-          token:tokenGen(uid),
-          exp: utils.expire(),
-          first: prop.first
-        });
-      }else {
-         res.status(401).json({message: 'not found'});
-      };
-   })
-   .catch((error)=>{
-      console.log(error);
-      res.status(400).json({error: error});
-   });
+  let ps = req.body;
+  let session = driver.session();
+  let tx = session.beginTransaction();
+
+  let params = {
+    email:ps.email,
+    password:ps.passpord,
+    first:ps.first,
+    last:ps.last,
+    middle:ps.middle
+  };
+  let query = `
+  MATCH (a:Account{email:$email})
+  WITH COUNT(a) as numb
+  CALL apoc.do.when(
+    numb=1,
+    "MATCH (e:Error) WHERE id(e)=170 RETURN e.name as data",
+    "CREATE (n:Account{
+      email:$email,
+      password:$password,
+      first:$first,
+      last:$last,
+      middle:$middle,
+      admin:'user',
+      subscription_commit_length:''
+    })
+    CREATE (b:Board_Activity{course_wait_recall:[]})
+    CREATE (n)-[:Linked]->(b)
+    RETURN {properties:properties(n), id:id(n)} as data"
+  ) YIELD value
+  RETURN value
+  `;
+  utils.str(ps.email)
+  .then( () => { return utils.str(ps.password) })
+  .then( () => { return utils.str(ps.first) })
+  .then( () => { return utils.str(ps.last) })
+  .then( () => { return utils.str(ps.middle) })
+  .then( () => { return tx.run(query, params) })
+  .then( data => {
+    // Check if response or not
+    if(data.records.length && data.records[0]._fields.length){
+      return data.records[0]._fields[0];
+    }else{
+      throw {status: 403, err: "not create"}
+    }
+  })
+  .then( data => {
+    let prop = data.properties;
+    let uid = data.id.low;
+    utils.commit({tx, res, uid, data:{first: prop.first}})
+  })
+  .catch( e =>{
+    let mess = e.mess || null;
+    utils.crash({tx, res, stat: e.status || null , mess, err: e.err || e})
+  });
 }

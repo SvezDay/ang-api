@@ -5,29 +5,6 @@ const labelService = require('../services/label.service');
 const utils = require('../services/utils.service');
 const dbService = require('../services/db.service');
 
-const crash = (transaction, response,  status, message, error)=>{
-  console.log(message)
-  transaction.rollback();
-  response.status(status).json({mess: message, error})
-}
-
-const commit = (transaction, response, status, user, data)=>{
-  transaction.commit()
-  .subscribe({
-    onCompleted: () => {
-      // this transaction is now committed
-      response.status(status).json({
-        token:tokenGen(user),
-        exp: utils.expire(),
-        data: data
-      })
-    },
-    onError: (error) => {
-      console.log('error', error);
-      crash(transaction, response, 400, "Error on the commit", error);
-    }
-  });
-}
 
 const deleteCommit = (tx, container_id, subCommit, commitLength) =>{
   return new Promise(resolve => {
@@ -67,106 +44,128 @@ const deleteCommit = (tx, container_id, subCommit, commitLength) =>{
 
 module.exports.create_note = (req, res, next)=>{
   let session = driver.session();
-  let today = new Date().getTime();
-  let user_id = req.decoded.user_id;
+  let tx = session.beginTransaction();
+  let now = new Date().getTime().toString();
+  let uid = req.decoded.user_id;
   let ps = req.body;
 
-
+  let params = {
+    uid,
+    now,
+    title: ps.title_value,
+    label: ps.content_label,
+    value: ps.content_value
+  };
   let query = `
-     match (a:Account) where id(a) = ${user_id}
-     create (n:Container{commitList: [${today}], type: 'note'})
-     create (t:Property:Title {value:'${ps.title_value}'})
-     create (u:Property:${ps.content_label}{value:'${ps.content_value}'})
-     create (a)-[:Linked]->(n)-[:Has{commit:${today}}]->(t)-[:Has{commit:${today}}]->(u)
+     match (a:Account) where id(a) = $uid
+     create (n:Container{commitList: [$now], type: 'note'})
+     create (t:Property:Title {value:$title})
+     create (u:Property:$label{value:$value})
+     create (a)-[:Linked]->(n)-[:Has{commit:$now}]->(t)-[:Has{commit:$now}]->(u)
      return {note_id: id(n), title_id:id(t), first_property_id: id(u)}
   `;
 
-
-  session.readTransaction(tx => tx.run(query))
+  // session.readTransaction(tx => tx.run(query))
+  utils.str(ps.title_value)
+  .then(()=>{ return utils.str(ps.content_label) })
+  .then(()=>{ return utils.str(ps.content_value) })
+  .then(()=>{ return tx.run(query, params) })
   .then( data => {
-    let f = data.records[0]._fields[0];
-    let l = Object.keys(f);
-    l.map(x => {
-      f[x].low ? f[x] = f[x].low : null
-    });
-    return f;
+    if(!data.records[0]._fields.length){
+      throw {stat: 400, mess: 'not Create'} }
+    else{
+      return data.records[0]._fields[0] }
   })
-  .then( data =>{
-    res.status(200).json({
-      token: tokenGen(user_id),
-      exp: utils.expire(),
-      data: data
-    });
-  })
-  .catch( error => {
-    console.log(error);
-     res.status(404).json({error: error, message:'error basic error'});
+  // .then( data => {
+  //   // let f = data.records[0]._fields[0];
+  //   // let l = Object.keys(f);
+  //   // l.map(x => {
+  //   //   f[x].low ? f[x] = f[x].low : null
+  //   // });
+  //   // return f;
+  // })
+  .then( data => { return utils.parseInt(data) })
+  .then( data => { return utils.sortLabel(data) })
+  .then( data =>{  utils.commit({tx, res, uid, data}) })
+  .catch( e => {
+    let mess = e.mess || null;
+    utils.crash({tx, res, stat: e.status || null , mess, err: e.err || e})
   });
 };
 
 module.exports.create_empty_note = (req, res, next)=>{
   let session = driver.session();
-  let today = new Date().getTime();
-  let user_id = req.decoded.user_id;
+  let tx = session.beginTransaction();
+  let now = new Date().getTime().toString();
+  let uid = req.decoded.user_id;
 
-
+  let params = { uid, now };
   let query = `
-     match (a:Account) where id(a) = ${user_id}
-     create (n:Container{commitList: [${today}], type: 'note'})
+     match (a:Account) where id(a) = $uid
+     create (n:Container{commitList: [$now], type: 'note'})
      create (t:Property:Title {value:'Undefined'})
      create (u:Property:Undefined {value:''})
-     create (a)-[:Linked]->(n)-[:Has{commit:${today}}]->(t)-[:Has{commit:${today}}]->(u)
+     create (a)-[:Linked]->(n)-[:Has{commit:$now}]->(t)-[:Has{commit:$now]->(u)
      return {container_id: id(n), title_id:id(t), first_property_id: id(u)}
   `;
 
-
-  session.readTransaction(tx => tx.run(query))
-  .then( data => {
-    let f = data.records[0]._fields[0];
-    let l = Object.keys(f);
-    l.map(x => {
-      f[x].low ? f[x] = f[x].low : null
-    });
-    return f;
-  })
-  .then( data =>{
-    res.status(200).json({
-      token: tokenGen(user_id),
-      exp:utils.expire(),
-      data: data
-    });
-  })
-  .catch( error => {
-    console.log(error);
-     res.status(404).json({error: error, message:'error basic error'});
+  // session.readTransaction(tx => tx.run(query))
+  tx.run(query, params)
+  .then( data => { return utils.parseInt(data) })
+  .then( data => { return utils.sortLabel(data) })
+  // .then( data => {
+  //   let f = data.records[0]._fields[0];
+  //   let l = Object.keys(f);
+  //   l.map(x => {
+  //     f[x].low ? f[x] = f[x].low : null
+  //   });
+  //   return f;
+  // })
+  // .then( data =>{
+  //   res.status(200).json({
+  //     token: tokenGen(user_id),
+  //     exp:utils.expire(),
+  //     data: data
+  //   });
+  // })
+  // .catch( error => {
+  //   console.log(error);
+  //    res.status(404).json({error: error, message:'error basic error'});
+  // });
+  .then( data =>{  utils.commit({tx, res, uid, data}) })
+  .catch( e => {
+    let mess = e.mess || null;
+    utils.crash({tx, res, stat: e.status || null , mess, err: e.err || e})
   });
 };
 
 module.exports.get_label = (req, res, next)=>{
-  let user_id = req.decoded.user_id;
+  let uid = req.decoded.user_id;
   labelService.getPropertyLabel().then( list => {
     res.status(200).json({
-      token: tokenGen(user_id),
+      token: tokenGen(uid),
       exp: utils.expire(),
       data: list.filter(x => {return x != 'Title'})
     });
-
   });
 };
 
 module.exports.get_all_note = (req, res, next)=>{
-    let user_id = req.decoded.user_id;
+    let uid = req.decoded.user_id;
     let session = driver.session();
+    let tx = session.beginTransaction();
+
+    let params = {uid};
     let query = `
     match (a:Account)-[:Linked]->(n:Container{type:'note'})-[l:Has{commit:last(n.commitList)}]->(x:Property)
-       where id(a)= ${user_id}
+       where id(a)= $uid
        return case
           when count(n) >= 1 then {note_id: id(n), title:x.value}
           else {}
        end
     `;
-    session.readTransaction(tx => tx.run(query))
-    .then((data)=>{
+    tx.run(query, params)
+    .then( data =>{
        if(data.records[0]){
           let f = data.records;
           let list = [];
@@ -182,26 +181,24 @@ module.exports.get_all_note = (req, res, next)=>{
        };
     })
     .then( data => {
-      res.status(200).json({
-         token:tokenGen(user_id),
-         exp:utils.expire(),
-         list: data
-      });
+      utils.commit({tx, res, uid, data});
     })
-    .catch((error)=>{
-       console.log(error);
-       res.status(400).json({error: error, message:'error basic error'});
+    .catch( e =>{
+      let mess = e.mess || null;
+      utils.crash({tx, res, mess, err: e.err || null })
     });
 
 }
 
 module.exports.get_note_detail = (req, res, next)=>{
     let session = driver.session();
-    let user_id = req.decoded.user_id;
+    let tx = session.beginTransaction();
+    let uid = req.decoded.user_id;
     let ps = req.params;
+    let params = {uid, cont: Number.parseInt(ps.id) };
     let query = `
       match (a:Account)-[l1:Linked*]->(n:Container)-[ly:Has{commit:last(n.commitList)}]->(y:Property:Title)-[lx:Has*{commit:last(n.commitList)}]->(x:Property)
-      where id(a)= ${user_id} and id(n) = ${ps.id}
+      where id(a)= $uid and id(n) = $cont
       with l1, y, x, n
       return
       case
@@ -209,7 +206,8 @@ module.exports.get_note_detail = (req, res, next)=>{
          else {data:{message: 'No access user'}}
       end
     `;
-    session.readTransaction(tx=>tx.run(query))
+    utils.num(params.cont)
+    .then(()=>{ return tx.run(query, params) })
     .then( data => {
       let r = data.records;
       if(r.length && r[0]._fields[0].length){
@@ -217,7 +215,7 @@ module.exports.get_note_detail = (req, res, next)=>{
       }else if(r.length && r[0]._fields.length){
         return r[0]._fields;
       }else{
-        throw {status: 403, err: 'no user access'}
+        throw {status: 403, mess: 'no user access'}
       }
     })
     .then(data =>{
@@ -241,17 +239,11 @@ module.exports.get_note_detail = (req, res, next)=>{
       };
     })
     .then( data => {
-      res.status(200).json({
-         token:tokenGen(user_id),
-         exp: utils.expire(),
-         data:data
-      });
+      utils.commit({tx, res, uid, data});
     })
-    .catch( err =>{
-       console.log(err);
-       let status = err.status || 400;
-       let e = err.err || err;
-       res.status(status).json(e);
+    .catch( e =>{
+      let mess = e.mess || null;
+      utils.crash({tx, res, mess, err: e.err || null })
     });
 };
 
@@ -391,10 +383,10 @@ module.exports.update = (req, res, next)=>{
 
   let session = driver.session();
   let tx = session.beginTransaction();
-  let user_id = req.decoded.user_id;
+  let uid = req.decoded.user_id;
   let ps = req.body;
-  let now = new Date().getTime();
-
+  let now = new Date().getTime().toString();
+  let params = {uid, now, cont:ps.container_id, label: ps.label, value:ps.value}
   // let commit = req.body.commit || null;
   let Q1_data = {};
   let updates;
@@ -404,7 +396,7 @@ module.exports.update = (req, res, next)=>{
   // Check user access and return the properties list of the container
   let Q1 = `
     match (a:Account)-[l:Linked]->(c:Container)
-    where id(a) = ${user_id} and id(c) = ${ps.container_id}
+    where id(a) = $uid and id(c) = $cont
     with count(l) as count, c, a.subscription_commit_length as subCommit
     call apoc.do.when(count <> 0,
       	" match (c:Container)-[:Has*{commit:last(c.commitList)}]->(plast:Property)"
@@ -416,14 +408,14 @@ module.exports.update = (req, res, next)=>{
 
   // Add new commit to the container commit list and create the updater node
   let Q2 = `
-    match(c:Container) where id(c) = ${ps.container_id}
-    set c.commitList =  c.commitList + ${now}
-    create (new:Property:${ps.label}{value:'${ps.value}'}) return new
+    match(c:Container) where id(c) = $cont
+    set c.commitList =  c.commitList + $now
+    create (new:Property:$label{value:$value}) return new
   `;
 
   // Store the new relationship flow of the new commit
   let Q3 = ``,
-      Q3_1 = `match (c) where id(c)=${ps.container_id}`,
+      Q3_1 = `match (c) where id(c)=$cont`,
       Q3_2 = ` create (c)`;
 
   // Remove the old commit
@@ -434,8 +426,7 @@ module.exports.update = (req, res, next)=>{
   .then(()=>{ return utils.num(ps.id)})
   .then(()=>{ return utils.str(ps.value)})
   .then(()=>{ return labelService.isPropertyLabel(ps.label)})
-  .then(()=>{
-    return tx.run(Q1) })
+  .then(()=>{ return tx.run(Q1, params) })
   .then( data => {
     if(data.records.length && data.records[0]._fields.length){
       Q1_data = data.records[0]._fields[0];
@@ -449,7 +440,7 @@ module.exports.update = (req, res, next)=>{
       lastlist.reverse();
     }
   })
-  .then(()=>{ return tx.run(Q2) })
+  .then(()=>{ return tx.run(Q2, params) })
   .then( data => {
     updates = data.records[0]._fields[0];
     // Iterate the properties list to create the 3rd query
@@ -464,17 +455,15 @@ module.exports.update = (req, res, next)=>{
         return crash(tx, res, 400, 'Cannot update label to Title');
       }else if( i == ps.id){
         Q3_1 += ` match (x${u}) where id(x${u})=${u}`;
-        Q3_2 += `-[:Has{commit:${now}}]->(x${u})`;
+        Q3_2 += `-[:Has{commit:$now}]->(x${u})`;
       }else{
         Q3_1 += ` match (x${i}) where id(x${i})=${i}`;
-        Q3_2 += `-[:Has{commit:${now}}]->(x${i})`;
+        Q3_2 += `-[:Has{commit:$now}]->(x${i})`;
       };
       Q3_3 = ` return x${u}`
     });
   })
-  .then( () => {
-    return tx.run(Q3_1+Q3_2+Q3_3);
-  })
+  .then( () => { return tx.run(Q3_1+Q3_2+Q3_3, params) })
   .then( data => {
     let r = data.records;
     if(r.length && r[0]._fields[0].length){
@@ -512,14 +501,15 @@ module.exports.update = (req, res, next)=>{
 module.exports.add_property = (req, res, next)=>{
   // Till it is difficult to extract the date time, the commit will be the last one by default
   let session = driver.session();
-  let user_id = req.decoded.user_id;
+  let tx = session.beginTransaction();
+  let uid = req.decoded.user_id;
   let ps = req.body;
-  let today = new Date().getTime();
+  let now = new Date().getTime().toString();
 
-
+  let params = {uid, now, cont:ps.container_id}
   let Q1 = `
      match (a:Account)-[l:Linked]->(c:Container)
-     where id(a) = ${user_id} and id(c) = ${ps.container_id}
+     where id(a) = $uid and id(c) = $cont
      with count(l) as count, c
      call apoc.do.when(
         count <> 0,
@@ -531,26 +521,34 @@ module.exports.add_property = (req, res, next)=>{
   `;
   let Q2_1 =
     `match (c:Container)-[:Has{commit:last(c.commitList)}]->(t:Title)
-    where id(c)= ${ps.container_id}`;
+    where id(c)= $cont`;
   let Q2_2 =
-    ` set c.commitList = c.commitList + ${today}
+    ` set c.commitList = c.commitList + $now
     create (new:Property:Undefined{value:''})
-    create (c)-[:Has{commit:${today}}]->(t)-[:Has{commit:${today}}]->(new)`;
+    create (c)-[:Has{commit:$now}]->(t)-[:Has{commit:$now}]->(new)`;
   let Q2_3 = ` return new`;
-
-  session.readTransaction(tx => tx.run(Q1))
+  utils.num(ps.container_id)
+  .then(() => { return tx.run(Q1, params) })
   .then( data => {
-    return data.records[0]._fields[0].list;
+    if(data.records.length && data.records[0]._fields[0].list.length){
+      return data.records[0]._fields[0].list;
+    }else{
+      throw {mess: 'no list'}
+    }
   })
   .then( data => {
     data.map(x => {
       let i = x.identity.low;
       Q2_1 += ` match (x${i}) where id(x${i}) = ${i}`;
-      Q2_2 += `-[:Has{commit:${today}}]->(x${i})`
+      Q2_2 += `-[:Has{commit:$now}]->(x${i})`
     });
-    return session.readTransaction(tx=>tx.run(Q2_1+Q2_2+Q2_3));
   })
+  .then(() => {
+    console.log(Q2_1+Q2_2+Q2_3)
+    console.log('params', params)
+    return tx.run(Q2_1+Q2_2+Q2_3, params) })
   .then( data => {
+    console.log('check', data.records[0]._fields)
     let f = data.records[0]._fields[0];
     return {
       id: f.identity.low,
@@ -559,15 +557,11 @@ module.exports.add_property = (req, res, next)=>{
     };
   })
   .then( data => {
-     res.status(200).json({
-        token:tokenGen(user_id),
-        exp:utils.expire(),
-        data:data
-     });
+    utils.commit({tx, res, uid, data});
   })
-  .catch(function (error) {
-    console.log(error);
-    res.status(400).json({error:error});
+  .catch( e =>{
+    let mess = "error on add property " + e.mess;
+    utils.crash({tx, res, mess, err: e.err || null })
   });
 };
 
@@ -578,16 +572,17 @@ module.exports.delete_property = (req, res, next)=>{
   // This method doesn't delete any node, but create relationship with new
   // commit without the property to delete
 
-  let user_id = req.decoded.user_id;
+  let uid = req.decoded.user_id;
   let session = driver.session();
+  let tx = session.beginTransaction();
   let ps = req.params
-  let now = new Date().getTime();
+  let now = new Date().getTime().toString();
   let commit = ps.commit || null;
-
+  let params = {uid, now, cont:ps.container_id}
   // this query check the user access and return the list of
   let Q1 = `
     match (a:Account)-[l:Linked*]->(c:Container)
-    where id(a) = ${user_id} and id(c) = ${ps.container_id}
+    where id(a) = $uid and id(c) = $cont
     with count(l) as count, c, last(c.commitList) as com
     call apoc.do.when(count <> 0,
     "match(c)-[:Has*{commit:com}]->(p) where c = co return collect(p) as list"
@@ -595,11 +590,11 @@ module.exports.delete_property = (req, res, next)=>{
     return value
   `;
 
-  let Q2_1 = ` match(c) where id(c) = ${ps.container_id}`;
+  let Q2_1 = ` match(c) where id(c) = $cont`;
   let Q2_2 = ` create (c)`;
-  let Q2_3 = ` set c.commitList = c.commitList + ${now}`;
+  let Q2_3 = ` set c.commitList = c.commitList + $now`;
 
-  session.readTransaction(tx => tx.run(Q1))
+  tx.run(Q1, params)
   .then( data => {
     return data.records[0]._fields[0].list;
   })
@@ -609,69 +604,61 @@ module.exports.delete_property = (req, res, next)=>{
       let i = p.identity.low;
       if(p.labels.filter(l=>{ return l != 'Property'})[0] == 'Title'){
         Q2_1 += ` match (t:Title) where id(t)=${i}`;
-        Q2_2 += `-[:Has{commit:${now}}]->(t)`;
+        Q2_2 += `-[:Has{commit:$now}]->(t)`;
       }else if(i != ps.property_id){
         Q2_1 += ` match (x${i}:Property) where id(x${i})=${i}`;
-        Q2_2 += `-[:Has{commit:${now}}]->(x${i})`;
+        Q2_2 += `-[:Has{commit:$now}]->(x${i})`;
       }
     });
   })
+  .then( data => { return tx.run(Q2_1+Q2_2+Q2_3, params) })
   .then( data => {
-    return session.readTransaction(tx=>tx.run(Q2_1+Q2_2+Q2_3));
+    utils.commit({tx, res, uid, data});
   })
-  .then( () => {
-    res.status(200).json({
-      token: tokenGen(user_id),
-      exp: utils.expire(),
-      message: 'deleted !'
-    })
-  })
-  .catch( error => {
-    console.log(error);
-    res.status(400).json({error:error});
+  .catch( e =>{
+    let mess = e.mess || null;
+    utils.crash({tx, res, mess, err: e.err || null })
   });
 };
 
 module.exports.drop_property = (req, res, next)=>{
   // Since it ain't possible to parse the commit, it'll be the last by default
-    let user_id = req.decoded.user_id;
+    let uid = req.decoded.user_id;
     let session = driver.session();
+    let tx = session.beginTransaction();
     let ps = req.body;
-    let now = new Date().getTime();
-
+    let now = new Date().getTime().toString();
+    let params = {uid, now, cont:ps.container_id}
     let last_com = Number;
 
     let Q1 = `
        match (a:Account)-[l:Linked]->(n:Container)
-       where id(a) = ${user_id} and id(n) = ${ps.container_id}
+       where id(a) = $uid and id(n) = $cont
        return count(l)
     `;
 
     let Q2 = `
        match (n:Container)-[l:Has*{commit:last(n.commitList)}]->(p:Property)
-       where id(n) = ${ps.container_id}
+       where id(n) = $cont
        return collect(p)
     `;
 
     let Q3_1 = `
-      match (n:Container) where id(n) = ${ps.container_id}
+      match (n:Container) where id(n) = $cont
     `;
     let Q3_2 = ` create (n)`;
-    let Q3_3 = ` set n.commitList = n.commitList + ${now}`;
+    let Q3_3 = ` set n.commitList = n.commitList + $now`;
 
-    utils.num(ps.container_id).then(()=>{
-      return utils.num(ps.property_id)
-    })
+    utils.num(ps.container_id)
+    .then(()=>{ return utils.num(ps.property_id) })
     .then(()=>{
       if(ps.direction == 'up' || ps.direction == 'down'){
         return;
       }else{
-        throw {status: 400, err: "Wrong type of the 'direction' variable"}
+        throw {status: 400, mess: "Wrong type of the 'direction' variable"}
       }
     })
-    .then(()=>{
-      return session.readTransaction(tx => tx.run(Q1))
-    })
+    .then(()=>{ return tx.run(Q1, params) })
     .then( data => {
       // Check the user access to the container
       if(data.records[0].get(0).low) {
@@ -680,10 +667,8 @@ module.exports.drop_property = (req, res, next)=>{
         throw {status: 400, err: "no acces user"}
       };
     })
-    .then( () => {
-      // Get the property list
-      return session.readTransaction(tx=>tx.run(Q2))
-    })
+    // Get the property list
+    .then( () => { return tx.run(Q2, params) })
     .then( data => {
       // Add the title to the query
       let f = data.records[0]._fields[0];
@@ -696,15 +681,15 @@ module.exports.drop_property = (req, res, next)=>{
       let title = f.splice(titleIndex, 1);
       let i = title[0].identity.low;
       Q3_1 += ` match (x${i}:Property) where id(x${i}) = ${i}`;
-      Q3_2 += `-[:Has{commit:${now}}]->(x${i})`;
+      Q3_2 += `-[:Has{commit:$now}]->(x${i})`;
       return f;
     })
     .then( f => {
       // Check the limit up and down
       if (ps.direction == 'up' && f[0].identity.low == ps.property_id){
-        throw {status: 400, err: "Unauthorized query"}
+        throw {status: 400, mess: "Unauthorized query"}
       }else if(ps.direction == 'down' && f.reverse()[0].identity.low == ps.property_id){
-        throw {status: 400, err: "Unauthorized query"}
+        throw {status: 400, mess: "Unauthorized query"}
       };
       // Because the previous conditionnal has not just check the reverse,
       // but modified it todrop, so we reverse again
@@ -725,41 +710,37 @@ module.exports.drop_property = (req, res, next)=>{
           Q3_1 += `
           match (x${i}:Property) where id(x${i}) = ${i}
           match (x${previous}:Property) where id(x${previous}) = ${previous}`;
-          Q3_2 += `-[:Has{commit:${now}}]->(x${i})-[:Has{commit:${now}}]->(x${previous})`;
+          Q3_2 += `-[:Has{commit:$now}]->(x${i})-[:Has{commit:$now}]->(x${previous})`;
           previous = 0;
         }else if(previous){
           Q3_1 += ` match (x${previous}:Property) where id(x${previous}) = ${previous}`;
-          Q3_2 += `-[:Has{commit:${now}}]->(x${previous})`;
+          Q3_2 += `-[:Has{commit:$now}]->(x${previous})`;
           previous = i;
         }else if(todrop){
           Q3_1 += `
           match (x${i}:Property) where id(x${i}) = ${i}
           match (x${todrop}:Property) where id(x${todrop}) = ${todrop}`;
-          Q3_2 += `-[:Has{commit:${now}}]->(x${i})-[:Has{commit:${now}}]->(x${todrop})`;
+          Q3_2 += `-[:Has{commit:$now}]->(x${i})-[:Has{commit:$now}]->(x${todrop})`;
           todrop = 0;
         }else if(ps.direction == 'down'){
           Q3_1 += ` match (x${i}:Property) where id(x${i}) = ${i}`;
-          Q3_2 += `-[:Has{commit:${now}}]->(x${i})`;
+          Q3_2 += `-[:Has{commit:$now}]->(x${i})`;
         }else if(ps.direction == 'up'){
           previous = i;
         };
       });
       if(ps.direction == 'up' && previous){
         Q3_1 += ` match (x${previous}:Property) where id(x${previous}) = ${previous}`;
-        Q3_2 += `-[:Has{commit:${now}}]->(x${previous})`;
+        Q3_2 += `-[:Has{commit:$now}]->(x${previous})`;
       };
       return;
     })
-    .then( () =>{
-      return session.readTransaction(tx=>tx.run(Q3_1+Q3_2+Q3_3))
+    .then( () =>{ return tx.run(Q3_1+Q3_2+Q3_3, params) })
+    .then( () => {
+      utils.commit({tx, res, uid});
     })
-    .then( ()=>{
-      res.status(200).json({message: 'Done !'})
-    })
-    .catch(err => {
-      console.log(err);
-      let status = err.status || 400;
-      let e = err.err || err;
-      res.status(status).json(e);
+    .catch( e =>{
+      let mess = e.mess || null;
+      utils.crash({tx, res, mess, err: e.err || null })
     });
 }
