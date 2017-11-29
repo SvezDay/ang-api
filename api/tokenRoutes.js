@@ -22,7 +22,6 @@ module.exports = apiRoutes.use((req, res, next)=>{
                success: 'false', message: 'Fail to authenticate token !'
             });
          }
-         console.log('decoded', decoded)
          req.decoded = decoded;
          next();
       };

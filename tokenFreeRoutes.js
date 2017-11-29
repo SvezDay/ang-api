@@ -2,7 +2,7 @@
 let driver = require('./config/driver');
 let tokenGen = require('./api/services/token.service');
 let utils = require('./api/services/utils.service');
-
+const ChkData = require('./api/services/check-data.service');
 
 module.exports.authenticate = (req, res, next)=>{
   let ps = req.body;
@@ -17,8 +17,10 @@ module.exports.authenticate = (req, res, next)=>{
   MATCH (a:Account{email:$email, password:$password})
   RETURN {id: id(a), properties: properties(a)} as data
   `;
-  utils.str(ps.email)
-  .then( ()=>{ return utils.str(ps.password)})
+  ChkData.str(ps.email)
+  .then( ()=>{
+    console.log('checking')
+    return ChkData.str(ps.password) })
   .then( ()=>{ return tx.run(query, params) })
   .then( data => {
     // Check if response or not
@@ -32,12 +34,13 @@ module.exports.authenticate = (req, res, next)=>{
     let prop = data.properties;
     let uid = data.id.low;
     // utils.commit(tx, res, 200, uid, {first: prop.first})
-    utils.commit({tx, res, uid, data:{first: prop.first}})
+    // session.close();
+    utils.commit(tx, res, {uid, data:{first: prop.first}})
   })
   .catch( e =>{
     // utils.crash(tx, res, err.status || 400, "error", err.err || err)
     let mess = e.mess || null;
-    utils.crash({tx, res, stat: e.status || null , mess, err: e.err || e})
+    utils.crash(tx, res, {stat: e.status || null , mess, err: e.err || e})
   });
 };
 
@@ -74,11 +77,11 @@ module.exports.register = (req, res, next)=>{
   ) YIELD value
   RETURN value
   `;
-  utils.str(ps.email)
-  .then( () => { return utils.str(ps.password) })
-  .then( () => { return utils.str(ps.first) })
-  .then( () => { return utils.str(ps.last) })
-  .then( () => { return utils.str(ps.middle) })
+  ChkData.str(ps.email)
+  .then( () => { return ChkData.str(ps.password) })
+  .then( () => { return ChkData.str(ps.first) })
+  .then( () => { return ChkData.str(ps.last) })
+  .then( () => { return ChkData.str(ps.middle) })
   .then( () => { return tx.run(query, params) })
   .then( data => {
     // Check if response or not
@@ -91,10 +94,10 @@ module.exports.register = (req, res, next)=>{
   .then( data => {
     let prop = data.properties;
     let uid = data.id.low;
-    utils.commit({tx, res, uid, data:{first: prop.first}})
+    utils.commit(tx, res, {uid, data:{first: prop.first}})
   })
   .catch( e =>{
     let mess = e.mess || null;
-    utils.crash({tx, res, stat: e.status || null , mess, err: e.err || e})
+    utils.crash(tx, res, {stat: e.status || null , mess, err: e.err || e})
   });
 }

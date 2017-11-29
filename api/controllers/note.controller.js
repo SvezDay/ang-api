@@ -3,6 +3,8 @@ const driver = require('../../config/driver');
 const tokenGen = require('../services/token.service');
 const labelService = require('../services/label.service');
 const utils = require('../services/utils.service');
+const ChkData = require('../services/check-data.service');
+
 const dbService = require('../services/db.service');
 
 
@@ -66,9 +68,9 @@ module.exports.create_note = (req, res, next)=>{
   `;
 
   // session.readTransaction(tx => tx.run(query))
-  utils.str(ps.title_value)
-  .then(()=>{ return utils.str(ps.content_label) })
-  .then(()=>{ return utils.str(ps.content_value) })
+  ChkData.str(ps.title_value)
+  .then(()=>{ return ChkData.str(ps.content_label) })
+  .then(()=>{ return ChkData.str(ps.content_value) })
   .then(()=>{ return tx.run(query, params) })
   .then( data => {
     if(!data.records[0]._fields.length){
@@ -89,7 +91,7 @@ module.exports.create_note = (req, res, next)=>{
   .then( data =>{  utils.commit({tx, res, uid, data}) })
   .catch( e => {
     let mess = e.mess || null;
-    utils.crash({tx, res, stat: e.status || null , mess, err: e.err || e})
+    utils.crash(tx, res, {stat: e.status || null , mess, err: e.err || e})
   });
 };
 
@@ -135,7 +137,7 @@ module.exports.create_empty_note = (req, res, next)=>{
   .then( data =>{  utils.commit({tx, res, uid, data}) })
   .catch( e => {
     let mess = e.mess || null;
-    utils.crash({tx, res, stat: e.status || null , mess, err: e.err || e})
+    utils.crash(tx, res, {stat: e.status || null , mess, err: e.err || e})
   });
 };
 
@@ -181,11 +183,11 @@ module.exports.get_all_note = (req, res, next)=>{
        };
     })
     .then( data => {
-      utils.commit({tx, res, uid, data});
+      utils.commit(tx, res, {uid, data});
     })
     .catch( e =>{
       let mess = e.mess || null;
-      utils.crash({tx, res, mess, err: e.err || null })
+      utils.crash(tx, res, {stat: e.status || null , mess, err: e.err || e})
     });
 
 }
@@ -206,7 +208,7 @@ module.exports.get_note_detail = (req, res, next)=>{
          else {data:{message: 'No access user'}}
       end
     `;
-    utils.num(params.cont)
+    ChkData.num(params.cont)
     .then(()=>{ return tx.run(query, params) })
     .then( data => {
       let r = data.records;
@@ -239,11 +241,11 @@ module.exports.get_note_detail = (req, res, next)=>{
       };
     })
     .then( data => {
-      utils.commit({tx, res, uid, data});
+      utils.commit(tx, res, {uid, data});
     })
     .catch( e =>{
       let mess = e.mess || null;
-      utils.crash({tx, res, mess, err: e.err || null })
+      utils.crash(tx, res, {stat: e.status || null , mess, err: e.err || e})
     });
 };
 
@@ -281,9 +283,9 @@ module.exports.update = (req, res, next)=>{
   //
   //
   // // CHECKING DATA
-  // utils.num(ps.container_id)
-  // .then(()=>{ return utils.num(ps.id)})
-  // .then(()=>{ return utils.str(ps.value)})
+  // ChkData.num(ps.container_id)
+  // .then(()=>{ return ChkData.num(ps.id)})
+  // .then(()=>{ return ChkData.str(ps.value)})
   // .then(()=>{ return labelService.isPropertyLabel(ps.label)})
   // // Q1 => check user access and return properties list of the container
   // // including the title
@@ -410,21 +412,20 @@ module.exports.update = (req, res, next)=>{
   let Q2 = `
     match(c:Container) where id(c) = $cont
     set c.commitList =  c.commitList + $now
-    create (new:Property:$label{value:$value}) return new
+    create (new:Property:${params.label}{value:$value}) return new
   `;
 
   // Store the new relationship flow of the new commit
   let Q3 = ``,
-      Q3_1 = `match (c) where id(c)=$cont`,
+      Q3_1 = `match (c) where id(c)= toInteger($cont)`,
       Q3_2 = ` create (c)`;
 
   // Remove the old commit
 
-
   // CHECKING DATA
-  utils.num(ps.container_id)
-  .then(()=>{ return utils.num(ps.id)})
-  .then(()=>{ return utils.str(ps.value)})
+  ChkData.num(ps.container_id)
+  .then(()=>{ return ChkData.num(ps.id)})
+  .then(()=>{ return ChkData.str(ps.value)})
   .then(()=>{ return labelService.isPropertyLabel(ps.label)})
   .then(()=>{ return tx.run(Q1, params) })
   .then( data => {
@@ -440,7 +441,8 @@ module.exports.update = (req, res, next)=>{
       lastlist.reverse();
     }
   })
-  .then(()=>{ return tx.run(Q2, params) })
+  .then(()=>{
+    return tx.run(Q2, params) })
   .then( data => {
     updates = data.records[0]._fields[0];
     // Iterate the properties list to create the 3rd query
@@ -463,7 +465,8 @@ module.exports.update = (req, res, next)=>{
       Q3_3 = ` return x${u}`
     });
   })
-  .then( () => { return tx.run(Q3_1+Q3_2+Q3_3, params) })
+  .then( () => {
+    return tx.run(Q3_1+Q3_2+Q3_3, params) })
   .then( data => {
     let r = data.records;
     if(r.length && r[0]._fields[0].length){
@@ -490,11 +493,11 @@ module.exports.update = (req, res, next)=>{
                                           Q1_data.last.commitLength.low + 1);
   })
   .then( () => {
-    commit(tx, res, 200, user_id, updatedNode);
+    utils.commit(tx, res, {uid, data:updatedNode});
   })
-  .catch((err)=>{
-    console.log(err);
-    crash(tx, res, err.status || 400, err.mess || null, err.err || err)
+  .catch( e =>{
+    let mess = e.mess || null;
+    utils.crash(tx, res, {stat: e.status || null , mess, err: e.err || e})
   });
 };
 
@@ -527,7 +530,7 @@ module.exports.add_property = (req, res, next)=>{
     create (new:Property:Undefined{value:''})
     create (c)-[:Has{commit:$now}]->(t)-[:Has{commit:$now}]->(new)`;
   let Q2_3 = ` return new`;
-  utils.num(ps.container_id)
+  ChkData.num(ps.container_id)
   .then(() => { return tx.run(Q1, params) })
   .then( data => {
     if(data.records.length && data.records[0]._fields[0].list.length){
@@ -544,9 +547,13 @@ module.exports.add_property = (req, res, next)=>{
     });
   })
   .then(() => {
-    console.log(Q2_1+Q2_2+Q2_3)
-    console.log('params', params)
-    return tx.run(Q2_1+Q2_2+Q2_3, params) })
+    // return new Promise((resolve, reject)=>{
+    //   console.log(Q2_1+Q2_2+Q2_3)
+    //   console.log('params', params)
+
+      return tx.run(Q2_1+Q2_2+Q2_3, params)
+    // })
+  })
   .then( data => {
     console.log('check', data.records[0]._fields)
     let f = data.records[0]._fields[0];
@@ -557,11 +564,11 @@ module.exports.add_property = (req, res, next)=>{
     };
   })
   .then( data => {
-    utils.commit({tx, res, uid, data});
+    utils.commit(tx, res, {uid, data});
   })
   .catch( e =>{
     let mess = "error on add property " + e.mess;
-    utils.crash({tx, res, mess, err: e.err || null })
+    utils.crash(tx, res, {stat: e.status || null , mess, err: e.err || e})
   });
 };
 
@@ -613,11 +620,11 @@ module.exports.delete_property = (req, res, next)=>{
   })
   .then( data => { return tx.run(Q2_1+Q2_2+Q2_3, params) })
   .then( data => {
-    utils.commit({tx, res, uid, data});
+    utils.commit(tx, res, {uid, data});
   })
   .catch( e =>{
     let mess = e.mess || null;
-    utils.crash({tx, res, mess, err: e.err || null })
+    utils.crash(tx, res, {stat: e.status || null , mess, err: e.err || e})
   });
 };
 
@@ -649,8 +656,8 @@ module.exports.drop_property = (req, res, next)=>{
     let Q3_2 = ` create (n)`;
     let Q3_3 = ` set n.commitList = n.commitList + $now`;
 
-    utils.num(ps.container_id)
-    .then(()=>{ return utils.num(ps.property_id) })
+    ChkData.num(ps.container_id)
+    .then(()=>{ return ChkData.num(ps.property_id) })
     .then(()=>{
       if(ps.direction == 'up' || ps.direction == 'down'){
         return;
@@ -737,10 +744,10 @@ module.exports.drop_property = (req, res, next)=>{
     })
     .then( () =>{ return tx.run(Q3_1+Q3_2+Q3_3, params) })
     .then( () => {
-      utils.commit({tx, res, uid});
+      utils.commit(tx, res, {uid});
     })
     .catch( e =>{
       let mess = e.mess || null;
-      utils.crash({tx, res, mess, err: e.err || null })
+      utils.crash(tx, res, {stat: e.status || null , mess, err: e.err || e})
     });
 }

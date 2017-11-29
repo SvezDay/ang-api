@@ -73,9 +73,12 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.post('/test', myeasytest.test);
-app.post('/test2', myeasytest.test2);
-app.post('/test3', myeasytest.test3);
+// app.post('/test', myeasytest.test);
+app.post('/test', (req, res, next)=>{
+  res.send('cehck')
+});
+// app.post('/test2', myeasytest.test2);
+// app.post('/test3', myeasytest.test3);
 app.use(allowCrossDomain);
 app.use(handleError);
 

@@ -1,6 +1,36 @@
 'use-strict';
 const tokenGen = require('./token.service');
 const self = {
+  // crash: (transaction, response,  status, message, error)=>{
+  crash: (tx, res, p)=>{
+    // p => {tx: transaction, res: response,  stat: status, mess: message, err: error}
+    console.log('ERROR MESSAGE: ', p.mess)
+    console.log('ERROR: ',p.err)
+    tx.rollback();
+    res.status(p.stat || 400).json({mess: p.mess, error: p.err})
+  },
+  // commit: (transaction, response, status, user, data)=>{
+  commit: (tx, res, p)=>{
+    // p => {tx: transaction, res: response, stat: status, uid: userId, data: data}
+    tx.commit()
+    .subscribe({
+      onCompleted: () => {
+        // this transaction is now committed
+        let params = {
+          token:tokenGen(p.uid),
+          exp: self.expire(),
+          data: p.data || null
+        };
+        // status != 204 ? ( params.data = data ) : null
+        res.status(p.stat || 200).json(params);
+      },
+      onError: (e) => {
+        // self.crash(transaction, response, 400, "Error on the commit", e);
+        let mess = 'commit fail';
+        self.crash(tx, res, {stat: e.status || null , mess, err: e.err || e})
+      }
+    });
+  },
 
   ObjInArrToKeyValInObj: (arr)=>{
     let keyval = {};
@@ -17,19 +47,6 @@ const self = {
       array.push({[x]: keyval[x]});
     });
     return array;
-  },
-
-  str: (data)=>{
-    return new Promise((resolve, reject)=>{
-      !data.length || typeof data != 'string' ?
-        reject({err: 'is not a string'}) : resolve()
-    })
-  },
-  num: (data)=>{
-    return new Promise((resolve, reject)=>{
-      isNaN(data) || typeof data != 'number' ?
-        reject({err: 'is not a number'}) : resolve()
-    })
   },
   expire: ()=>{
     return new Date().getTime() + (1000 * 60 * 30);
@@ -53,36 +70,6 @@ const self = {
       })
     })
   },
-  // crash: (transaction, response,  status, message, error)=>{
-  crash: (p)=>{
-    // p => {tx: transaction, res: response,  stat: status, mess: message, err: error}
-    console.log('ERROR MESSAGE: ', p.mess)
-    console.log('ERROR: ',p.err)
-    p.tx.rollback();
-    p.res.status(p.stat || 400).json({mess: p.mess, error: p.err})
-  },
-  // commit: (transaction, response, status, user, data)=>{
-  commit: (p)=>{
-    // p => {tx: transaction, res: response, stat: status, uid: userId, data: data}
-    p.tx.commit()
-    .subscribe({
-      onCompleted: () => {
-        // this transaction is now committed
-        let params = {
-          token:tokenGen(p.uid),
-          exp: self.expire(),
-          data: p.data || null
-        };
-        // status != 204 ? ( params.data = data ) : null
-        p.res.status(p.stat || 200).json(params);
-      },
-      onError: (e) => {
-        // self.crash(transaction, response, 400, "Error on the commit", e);
-        let mess = 'commit fail';
-        self.crash({tx, res, stat: e.status || null , mess, err: e.err || e})
-      }
-    });
-  },
   sortLabel: (obj)=>{
     return new Promise((resolve)=>{
       if(obj.labels){
@@ -99,6 +86,7 @@ const self = {
       resolve(obj);
     })
   }
+
 
 };
 

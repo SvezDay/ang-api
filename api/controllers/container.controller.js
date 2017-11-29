@@ -3,13 +3,14 @@ let driver = require('../../config/driver');
 let tokenGen = require('../services/token.service');
 let labelService = require('../services/label.service');
 let utils = require('../services/utils.service');
+const ChkData = require('../services/check-data.service');
 
 module.exports.get_sub_container = (req, res, next)=>{
   let session = driver.session();
   let uid = req.decoded.user_id;
   let ps = req.body;
 
-  let params = {uid, container_id:ps.container_id};
+  let params = {uid, cont:ps.container_id};
   let Q1 = `match (a:Account)`;
   let Q2 = ``;
   let Q3 = `-[:Linked]->(last:Container)`;
@@ -20,7 +21,7 @@ module.exports.get_sub_container = (req, res, next)=>{
 
   if(ps.container_id){
     Q2 += `-[l:Linked*]->(c:Container)`;
-    Q5 += ` and id(c)= $container_id`;
+    Q5 += ` and id(c)= $cont`;
     Q7 += ` with last, count(l) as count
     return case when count <> 0 then collect(last) else {} end `;
   }else{
@@ -29,7 +30,6 @@ module.exports.get_sub_container = (req, res, next)=>{
 
   let Q8 = ``;
   let Q9 = ` return `;
-
   // This tx return the list of the container
   let p1 = session.readTransaction(tx=>tx.run(Q1+Q2+Q3+Q4+Q5+Q6+Q7, params))
   let p2 = p1.then( data => {
@@ -81,7 +81,7 @@ module.exports.get_sub_container = (req, res, next)=>{
         res.status(200).json(params);
       })
       .catch( e =>{
-        console.log(e)
+        console.log('error', e)
         res.status(400).json({err:e})
       });
 
@@ -138,11 +138,11 @@ module.exports.change_container_path = (req, res, next)=>{
     return data.records[0]._fields;
   })
   .then( data => {
-    utils.commit({tx, res, uid, data});
+    utils.commit(tx, res, {uid, data});
   })
   .catch( e =>{
     let mess = e.mess || null;
-    utils.crash({tx, res, mess, err: e.err || null })
+    utils.crash(tx, res, {stat: e.status || null , mess, err: e.err || e})
   });
 };
 
@@ -168,7 +168,7 @@ module.exports.delete_container = (req, res, next)=>{
     return value
   `;
 
-  utils.num(Number(ps.id))
+  ChkData.num(Number(ps.id))
   .then( () =>{ return tx.run(query, params) })
   .then( data => {
     // Check if user access
@@ -177,10 +177,10 @@ module.exports.delete_container = (req, res, next)=>{
     }
   })
   .then( () => {
-    utils.commit({tx, res, uid});
+    utils.commit(tx, res, {uid});
   })
   .catch( e =>{
     let mess = e.mess || null;
-    utils.crash({tx, res, mess, err: e.err || null })
+    utils.crash(tx, res, {stat: e.status || null , mess, err: e.err || e})
   });
 }
