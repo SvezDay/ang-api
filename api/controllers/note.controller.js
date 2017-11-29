@@ -3,7 +3,7 @@ const driver = require('../../config/driver');
 const tokenGen = require('../services/token.service');
 const labelService = require('../services/label.service');
 const utils = require('../services/utils.service');
-const ChkData = require('../services/check-data.service');
+const CheckData = require('../services/check-data.service');
 
 const dbService = require('../services/db.service');
 
@@ -68,9 +68,9 @@ module.exports.create_note = (req, res, next)=>{
   `;
 
   // session.readTransaction(tx => tx.run(query))
-  ChkData.str(ps.title_value)
-  .then(()=>{ return ChkData.str(ps.content_label) })
-  .then(()=>{ return ChkData.str(ps.content_value) })
+  CheckData.str(ps.title_value)
+  .then(()=>{ return CheckData.str(ps.content_label) })
+  .then(()=>{ return CheckData.str(ps.content_value) })
   .then(()=>{ return tx.run(query, params) })
   .then( data => {
     if(!data.records[0]._fields.length){
@@ -208,7 +208,7 @@ module.exports.get_note_detail = (req, res, next)=>{
          else {data:{message: 'No access user'}}
       end
     `;
-    ChkData.num(params.cont)
+    CheckData.num(params.cont)
     .then(()=>{ return tx.run(query, params) })
     .then( data => {
       let r = data.records;
@@ -283,9 +283,9 @@ module.exports.update = (req, res, next)=>{
   //
   //
   // // CHECKING DATA
-  // ChkData.num(ps.container_id)
-  // .then(()=>{ return ChkData.num(ps.id)})
-  // .then(()=>{ return ChkData.str(ps.value)})
+  // CheckData.num(ps.container_id)
+  // .then(()=>{ return CheckData.num(ps.id)})
+  // .then(()=>{ return CheckData.str(ps.value)})
   // .then(()=>{ return labelService.isPropertyLabel(ps.label)})
   // // Q1 => check user access and return properties list of the container
   // // including the title
@@ -423,9 +423,9 @@ module.exports.update = (req, res, next)=>{
   // Remove the old commit
 
   // CHECKING DATA
-  ChkData.num(ps.container_id)
-  .then(()=>{ return ChkData.num(ps.id)})
-  .then(()=>{ return ChkData.str(ps.value)})
+  CheckData.num(ps.container_id)
+  .then(()=>{ return CheckData.num(ps.id)})
+  .then(()=>{ return CheckData.str(ps.value)})
   .then(()=>{ return labelService.isPropertyLabel(ps.label)})
   .then(()=>{ return tx.run(Q1, params) })
   .then( data => {
@@ -530,7 +530,7 @@ module.exports.add_property = (req, res, next)=>{
     create (new:Property:Undefined{value:''})
     create (c)-[:Has{commit:$now}]->(t)-[:Has{commit:$now}]->(new)`;
   let Q2_3 = ` return new`;
-  ChkData.num(ps.container_id)
+  CheckData.num(ps.container_id)
   .then(() => { return tx.run(Q1, params) })
   .then( data => {
     if(data.records.length && data.records[0]._fields[0].list.length){
@@ -585,7 +585,7 @@ module.exports.delete_property = (req, res, next)=>{
   let ps = req.params
   let now = new Date().getTime().toString();
   let commit = ps.commit || null;
-  let params = {uid, now, cont:ps.container_id}
+  let params = {uid, now, cont:parseInt(ps.container_id)}
   // this query check the user access and return the list of
   let Q1 = `
     match (a:Account)-[l:Linked*]->(c:Container)
@@ -597,11 +597,12 @@ module.exports.delete_property = (req, res, next)=>{
     return value
   `;
 
-  let Q2_1 = ` match(c) where id(c) = $cont`;
+  let Q2_1 = ` match(c) where id(c) = toInteger($cont)`;
   let Q2_2 = ` create (c)`;
   let Q2_3 = ` set c.commitList = c.commitList + $now`;
 
-  tx.run(Q1, params)
+  CheckData.num(params.cont, 'params.cont')
+  .then(()=>{ return tx.run(Q1, params) })
   .then( data => {
     return data.records[0]._fields[0].list;
   })
@@ -618,7 +619,10 @@ module.exports.delete_property = (req, res, next)=>{
       }
     });
   })
-  .then( data => { return tx.run(Q2_1+Q2_2+Q2_3, params) })
+  .then( data => {
+    console.log(Q2_1+Q2_2+Q2_3)
+    console.log(params)
+    return tx.run(Q2_1+Q2_2+Q2_3, params) })
   .then( data => {
     utils.commit(tx, res, {uid, data});
   })
@@ -656,8 +660,8 @@ module.exports.drop_property = (req, res, next)=>{
     let Q3_2 = ` create (n)`;
     let Q3_3 = ` set n.commitList = n.commitList + $now`;
 
-    ChkData.num(ps.container_id)
-    .then(()=>{ return ChkData.num(ps.property_id) })
+    CheckData.num(ps.container_id, 'ps.container_id')
+    .then(()=>{ return CheckData.num(ps.property_id) })
     .then(()=>{
       if(ps.direction == 'up' || ps.direction == 'down'){
         return;

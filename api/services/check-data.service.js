@@ -1,16 +1,17 @@
 'use-strict';
 const tokenGen = require('./token.service');
 const self = {
-  str: (data)=>{
+  str: (data, name="A Param")=>{
     return new Promise((resolve, reject)=>{
+      isNaN(name) ? name = "A PARAM" : null
       !data.length || typeof data != 'string' ?
-        reject({err: 'is not a string'}) : resolve()
+        reject({err: `${name} is not a string: ${data}`}) : resolve()
     })
   },
-  num: (data)=>{
+  num: (data, name="A Param")=>{
     return new Promise((resolve, reject)=>{
       isNaN(data) || typeof data != 'number' ?
-        reject({err: 'is not a number'}) : resolve()
+        reject({err: `${name} is not a number: ${data}`}) : resolve()
     })
   },
   retObjInField1: (data)=>{
