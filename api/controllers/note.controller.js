@@ -44,57 +44,6 @@ const deleteCommit = (tx, container_id, subCommit, commitLength) =>{
   })
 }
 
-module.exports.create_note = (req, res, next)=>{
-  let session = driver.session();
-  let tx = session.beginTransaction();
-  let now = new Date().getTime().toString();
-  let uid = req.decoded.user_id;
-  let ps = req.body;
-
-  let params = {
-    uid,
-    now,
-    title: ps.title_value,
-    label: ps.content_label,
-    value: ps.content_value
-  };
-  let query = `
-     match (a:Account) where id(a) = $uid
-     create (n:Container{commitList: [$now], type: 'note'})
-     create (t:Property:Title {value:$title})
-     create (u:Property:$label{value:$value})
-     create (a)-[:Linked]->(n)-[:Has{commit:$now}]->(t)-[:Has{commit:$now}]->(u)
-     return {note_id: id(n), title_id:id(t), first_property_id: id(u)}
-  `;
-
-  // session.readTransaction(tx => tx.run(query))
-  CheckData.str(ps.title_value)
-  .then(()=>{ return CheckData.str(ps.content_label) })
-  .then(()=>{ return CheckData.str(ps.content_value) })
-  .then(()=>{ return tx.run(query, params) })
-  .then( data => {
-    if(!data.records[0]._fields.length){
-      throw {stat: 400, mess: 'not Create'} }
-    else{
-      return data.records[0]._fields[0] }
-  })
-  // .then( data => {
-  //   // let f = data.records[0]._fields[0];
-  //   // let l = Object.keys(f);
-  //   // l.map(x => {
-  //   //   f[x].low ? f[x] = f[x].low : null
-  //   // });
-  //   // return f;
-  // })
-  .then( data => { return utils.parseInt(data) })
-  .then( data => { return utils.sortLabel(data) })
-  .then( data =>{  utils.commit({tx, res, uid, data}) })
-  .catch( e => {
-    let mess = e.mess || null;
-    utils.crash(tx, res, {stat: e.status || null , mess, err: e.err || e})
-  });
-};
-
 module.exports.create_empty_note = (req, res, next)=>{
   let session = driver.session();
   let tx = session.beginTransaction();

@@ -1,32 +1,17 @@
 "use-strict";
-let express = require('express');
-let apoc = require('apoc');
+const express = require('express');
+const apoc = require('apoc');
 const neo4j = require('neo4j-driver').v1;
+const version = require('../package.json').version;
 
-let version = require('../package.json').version;
+const user = require('./controllers/user.controller');
+const admin = require('./controllers/admin.controller');
+const container = require('./controllers/container.controller');
+const note = require('./controllers/note.controller');
 
-// let person = require('./controllers/personCtrl.js');
-// let user = require('./controllers/userCtrl.js');
-// let node = require('./controllers/nodeCtrl.js');
-// let relationship = require('./controllers/relationshipCtrl.js');
-// let container = require('./controllers/containerCtrl.js');
-// let learningSchema = require('./controllers/learningSchemaCtrl.js');
-// let course = require('./controllers/learnings/coursesCtrl.js');
-let user = require('./controllers/user.controller');
-let note = require('./controllers/note.controller');
-let course = require('./controllers/courseCtrl');
-let game = require('./controllers/gameCtrl');
-let container = require('./controllers/container.controller');
-let admin = require('./controllers/admin.controller');
+// const multer = require('multer');
+// const upload = multer()
 
-const graphenedbURL = process.env.GRAPHENEDB_BOLT_URL || "bolt://localhost:7687";
-const graphenedbUser = process.env.GRAPHENEDB_BOLT_USER || "neo4j";
-const graphenedbPass = process.env.GRAPHENEDB_BOLT_PASSWORD || "futur$";
-
-const driver = neo4j.driver(graphenedbURL, neo4j.auth.basic(graphenedbUser, graphenedbPass));
-
-const multer = require('multer');
-let upload = multer()
 module.exports = ()=>{
    let routes = express.Router();
    routes
@@ -35,16 +20,15 @@ module.exports = ()=>{
       .get('/user_profile', user.user_profile)
       .put('/user_update_properties', user.update_properties)
       .get('/user_download_all', user.download_all)
+      // .post('/user_upload_data', upload.any(), user.upload_data)
+      // .post('/user_upload_data', user.upload_data)
       // .post('/user_upload_data', upload.any(), (req, res, next)=>{
       //   console.log('req.body', req.files)
       //   console.log('files', Object.keys(req))
       //   res.status(200).json({mes: 'ok'})
       // })
-      .post('/user_upload_data', upload.any(), user.upload_data)
 
-      // .post('/user_upload_data', user.upload_data)
    // NOTES
-      // .post('/create_note', note.create_note)
       .post('/create_empty_note', note.create_empty_note)
       .get('/note_get_label', note.get_label)
       .get('/get_all_note', note.get_all_note)
@@ -53,23 +37,7 @@ module.exports = ()=>{
       .post('/note_add_property', note.add_property)
       .delete('/delete_property/:container_id/:property_id', note.delete_property)
       .post('/note_drop_property', note.drop_property)
-    // COURSE
-      .post('/create_course', course.create_course)
-      .get('/get_all_course', course.get_all_course)
-      .get('/get_model_list', course.get_model_list)
-      .get('/get_course_detail/:id', course.get_course_detail)
-      .post('/update_course', course.update_course)
-      .delete('/delete_course/:id', course.delete_course)
-      .post('/update_course_value', course.update_course_value)
-    // GAME
-      .post('/new_result', game.new_result)
-      .get('/game_timer', game.game_timer)
-      // .post('/game_timer_all_course', game.game_timer_all_course)
-      .get('/course_wait_recall', game.course_wait_recall)
-      .get('/game_course_recallable', game.course_recallable)
-      .post('/game_toggle_out_from_recallable', game.toggle_out_from_recallable)
-      .post('/game_toggle_in_to_recallable', game.toggle_in_to_recallable)
-      .post('/game_answering', game.answering)
+
     // CONTAINER & ARBORESCENCE
       .post('/container_get_sub_container', container.get_sub_container)
       .post('/change_container_path', container.change_container_path)

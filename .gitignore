@@ -1,3 +1,4 @@
-/node_modules/*
-/api/client-secret.json
-/api/config/database.js
+/config/config/
+/middleware/*
+/neo4j-*/**
+/node_modules/

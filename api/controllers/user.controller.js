@@ -12,6 +12,7 @@ const recoverField = require('../services/recoverField.service')
 
 
 module.exports.user_profile = (req, res, next)=>{
+  console.log('uid===================================', uid)
   let session = driver.session();
   let tx = session.beginTransaction();
   let uid = req.decoded.user_id;

@@ -2,8 +2,8 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const apiRoutes = express.Router();
-const secret = require('../config/tokenSecret').secret;
-const algo = require('../config/tokenSecret').algo;
+const conf = require('../config/config').token_secret;
+// const algo = require('../config/config').algo;
 
 module.exports = apiRoutes.use((req, res, next)=>{
 
@@ -25,7 +25,7 @@ module.exports = apiRoutes.use((req, res, next)=>{
          req.decoded = decoded;
          next();
       };
-      jwt.verify(token, secret, cb);
+      jwt.verify(token, conf.secret, cb);
 
    }
    // Trow error

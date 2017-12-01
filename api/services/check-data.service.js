@@ -1,5 +1,6 @@
 'use-strict';
 const tokenGen = require('./token.service');
+
 const self = {
   str: (data, name="A Param")=>{
     return new Promise((resolve, reject)=>{

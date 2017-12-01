@@ -18,32 +18,24 @@ https://www.npmjs.com/package/apoc
   apoc.export.file.enabled=true   // was added
 */
 
-let express = require('express');
-let bodyParser = require('body-parser');
-let cors = require('cors');
-let morgan = require('morgan');
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const morgan = require('morgan');
 const _ = require('lodash');
 
-let conf = require('./config/config');
-let appRoutes = require('./api/appRoutes');
-let tokenRoutes = require('./api/tokenRoutes');
-let freeRoutes = require('./tokenFreeRoutes');
+const conf = require('./config/config');
+const appRoutes = require('./api/appRoutes');
+const tokenRoutes = require('./api/tokenRoutes');
+const freeRoutes = require('./tokenFreeRoutes');
 let myeasytest = require('./myeasytest');
 
-let app = express();
-let port = process.env.PORT || 3200;
-
-// process.env.NEO4J_PROTOCOL="http";
-// // process.env.NEO4J_HOST=192+"."+168+"."+.0+"."+5
-// process.env.NEO4J_HOST=conf.back.host;
-// process.env.NEO4J_PORT=conf.back.port;
-// process.env.NEO4J_USERNAME=conf.back.neousr;
-// process.env.NEO4J_PASSWORD=conf.back.neopwd;
-
+const app = express();
+const port = process.env.PORT || 3200;
 
 
 let allowCrossDomain = (req, res, next)=>{
-   res.header("Access-Control-Allow-Origin", "https://ang-app.herokuapp.com", "http://localhost:4200");
+   res.header("Access-Control-Allow-Origin", "http://localhost:4200", "https://ang-app.herokuapp.com");
    res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");
    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Auth-Token, x-access-token");
    next();
@@ -52,7 +44,7 @@ let allowCrossDomain = (req, res, next)=>{
 let corsOptions = {
   origin: (origin, callback)=>{
     if(origin == undefined){ callback(null, true) } else
-    if(conf.app.whiteList.indexOf(origin) !== -1){
+    if(conf.white_list.indexOf(origin) !== -1){
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
