@@ -8,6 +8,7 @@ const user = require('./controllers/user.controller');
 const admin = require('./controllers/admin.controller');
 const container = require('./controllers/container.controller');
 const note = require('./controllers/note.controller');
+const todo = require('./controllers/todo.controller');
 
 // const multer = require('multer');
 // const upload = multer()
@@ -42,6 +43,19 @@ module.exports = ()=>{
       .post('/container_get_sub_container', container.get_sub_container)
       .post('/change_container_path', container.change_container_path)
       .delete('/delete_container/:id', container.delete_container)
+
+    // TODOS
+      .get('/todo_list', todo.list)
+      .post('/todo_create_task', todo.create_task)
+      .delete('/todo_delete_task/:id', todo.delete_task)
+      .post('/todo_update_task', todo.update_task)
+
+      .post('/todo_task_for_today', todo.task_for_today) // todo to today
+      .post('/today_task_for_later', todo.task_for_later) // today to todo
+
+      .post('/todo_close_task', todo.close_task)
+      .post('/todo_reopen_task', todo.reopen_task)
+
 
 
 //    .get('/users', user.getAll)
