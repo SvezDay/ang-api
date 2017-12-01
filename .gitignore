@@ -1,4 +1,2 @@
-/config/config*
-/middleware/
-/neo4j-*/
 /node_modules/
+/config/config*
