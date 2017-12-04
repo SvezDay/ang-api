@@ -65,7 +65,7 @@ module.exports.register = (req, res, next)=>{
   CALL apoc.do.when(
     numb=1,
     "MATCH (e:Error) WHERE id(e)=170 RETURN e.name as data",
-    "CREATE (n:Account{
+    "CREATE (a:Account{
       email:$email,
       password:$password,
       first:$first,
@@ -75,8 +75,9 @@ module.exports.register = (req, res, next)=>{
       subscription_commit_length:''
     })
     CREATE (b:Board_Activity{course_wait_recall:[]})
-    CREATE (n)-[:Linked]->(b)
-    RETURN {properties:properties(n), id:id(n)} as data"
+    CREATE (t:Todo)
+    CREATE (t)<-[:Linked]-(a)-[:Linked]->(b)
+    RETURN {properties:properties(a), id:id(a)} as data"
   ) YIELD value
   RETURN value
   `;

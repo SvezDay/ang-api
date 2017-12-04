@@ -49,10 +49,10 @@ module.exports = ()=>{
       .post('/todo_create_task', todo.create_task)
       .delete('/todo_delete_task/:id', todo.delete_task)
       .post('/todo_update_task', todo.update_task)
-
+      //
       .post('/todo_task_for_today', todo.task_for_today) // todo to today
-      .post('/today_task_for_later', todo.task_for_later) // today to todo
-
+      .post('/todo_task_for_later', todo.task_for_later) // today to todo
+      //
       .post('/todo_close_task', todo.close_task)
       .post('/todo_reopen_task', todo.reopen_task)
 
