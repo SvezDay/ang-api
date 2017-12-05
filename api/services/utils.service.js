@@ -1,17 +1,13 @@
 'use-strict';
 const tokenGen = require('./token.service');
 const self = {
-  // crash: (transaction, response,  status, message, error)=>{
   crash: (tx, res, p)=>{
-    // p => {tx: transaction, res: response,  stat: status, mess: message, err: error}
     console.log('ERROR MESSAGE: ', p.mess)
     console.log('ERROR: ',p.err)
     tx.rollback();
     res.status(p.stat || 400).json({mess: p.mess, error: p.err})
   },
-  // commit: (transaction, response, status, user, data)=>{
   commit: (tx, res, p)=>{
-    // p => {tx: transaction, res: response, stat: status, uid: userId, data: data}
     tx.commit()
     .subscribe({
       onCompleted: () => {
@@ -21,11 +17,9 @@ const self = {
           exp: self.expire(),
           data: p.data || null
         };
-        // status != 204 ? ( params.data = data ) : null
         res.status(p.stat || 200).json(params);
       },
       onError: (e) => {
-        // self.crash(transaction, response, 400, "Error on the commit", e);
         let mess = 'commit fail';
         self.crash(tx, res, {stat: e.status || null , mess, err: e.err || e})
       }

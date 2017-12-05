@@ -90,6 +90,99 @@ module.exports.get_sub_container = (req, res, next)=>{
 
 
 };
+module.exports.get_sub_container_no_recallable = (req, res, next)=>{
+  let session = driver.session();
+  let uid = req.decoded.user_id;
+  let ps = req.body;
+  let params = {uid, cid:ps.container_id};
+
+  let queryFirst = `
+    match (a:Acc)-[:Linked]->(rs:Recall)
+    where id(a) = 71
+    with collect(distinct rs.cid) as list
+    return list
+  `;
+  let Q1 = `match (a:Acc)`;
+  let Q2 = ``;
+  let Q3 = `-[:Linked]->(last:Cont)`;
+  let Q4 = ` where id(a) = $uid`;
+  let Q5 = ``;
+  let Q6 = ``;
+  let Q7 = ``;
+
+  if(ps.container_id){
+    Q2 += `-[l:Linked*]->(c:Cont)`;
+    Q5 += ` and id(c)= $cid`;
+    Q7 += ` with last, count(l) as count
+    return case when count <> 0 then collect(last) else {} end `;
+  }else{
+    Q6 += ` return collect(last)`;
+  };
+
+  let Q8 = ``;
+  let Q9 = ` return `;
+  session.readTransaction(tx=>tx.run(queryFirst, params))
+  .then( data => { recallList = data.records[0]._fields[0]})
+  // This tx return the list of the container
+  let p1 = session.readTransaction(tx=>tx.run(Q1+Q2+Q3+Q4+Q5+Q6+Q7, params))
+  let p2 = p1.then( data => {
+    if(data.records.length == 0){
+      return false;
+    }else{
+      return data.records[0]._fields[0];
+    };
+  })
+
+  p2.then( data => {
+    if( data == false){
+      return res.status(204).json({message:'empty'});
+    }else{
+      p2.then( data => {
+        let t = 0;
+        data.map(x => {
+          t != 0 ? Q9 += " , " : null
+          let i = x.identity.low;
+          Q8 += ` match(c${i}:Cont)-[:Has{commit:last(c${i}.commitList)}]->(ct${i}:Title)
+          where id(c${i}) = ${i}`;
+          Q9 += `
+          {container_id: id(c${i}), title_id:id(ct${i}), value:ct${i}.value}`;
+          t++;
+        })
+      })
+      .then( ()=> {
+        // This tx return the title properties of each containers founds
+        return session.readTransaction(tx=>tx.run(Q8+Q9))
+      })
+      .then( data => {
+        if(!data.records[0]) {
+          throw {
+            status: 400, err: "container get sub container err on Q8 et Q9"}
+        }
+
+        return data.records[0]._fields.map(x => {
+          x.container_id = x.container_id.low;
+          x.title_id = x.title_id.low;
+          return x;
+        });
+      })
+      .then( data => {
+        let params = {
+          token:tokenGen(uid),
+          exp: utils.expire(),
+          data: data
+        };
+        res.status(200).json(params);
+      })
+      .catch( e =>{
+        console.log('error', e)
+        res.status(400).json({err:e})
+      });
+
+    }
+  })
+
+
+};
 
 module.exports.change_container_path = (req, res, next)=>{
   let session = driver.session();
