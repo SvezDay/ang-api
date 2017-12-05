@@ -40,14 +40,14 @@ const self = {
     return keyval;
   },
 
-  keyValInObjToObjInArr: (keyval)=>{
-    let array = [];
-    let keys = Object.keys(keyval);
-    keys.map(x => {
-      array.push({[x]: keyval[x]});
-    });
-    return array;
-  },
+  // keyValInObjToObjInArr: (keyval)=>{
+  //   let array = [];
+  //   let keys = Object.keys(keyval);
+  //   keys.map(x => {
+  //     array.push({[x]: keyval[x]});
+  //   });
+  //   return array;
+  // },
   expire: ()=>{
     return new Date().getTime() + (1000 * 60 * 30);
   },

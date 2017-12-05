@@ -32,6 +32,14 @@ module.exports = {
   get_recallable_label_list: (label)=>{
     return util.ObjInArrToKeyValInObj(labels.recallable_label_list)[label];
   },
+  // ObjInArrToKeyValInObj: (arr)=>{
+  //   let keyval = {};
+  //   arr.map(x => {
+  //     keyval[Object.keys(x)] = x[Object.keys(x)];
+  //   });
+  //   return keyval;
+  // },
+
   // get_all_main_label: ()=>{
   //   let brut = [];
   //   labels.label_list.map( x => {
