@@ -16,7 +16,7 @@ module.exports.list = (req, res, next)=>{
 
   let params = { uid, now };
   let query = `
-    match (a:Account)-->(:Todo)-[:Has]->(ts:Task) where id(a) = $uid
+    match (a:Acc)-->(:Todo)-[:Has]->(ts:Task) where id(a) = $uid
     with ts,
     filter(x in collect(ts) where x.status = 'close' ) as valid,
     filter(x in collect(ts) where
@@ -50,7 +50,7 @@ module.exports.create_task = (req, res, next)=>{
 
   let params = { uid, value:ps.value };
   let query = `
-     match (a:Account)-->(ts:Todo) where id(a) = $uid
+     match (a:Acc)-->(ts:Todo) where id(a) = $uid
      create (t:Task{status:"open", date:"", value:$value})
      create (ts)-[:Has]->(t)
      return t

@@ -73,7 +73,7 @@ const self = {
   sortLabel: (obj)=>{
     return new Promise((resolve)=>{
       if(obj.labels){
-        obj.labels = obj.labels.filter(x => {return x != 'Property'})[0];
+        obj.labels = obj.labels.filter(x => {return x != 'Prop'})[0];
       }else{
         for( let v in obj){
           if(typeof obj[v] == 'object'){

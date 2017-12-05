@@ -14,16 +14,13 @@ module.exports.authenticate = (req, res, next)=>{
     password:ps.password
   };
   let query = `
-  MATCH (a:Account{email:$email, password:$password})
+  MATCH (a:Acc{email:$email, password:$password})
   RETURN {id: id(a), properties: properties(a)} as data
   `;
-  console.log(params)
   CheckData.str(ps.email)
-  .then( ()=>{
-    return CheckData.str(ps.password) })
+  .then( ()=>{ return CheckData.str(ps.password) })
   .then( ()=>{ return tx.run(query, params) })
   .then( data => {
-    console.log('data', data.records)
     // Check if response or not
     if(data.records.length && data.records[0]._fields.length){
       return data.records[0]._fields[0];
@@ -34,14 +31,9 @@ module.exports.authenticate = (req, res, next)=>{
   .then( data =>{
     let prop = data.properties;
     let uid = data.id.low;
-    console.log('uid ===========================', uid)
-    // utils.commit(tx, res, 200, uid, {first: prop.first})
-    // session.close();
     utils.commit(tx, res, {uid, data:{first: prop.first}})
   })
   .catch( e =>{
-    // utils.crash(tx, res, err.status || 400, "error", err.err || err)
-    console.log('========================================', e)
     let mess = e.mess || null;
     utils.crash(tx, res, {stat: e.status || null , mess, err: e.err || e})
   });
@@ -54,18 +46,18 @@ module.exports.register = (req, res, next)=>{
 
   let params = {
     email:ps.email,
-    password:ps.passpord,
+    password:ps.password,
     first:ps.first,
     last:ps.last,
-    middle:ps.middle
+    middle:ps.middle || ""
   };
   let query = `
-  MATCH (a:Account{email:$email})
+  MATCH (a:Acc{email:$email})
   WITH COUNT(a) as numb
   CALL apoc.do.when(
     numb=1,
     "MATCH (e:Error) WHERE id(e)=170 RETURN e.name as data",
-    "CREATE (a:Account{
+    "CREATE (a:Acc:PersonalAccount{
       email:$email,
       password:$password,
       first:$first,
@@ -77,25 +69,29 @@ module.exports.register = (req, res, next)=>{
     CREATE (b:Board_Activity{course_wait_recall:[]})
     CREATE (t:Todo)
     CREATE (t)<-[:Linked]-(a)-[:Linked]->(b)
-    RETURN {properties:properties(a), id:id(a)} as data"
+    RETURN {properties:properties(a), id:id(a)} as data",
+    {email:$email, password:$password, first:$first, last:$last, middle:$middle}
   ) YIELD value
   RETURN value
   `;
+  console.log("param", ps)
   CheckData.str(ps.email)
   .then( () => { return CheckData.str(ps.password) })
   .then( () => { return CheckData.str(ps.first) })
   .then( () => { return CheckData.str(ps.last) })
-  .then( () => { return CheckData.str(ps.middle) })
+  // .then( () => { return CheckData.str(ps.middle) || true })
   .then( () => { return tx.run(query, params) })
   .then( data => {
     // Check if response or not
+    console.log("data 1", data.records[0]._fields)
     if(data.records.length && data.records[0]._fields.length){
-      return data.records[0]._fields[0];
+      return data.records[0]._fields[0].data;
     }else{
       throw {status: 403, err: "not create"}
     }
   })
   .then( data => {
+    console.log("data 2", data.id)
     let prop = data.properties;
     let uid = data.id.low;
     utils.commit(tx, res, {uid, data:{first: prop.first}})

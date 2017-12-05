@@ -1,34 +1,33 @@
 module.exports = {
   label_list: [
-    {"Account": "Personal_account"},
-    {"Account": "Business_account"},
+    {"Acc": "PersonalAccount"},
+    {"Acc": "BusinessAccount"},
 
-    {"Container": "Note"},
-    {"Container": "Course"},
-    {"Container": "Project"},
+    {"Cont": "Note"},
+    {"Cont": "Course"},
+    {"Cont": "Project"},
 
-    {"Property": "Undefined"},
-    {"Property": "CUSTOM"},
-    {"Property": "Title"},
-    {"Property": "Introduction"},
-    {"Property": "Example"},
-    {"Property": "Definition"},
+    {"Prop": "Undefined"},
+    {"Prop": "CUSTOM"},
+    {"Prop": "Title"},
+    {"Prop": "Introduction"},
+    {"Prop": "Example"},
+    {"Prop": "Definition"},
     // {"Property": "Property_Theorem"},
-    {"Property": "Property"},
-    {"Property": "Theorem"},
-    {"Property": "Rule"},
-    {"Property": "Predicat"},
+    {"Prop": "Prop"},
+    {"Prop": "Theorem"},
+    {"Prop": "Rule"},
+    {"Prop": "Predicat"},
 
-    {"Property": "Method"},
-    {"Property": "Mecanism"},
+    {"Prop": "Method"},
+    {"Prop": "Mecanism"},
 
-    {"Property": "QuestionTest"},
-    {"Property": "SolutionTest"},
-
+    {"Prop": "QuestionTest"},
+    {"Prop": "SolutionTest"},
     // {"Addon": "Explanation"}
-    {"Property": "Comment"},
-    {"Property": "Correspondence"},
-    {"Property": "Synonym"}
+    {"Prop": "Comment"},
+    {"Prop": "Correspondence"},
+    {"Prop": "Synonym"}
   ],
   primary_model_list: [
     {name: "Mathematics Essential", composition: ["Definition", "Property", "Method"]},

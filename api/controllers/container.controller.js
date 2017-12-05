@@ -11,16 +11,16 @@ module.exports.get_sub_container = (req, res, next)=>{
   let ps = req.body;
 
   let params = {uid, cont:ps.container_id};
-  let Q1 = `match (a:Account)`;
+  let Q1 = `match (a:Acc)`;
   let Q2 = ``;
-  let Q3 = `-[:Linked]->(last:Container)`;
+  let Q3 = `-[:Linked]->(last:Cont)`;
   let Q4 = ` where id(a) = $uid`;
   let Q5 = ``;
   let Q6 = ``;
   let Q7 = ``;
 
   if(ps.container_id){
-    Q2 += `-[l:Linked*]->(c:Container)`;
+    Q2 += `-[l:Linked*]->(c:Cont)`;
     Q5 += ` and id(c)= $cont`;
     Q7 += ` with last, count(l) as count
     return case when count <> 0 then collect(last) else {} end `;
@@ -49,7 +49,7 @@ module.exports.get_sub_container = (req, res, next)=>{
         data.map(x => {
           t != 0 ? Q9 += " , " : null
           let i = x.identity.low;
-          Q8 += ` match(c${i}:Container)-[:Has{commit:last(c${i}.commitList)}]->(ct${i}:Title)
+          Q8 += ` match(c${i}:Cont)-[:Has{commit:last(c${i}.commitList)}]->(ct${i}:Title)
           where id(c${i}) = ${i}`;
           Q9 += `
           {container_id: id(c${i}), title_id:id(ct${i}), value:ct${i}.value}`;
@@ -101,7 +101,7 @@ module.exports.change_container_path = (req, res, next)=>{
   let params = {uid, ctm:ps.container_to_move, cth:ps.container_to_host};
   let Q = "";
   let Q1 = `
-  match(ctm:Container)<-[lm:Linked*]-(a:Account)-[lh:Linked*]->(cth:Container)
+  match(ctm:Cont)<-[lm:Linked*]-(a:Acc)-[lh:Linked*]->(cth:Cont)
   where id(a)=$uid and id(ctm) = $ctm and id(cth)=$cth
   with count(lm) as countm, count(lh) as counth, ctm, lm, cth
   call apoc.do.when(countm <> 0 and counth <> 0,
@@ -116,12 +116,12 @@ module.exports.change_container_path = (req, res, next)=>{
   `;
   // The same query if the host container is the account
   let Q2 = `
-  match(ctm:Container)<-[lm:Linked*]-(a:Account)
+  match(ctm:Cont)<-[lm:Linked*]-(a:Acc)
   where id(a)=$uid and id(ctm) = $ctm
   with count(lm) as countm, ctm, lm, a
   call apoc.do.when(countm <> 0,
-    " match (ctm:Container) where ctm = ctmp"
-    +" match (a:Account) where a = ap"
+    " match (ctm:Cont) where ctm = ctmp"
+    +" match (a:Acc) where a = ap"
     +" match ()-[lm:Linked]->() where lm = lmp"
     +" create (cth)-[:Linked]->(ctm)"
     +" delete lm"
@@ -154,7 +154,7 @@ module.exports.delete_container = (req, res, next)=>{
 
   let params = {uid, cont_id:ps.id}
   let query = `
-    optional match (a:Account)-[l:Linked*]->(c:Container) where id(c)=$cont_id and id(a)=$uid
+    optional match (a:Acc)-[l:Linked*]->(c:Cont) where id(c)=$cont_id and id(a)=$uid
     with count(l) as count, last(l) as link, c
     call apoc.do.when(
       count >= 1,

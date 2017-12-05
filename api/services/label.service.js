@@ -7,7 +7,7 @@ module.exports = {
     return new Promise((resolve, reject)=>{
       let list = [];
       labels.label_list.filter(x => {
-        if(Object.keys(x) == 'Property'){
+        if(Object.keys(x) == 'Prop'){
           list.push(x[Object.keys(x)]);
         }
       })
@@ -21,7 +21,7 @@ module.exports = {
       let list = [];
       labels
       .label_list.filter(x => {
-          if(Object.keys(x) == 'Property'){
+          if(Object.keys(x) == 'Prop'){
             list.push(x[Object.keys(x)]);
           }
         })

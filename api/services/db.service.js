@@ -24,7 +24,7 @@ module.exports = {
   deleteCommit: (tx, container_id, subCommit, commitLength) =>{
     return new Promise(resolve => {
       let q = `
-        match (c)-[r:Has*{commit:head(c.commitList)}]->(p:Property)
+        match (c)-[r:Has*{commit:head(c.commitList)}]->(p:Prop)
         where id(c) = ${container_id}
         set c.commitList = filter(x in c.commitList where x <> head(c.commitList))
         foreach(x in r | delete x)

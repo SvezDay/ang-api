@@ -35,13 +35,13 @@ module.exports.export_database = (req, res, next)=>{
   let tx = session.beginTransaction();
 
   // let q = `
-  //   match path=(a:Account)-[l*]->(c:Container)
+  //   match path=(a:Acc)-[l*]->(c:Cont)
   //   where id(a)=${user_id}
   //   return path
   // `;
 
   let q = `
-    match (a:Account) where id(a)=${user_id}
+    match (a:Acc) where id(a)=${user_id}
     call apoc.path.subgraphAll(a, {relationshipFilter:'Linked'})
     yield nodes, relationships
     return nodes, relationships

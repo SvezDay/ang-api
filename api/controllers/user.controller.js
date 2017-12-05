@@ -17,7 +17,7 @@ module.exports.user_profile = (req, res, next)=>{
   let uid = req.decoded.user_id;
   let params = {uid}
   let query = `
-    match (a:Account) where id(a)=$uid return a
+    match (a:Acc) where id(a)=$uid return a
   `;
 
   tx.run(query, params)
@@ -49,7 +49,7 @@ module.exports.update_properties = (req, res, next)=>{
   let ps = req.body;
   let params = {uid, key:ps.key, value:ps.value};
   let query = `
-    match (a:Account) where id(a)= $uid
+    match (a:Acc) where id(a)= $uid
     set a.$key = $value
   `;
 
@@ -76,7 +76,7 @@ module.exports.download_all = (req, res, next)=>{
   let nodesCsv;
   let params = {uid}
   let query = `
-    match (a:Account) where id(a)=$uid
+    match (a:Acc) where id(a)=$uid
     call apoc.path.subgraphAll(a, {relationshipFilter:'Linked|Has'})
     yield nodes, relationships return nodes, relationships
   `;
@@ -140,7 +140,7 @@ module.exports.upload_data = (req, res, next)=>{
   console.log(str)
   let params = {uid}
   let query = `
-    match (a:Account) where id(a)=$uid
+    match (a:Acc) where id(a)=$uid
 
     call apoc.path.subgraphAll(a, {relationshipFilter:'Linked|Has'})
     yield nodes, relationships return nodes, relationships

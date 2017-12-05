@@ -3,7 +3,7 @@
 module.exports.user = (uid, tid, tx)=>{
   return new Promise((resolve, reject)=>{
     let query = `
-      match (a:Account)-[r:Has|:Linked*]->(t:Task)
+      match (a:Acc)-[r:Has|:Linked*]->(t:Task)
       where id(a) = $uid and id(t) = toInteger($tid)
       return count(r)
     `;
