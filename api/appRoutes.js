@@ -41,7 +41,7 @@ module.exports = ()=>{
 
     // CONTAINER & ARBORESCENCE
       .post('/container_get_sub_container', container.get_sub_container)
-      .post('/container_get_sub_container_no_recallable', container.get_sub_container_no_recallable)
+      .get('/container_recallable', container.recallable)
       .post('/change_container_path', container.change_container_path)
       .delete('/delete_container/:id', container.delete_container)
 

@@ -64,6 +64,31 @@ const self = {
       })
     })
   },
+  parseInt2: (data)=>{
+    return new Promise((resolve, reject)=>{
+      // Check if value or array/object
+      if(data.hasOwnProperty('low')){
+        resolve(data = data.low);
+      }else {
+        // check if array/object of array/object or value
+        let promises = [];
+        Object.keys(data).map(x => {
+          if(Array.isArray(data[x]) || typeof data[x] == 'object'){
+            self.parseInt2(data[x]).then(result => {
+              promises.push(Promise.resolve(data[x] = result))
+            });
+          }else if(typeof data[x] == 'string' || 'number' || 'boolean'){
+            promises.push(Promise.resolve(x = data[x]))
+          }else{
+            reject({mess:'error 1 on the parseInt2'})
+          }
+        })
+        Promise.all(promises).then(()=>{
+          resolve(data);
+        })
+      }
+    })
+  },
   sortLabel: (obj)=>{
     return new Promise((resolve)=>{
       if(obj.labels){
@@ -78,6 +103,32 @@ const self = {
         }
       }
       resolve(obj);
+    })
+  },
+  parseResult: (data)=>{
+    return new Promise((resolve, reject)=>{
+
+      switch (true) {
+        case data.records.length == 0:
+          reject({mess: "error on the returned value"})
+          break;
+        case data.records.length > 1:
+          resolve(data.records.map(x => { return x._fields}));
+          break;
+        case data.records[0]._fields.length > 1:
+          resolve(data.records[0]._fields);
+          break;
+        case data.records[0]._fields[0].length > 1:
+          resolve(data.records[0]._fields[0]);
+          break;
+        case data.records[0]._fields[0].length == 1:
+          resolve(data.records[0]._fields[0][0]);
+          break;
+        default:
+          console.log(data)
+          reject({mess: "error on the data parsing"});
+
+      }
     })
   }
 
