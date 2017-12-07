@@ -10,53 +10,22 @@ module.exports.test = (req, res, next)=>{
   let tx = session.beginTransaction();
   let ps = req.body;
   let uid = 71;
-  let params = {uid};
-  let recallCont = [];
-      // globalList = [],
-  let recallable = [];
-  let unrecallable = [];
+  let now = new Date().getTime().toString();
+  let params = {uid, now};
 
 
   // List of Recallable container
   tx.run(`
-    match (a:Acc)-[:Linked]->(rs:Recall)
-    where id(a) = $uid
-    with collect(distinct rs.cid) as list
-    return list
+    match (a:Acc)-[]->(c:Recall)
+    where id(a)=$uid and (toInteger(c.next) < toInteger($now) or c.next = "")
+    with c limit 1
+    match (q) where id(q)=c.qid
+    match (r) where id(r)=c.rid
+    return {question:q, response:r}
     `, params)
   .then( data => { return utils.parseResult(data)})
   .then( data => { return utils.parseInt2(data) })
-  .then( data => { params.recallList = utils.sortLabel(data) })
-  .then( () => {
-    return tx.run(`
-      match (a:Acc)-[:Linked]->(c:Cont)-[:Has{commit:last(c.commitList)}]->(t:Title)
-      where id(a)=$uid
-      return c, t
-      `, params)
-  })
-  .then( data =>{ return utils.parseResult(data) })
-  .then( data =>{ return utils.parseInt2(data) })
-  .then( data =>{ return utils.sortLabel(data) })
-  .then( data =>{
-    data.map(x => {
-      if( recallCont.indexOf(x[0].identity) ){
-        recallable.push({
-          cid: x[0].identity,
-          type: x[0].properties.type,
-          tid: x[1].identity,
-          val: x[1].properties.value
-        })
-      }else{
-        unrecallable.push({
-          cid: x[0].identity,
-          type: x[0].properties.type,
-          tid: x[1].identity,
-          val: x[1].properties.value
-        })
-      }
-    })
-    return {recallable, unrecallable};
-  })
+  .then( data => { return utils.sortLabel(data) })
   .then( data =>{  utils.commit(tx, res, {uid, data}) })
   .catch( e => {
     let mess = e.mess || null;

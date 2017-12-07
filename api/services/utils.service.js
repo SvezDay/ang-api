@@ -25,7 +25,6 @@ const self = {
       }
     });
   },
-
   ObjInArrToKeyValInObj: (arr)=>{
     let keyval = {};
     arr.map(x => {
@@ -107,10 +106,9 @@ const self = {
   },
   parseResult: (data)=>{
     return new Promise((resolve, reject)=>{
-
       switch (true) {
         case data.records.length == 0:
-          reject({mess: "error on the returned value"})
+          reject({mess: "THE QUERY HAS RETURNED NO VALUE"})
           break;
         case data.records.length > 1:
           resolve(data.records.map(x => { return x._fields}));
@@ -124,9 +122,12 @@ const self = {
         case data.records[0]._fields[0].length == 1:
           resolve(data.records[0]._fields[0][0]);
           break;
+        case data.records[0]._fields[0].length == undefined:
+          resolve(data.records[0]._fields[0]);
+          break;
         default:
           console.log(data)
-          reject({mess: "error on the data parsing"});
+          reject({mess: "error on the data parseResult"});
 
       }
     })

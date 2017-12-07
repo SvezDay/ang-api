@@ -9,6 +9,7 @@ const admin = require('./controllers/admin.controller');
 const container = require('./controllers/container.controller');
 const note = require('./controllers/note.controller');
 const todo = require('./controllers/todo.controller');
+const memorize = require('./controllers/memorize.controller');
 
 // const multer = require('multer');
 // const upload = multer()
@@ -56,7 +57,8 @@ module.exports = ()=>{
       .post('/todo_reopen_task', todo.reopen_task)
 
     // MEMORIZE
-      // .get('/memorize_get_')
+      .get('/memorize_get_all_recallable', memorize.get_all_recallable)
+      .get('/memorize_recording_result', memorize.recording_result)
 
    ;
 
